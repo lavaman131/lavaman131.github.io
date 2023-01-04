@@ -2,6 +2,7 @@ import "./index.css";
 import Navbar from "./Navbar";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
+import Projects from "./pages/Projects";
 import Error from "./pages/Error";
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/Projects" element={<Projects />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </div>

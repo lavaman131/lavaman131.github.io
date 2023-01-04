@@ -3,7 +3,7 @@ import corgi from "../imgs/corgi.jpg";
 
 const Error = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 bg-deep_space place-items-center h-screen gap-0">
+    <div className="grid grid-cols-1 md:grid-cols-2 bg-deep_space w-full h-screen place-items-center gap-0">
       <div className="flex flex-col items-center justify-center gap-10 m-4">
         <h1 className="text-dark_gold font-bold font-baskerville text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
           Oops!
@@ -19,7 +19,7 @@ const Error = () => {
         </Link>
       </div>
       <div className="flex flex-col items-center justify-center m-4">
-        <img src={corgi}></img>
+        <img alt="space corgi" src={corgi}></img>
       </div>
     </div>
   );
