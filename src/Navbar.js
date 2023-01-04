@@ -81,19 +81,19 @@ const Navbar = () => {
       <div className="mobile-menu hidden md:hidden">
         <Link
           to="/About"
-          className="block py-2 px-3 text-sm font-baskerville text-slate-300 hover:bg-med_blue"
+          className="block py-2 px-3 text-sm font-baskerville text-slate-300 hover:bg-slate-500"
         >
           About
         </Link>
         <Link
           to="/Projects"
-          className="block py-2 px-3 text-sm font-baskerville text-slate-300 hover:bg-med_blue"
+          className="block py-2 px-3 text-sm font-baskerville text-slate-300 hover:bg-slate-500"
         >
           Projects
         </Link>
         <Link
           to="/Contact"
-          className="block py-2 px-3 text-sm font-baskerville text-slate-300 hover:bg-med_blue"
+          className="block py-2 px-3 text-sm font-baskerville text-slate-300 hover:bg-slate-500"
         >
           Contact
         </Link>

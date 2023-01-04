@@ -38,10 +38,6 @@ module.exports = {
         code_block: "rgb(32, 41, 58)",
       },
       backgroundImage: {
-        waves_1: "url('./imgs/waves_1.jpg')",
-        waves_2: "url('./imgs/waves_2.jpg')",
-        waves_3: "url('./imgs/waves_3.jpg')",
-        space: "url(./imgs/space.jpg)",
         space_2: "url(./imgs/space_2.jpg)",
         corgi: "url(./imgs/corgi.jpg)",
       },
