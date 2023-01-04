@@ -36,6 +36,8 @@ module.exports = {
         creamy_white: "rgb(250, 242, 225)",
         red_orange: "#FF4500",
         code_block: "rgb(32, 41, 58)",
+        dark_gold: "rgb(196, 154, 72)",
+        light_gold: "rgb(222, 188, 92)",
       },
       backgroundImage: {
         space_2: "url(./imgs/space_2.jpg)",

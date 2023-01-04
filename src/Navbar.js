@@ -12,7 +12,7 @@ const Navbar = () => {
     });
   }, []);
   return (
-    <nav className="bg-creamy_white bg-opacity-20 sticky top-0 z-50">
+    <nav className="bg-midnight_blue sticky top-0 z-50">
       <div className="flex-initial max-w-7xl mx-auto px-4">
         <div className="flex justify-between">
           <div className="flex space-x-4">
@@ -26,7 +26,7 @@ const Navbar = () => {
             <div className="flex items-center space-x-1">
               <Link
                 to="/"
-                className="py-5 px-3 font-baskerville text-slate-300 hover:text-gray-400"
+                className="py-5 px-3 font-baskerville text-light_gold hover:text-dark_gold"
               >
                 Home
               </Link>
@@ -34,7 +34,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-1">
               <Link
                 to="/About"
-                className="py-5 px-3 font-baskerville text-slate-300 hover:text-gray-400"
+                className="py-5 px-3 font-baskerville text-light_gold hover:text-dark_gold"
               >
                 About
               </Link>
@@ -42,7 +42,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-1">
               <Link
                 to="/Projects"
-                className="py-5 px-3 font-baskerville text-slate-300 hover:text-gray-400"
+                className="py-5 px-3 font-baskerville text-light_gold hover:text-dark_gold"
               >
                 Projects
               </Link>
@@ -51,7 +51,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-1">
               <Link
                 to="/Contact"
-                className="py-5 px-3 font-baskerville text-slate-300 hover:text-gray-400"
+                className="py-5 px-3 font-baskerville text-light_gold hover:text-dark_gold"
               >
                 Contact
               </Link>
@@ -81,19 +81,19 @@ const Navbar = () => {
       <div className="mobile-menu hidden md:hidden">
         <Link
           to="/About"
-          className="block py-2 px-3 text-sm font-baskerville text-slate-300 hover:bg-slate-500"
+          className="block py-2 px-3 text-sm font-baskerville text-light_gold hover:bg-slate-500"
         >
           About
         </Link>
         <Link
           to="/Projects"
-          className="block py-2 px-3 text-sm font-baskerville text-slate-300 hover:bg-slate-500"
+          className="block py-2 px-3 text-sm font-baskerville text-light_gold hover:bg-slate-500"
         >
           Projects
         </Link>
         <Link
           to="/Contact"
-          className="block py-2 px-3 text-sm font-baskerville text-slate-300 hover:bg-slate-500"
+          className="block py-2 px-3 text-sm font-baskerville text-light_gold hover:bg-slate-500"
         >
           Contact
         </Link>
