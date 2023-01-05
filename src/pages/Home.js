@@ -16,7 +16,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <div className="bg-deep_space w-full h-screen">
+      <div className="bg-deep_space">
         <CodingSkillsWidget></CodingSkillsWidget>
       </div>
     </div>

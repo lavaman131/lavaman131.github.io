@@ -5,7 +5,7 @@ const CodingSkillsWidget = () => {
     color: "rgb(203 213 225)",
   };
   return (
-    <div className="grid grid-cols-1 place-items-center gap-10 m-4">
+    <div className="grid grid-cols-1 place-items-center gap-10 m-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 place-items-start m-4">
         <div className="flex flex-col gap-4">
           <h1 className="font-baskerville text-xl md:text-2xl lg:text-3xl xl:text-4xl bg-gradient-to-t from-yellow-300 via-red-300 to-magic_purple bg-clip-text text-transparent">
