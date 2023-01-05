@@ -1,7 +1,7 @@
 const Contact = () => {
   return (
-    <div className="flex flex-col items-center justify-center bg-deep_space h-screen gap-10">
-      <div className="flex flex-row gap-8 m-4">
+    <div className="flex flex-col items-center justify-center bg-deep_space h-screen gap-6 md:gap-10">
+      <div className="flex flex-row gap-8">
         <h1 className="font-baskerville font-bold text-creamy_white text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
           Mail
         </h1>
@@ -13,7 +13,7 @@ const Contact = () => {
           alavaee@bu.edu
         </a>
       </div>
-      <div className="flex flex-row gap-8 m-4">
+      <div className="flex flex-row gap-8">
         <h1 className="font-baskerville font-bold text-creamy_white text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
           Social Media
         </h1>
