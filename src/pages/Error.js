@@ -3,7 +3,7 @@ import corgi from "../imgs/corgi.jpg";
 
 const Error = () => {
   return (
-    <div className="h-screen bg-deep_space md:flex md:items-center md:justify-center">
+    <div className="h-screen bg-deep_space flex items-center justify-center">
       <div className="grid grid-cols-1 md:grid-cols-2 justify-center place-items-center gap-0">
         <div className="flex flex-col items-center justify-center gap-10 m-4">
           <h1 className="text-dark_gold font-bold font-baskerville text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
