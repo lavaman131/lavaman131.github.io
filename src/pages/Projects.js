@@ -1,6 +1,6 @@
 const Projects = () => {
   return (
-    <div className="grid bg-deep_space sm:h-screen">
+    <div className="grid bg-deep_space md:h-screen">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-4 m-4">
         <a href="https://github.com/lavaman131/human_connectome">
           <img
