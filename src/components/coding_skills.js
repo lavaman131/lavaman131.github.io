@@ -17,11 +17,6 @@ const CodingSkillsWidget = () => {
             />
 
             <img
-              src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
-              alt=""
-              className="w-10 h-10 md:w-14 md:h-14"
-            />
-            <img
               src="https://raw.githubusercontent.com/actions/starter-workflows/main/icons/rust.svg"
               alt=""
               className="w-10 h-10 md:w-14 md:h-14"
@@ -41,9 +36,14 @@ const CodingSkillsWidget = () => {
               alt=""
               className="w-10 h-10 md:w-14 md:h-14"
             />
+            <img
+              src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg"
+              alt=""
+              className="w-10 h-10 md:w-14 md:h-14"
+            />
           </div>
           <div className="font-baskerville text-slate-300">
-            Data Science Tools:
+            Data Science Frameworks:
           </div>
           <div className="font-baskerville text-slate-300 flex items-center space-x-2">
             <img
@@ -62,16 +62,6 @@ const CodingSkillsWidget = () => {
               className="w-10 h-10 md:w-14 md:h-14"
             />
             <img
-              src="https://raw.githubusercontent.com/valohai/ml-logos/master/scipy.svg"
-              alt=""
-              className="w-10 h-10 md:w-14 md:h-14"
-            />
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/0/01/Created_with_Matplotlib-logo.svg"
-              alt=""
-              className="w-10 h-10 md:w-14 md:h-14"
-            />
-            <img
               src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg"
               alt=""
               className="w-10 h-10 md:w-14 md:h-14"
@@ -81,21 +71,20 @@ const CodingSkillsWidget = () => {
               alt=""
               className="w-10 h-10 md:w-14 md:h-14"
             />
-          </div>
-          <div className="font-baskerville text-slate-300">Frontend Tools:</div>
-          <div className="font-baskerville text-slate-300 flex items-center space-x-2">
             <img
-              src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"
+              src="https://raw.githubusercontent.com/valohai/ml-logos/master/scipy.svg"
               alt=""
               className="w-10 h-10 md:w-14 md:h-14"
             />
             <img
-              src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg"
+              src="https://upload.wikimedia.org/wikipedia/commons/0/01/Created_with_Matplotlib-logo.svg"
               alt=""
               className="w-10 h-10 md:w-14 md:h-14"
             />
           </div>
-          <div className="font-baskerville text-slate-300">Backend Tools:</div>
+          <div className="font-baskerville text-slate-300">
+            Backend Frameworks:
+          </div>
           <div className="font-baskerville text-slate-300 flex items-center space-x-2">
             <img
               src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg"
@@ -114,6 +103,21 @@ const CodingSkillsWidget = () => {
             />
             <img
               src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-plain.svg"
+              alt=""
+              className="w-10 h-10 md:w-14 md:h-14"
+            />
+          </div>
+          <div className="font-baskerville text-slate-300">
+            Frontend Frameworks:
+          </div>
+          <div className="font-baskerville text-slate-300 flex items-center space-x-2">
+            <img
+              src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg"
+              alt=""
+              className="w-10 h-10 md:w-14 md:h-14"
+            />
+            <img
+              src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg"
               alt=""
               className="w-10 h-10 md:w-14 md:h-14"
             />
