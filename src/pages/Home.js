@@ -5,7 +5,7 @@ import CodingSkillsWidget from "../components/coding_skills";
 const Home = () => {
   return (
     <div className="grid grid-cols-1 gap-0">
-      <div className="flex flex-col items-center justify-center relative">
+      <div className="flex flex-col items-center justify-center lg:h-screen relative">
         <img src={profile_img} alt="Alex Lavaee" className="h-fit lg:h-screen"></img>
         <div className="flex flex-col items-center absolute bottom-4 md:bottom-20 gap-4">
           <div className="bg-gradient-to-t from-yellow-300 via-red-300 to-magic_purple font-extrabold font-baskerville bg-clip-text text-transparent text-5xl lg:text-6xl xl:text-7xl">
