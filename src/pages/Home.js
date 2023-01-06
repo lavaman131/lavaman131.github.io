@@ -1,4 +1,4 @@
-import profile_img from "../imgs/profile_2_tb.png";
+import profile_img from "../imgs/profile_2_tb.webp";
 import AutoTypingHelper from "../components/auto-typing-helper";
 import CodingSkillsWidget from "../components/coding_skills";
 

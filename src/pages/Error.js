@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import corgi from "../imgs/corgi.jpg";
+import corgi from "../imgs/corgi.webp";
 
 const Error = () => {
   return (

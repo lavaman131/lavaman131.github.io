@@ -1,5 +1,5 @@
 import React from "react";
-import profile_img from "../imgs/profile_about_me.jpg";
+import profile_img from "../imgs/profile_about_me.webp";
 
 const About = () => (
   <div className=" rounded-xl flex flex-col gap-4 items-center justify-center h-screen m-6">
