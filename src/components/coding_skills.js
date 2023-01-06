@@ -1,9 +1,4 @@
-import GitHubCalendar from "react-github-calendar";
-
 const CodingSkillsWidget = () => {
-  const gStyle = {
-    color: "rgb(203 213 225)",
-  };
   return (
     <div className="grid grid-cols-1 place-items-center gap-10 m-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 place-items-start m-4">
@@ -141,15 +136,6 @@ const CodingSkillsWidget = () => {
             ></img>
           </div>
         </div>
-      </div>
-      <div className="hidden md:flex">
-        <GitHubCalendar
-          username="lavaman131"
-          hideColorLegend
-          hideTotalCount
-          fontSize={14}
-          style={gStyle}
-        />
       </div>
     </div>
   );
