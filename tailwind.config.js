@@ -39,7 +39,7 @@ module.exports = {
         light_gold: "rgb(222, 188, 92)",
       },
       backgroundImage: {
-        space_2: "url(./imgs/space_2.jpg)",
+        space_2: "url(./imgs/space_2.webp)",
         corgi: "url(./imgs/corgi.jpg)",
       },
       fontFamily: {
