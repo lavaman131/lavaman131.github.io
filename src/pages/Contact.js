@@ -6,7 +6,6 @@ const Contact = () => {
           <h1 className="font-baskerville font-bold text-creamy_white text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
             Mail
           </h1>
-
           <a
             className="font-baskerville text-sky-400 before:content-['_↗'] hover:text-sky-200 text-2xl md:text-3xl lg:text-4xl xl:text-5xl"
             href="mailto:alavaee@bu.edu"
