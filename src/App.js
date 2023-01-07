@@ -9,7 +9,7 @@ import Error from "./pages/Error";
 
 function App() {
   return (
-    <div className="flex flex-col flex-auto">
+    <div className="flex flex-col h-screen">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

@@ -1,7 +1,7 @@
 const Contact = () => {
   return (
-    <div className="grid bg-deep_space">
-      <div className="flex flex-col mx-auto justify-center h-screen gap-6 md:gap-10">
+    <div className="flex-grow grid bg-deep_space">
+      <div className="flex flex-col mx-auto justify-center gap-6 md:gap-10">
         <div className="flex flex-row gap-8">
           <h1 className="font-baskerville font-bold text-creamy_white text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
             Mail
