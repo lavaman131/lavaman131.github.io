@@ -3,7 +3,7 @@ import profile_img from "../imgs/profile_about_me.webp";
 
 const About = () => (
   <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-0">
-    <div className="flex items-center justify-center m-4">
+    <div className="flex items-center justify-center m-8">
       <div className="rounded-full p-2 bg-gradient-to-t from-red-600 to-magic_purple w-2/3 md:w-full">
         <img
           alt="Alex Lavaee"
