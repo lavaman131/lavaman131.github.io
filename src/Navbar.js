@@ -10,6 +10,9 @@ const Navbar = () => {
     btn.addEventListener("click", () => {
       menu.classList.toggle("hidden");
     });
+    menu.addEventListener("click", () => {
+      menu.classList.toggle("hidden");
+    });
   }, []);
   return (
     <nav className="bg-midnight_blue sticky top-0 z-50">
