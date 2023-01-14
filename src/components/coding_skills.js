@@ -1,3 +1,4 @@
+import languages_img from "../imgs/languages.png";
 const CodingSkillsWidget = () => {
   return (
     <div className="grid grid-cols-1 place-items-center gap-10 m-8">
@@ -129,7 +130,7 @@ const CodingSkillsWidget = () => {
           </h1>
           <div className="flex flex-col gap-4">
             <img
-              src="https://github-readme-stats.lavaman131.vercel.app/api/top-langs/?username=lavaman131&show_icons=true&theme=radical&hide_border=true&layout=compact&langs_count=8&hide=jupyter%20notebook"
+              src={languages_img}
               alt="git languages"
               className="w-5/6"
             ></img>
