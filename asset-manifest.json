@@ -1,20 +1,27 @@
 {
   "files": {
-    "main.css": "/static/css/main.bba55d29.css",
-    "main.js": "/static/js/main.9646488b.js",
+    "main.css": "/static/css/main.8734667d.css",
+    "main.js": "/static/js/main.8ed86bd6.js",
     "static/js/787.fb771931.chunk.js": "/static/js/787.fb771931.chunk.js",
+    "static/media/disaster_relief.png": "/static/media/disaster_relief.9abe5ffcde718ad46c0f.png",
     "static/media/profile_2_tb.png": "/static/media/profile_2_tb.5cd99049c566fb1cb082.png",
     "static/media/space_2.jpg": "/static/media/space_2.fd266f1caba023676866.jpg",
     "static/media/corgi.webp": "/static/media/corgi.dbb1319dabd1feeb9282.webp",
+    "static/media/plantifydr.png": "/static/media/plantifydr.bca105882565a48c2f2b.png",
+    "static/media/human_connectome.jpg": "/static/media/human_connectome.a08a8277b5aa2c12d962.jpg",
+    "static/media/languages.png": "/static/media/languages.eaf067b900ee9f2a1cab.png",
     "static/media/profile_about_me.webp": "/static/media/profile_about_me.214ef5b560eb2b3260b6.webp",
+    "static/media/operating_system.jpg": "/static/media/operating_system.a7e6a217a6a09316233a.jpg",
+    "static/media/PUber.png": "/static/media/PUber.f87e19162e059b87c4c1.png",
     "static/media/logo.webp": "/static/media/logo.42df8f0ccb48f5334604.webp",
+    "static/media/bullyproof.svg": "/static/media/bullyproof.e40164d5b4e40207e56f48cfb0c1e2d2.svg",
     "index.html": "/index.html",
-    "main.bba55d29.css.map": "/static/css/main.bba55d29.css.map",
-    "main.9646488b.js.map": "/static/js/main.9646488b.js.map",
+    "main.8734667d.css.map": "/static/css/main.8734667d.css.map",
+    "main.8ed86bd6.js.map": "/static/js/main.8ed86bd6.js.map",
     "787.fb771931.chunk.js.map": "/static/js/787.fb771931.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.bba55d29.css",
-    "static/js/main.9646488b.js"
+    "static/css/main.8734667d.css",
+    "static/js/main.8ed86bd6.js"
   ]
 }
