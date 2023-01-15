@@ -1,6 +1,14 @@
+import { motion } from "framer-motion";
+
 const Contact = () => {
   return (
-    <div className="flex-grow grid bg-deep_space">
+    <motion.div
+      className="flex-grow grid bg-deep_space"
+      initial={{ opacity: 0, y: 200 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -200 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="flex flex-col mx-auto justify-center gap-6 md:gap-10">
         <div className="flex flex-row gap-8">
           <h1 className="font-baskerville font-bold text-creamy_white text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
@@ -36,7 +44,7 @@ const Contact = () => {
           </a>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,4 +1,5 @@
 import ProjectWidget from "../components/project_widget";
+import { motion } from "framer-motion";
 
 import human_connectome from "../imgs/projects/human_connectome.jpg";
 import plantifydr from "../imgs/projects/plantifydr.png";
@@ -9,15 +10,21 @@ import bullyproof from "../imgs/projects/bullyproof.svg";
 
 const Projects = () => {
   return (
-    <div className="flex-grow grid place-items-center bg-deep_space">
+    <motion.div
+      className="flex-grow grid place-items-center bg-deep_space"
+      initial={{ opacity: 0, y: 200 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -200 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="grid bg-deep_space grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 m-4">
         <ProjectWidget
-          project_name="Human Connectome"
+          project_name="Autism Brain Region Detection"
           project_img={human_connectome}
           github_link="https://github.com/lavaman131/human_connectome"
         ></ProjectWidget>
         <ProjectWidget
-          project_name="PlantifyDr"
+          project_name="Plant Disease Detection App"
           project_img={plantifydr}
           github_link="https://github.com/lavaman131/PlantifyDr"
         ></ProjectWidget>
@@ -27,7 +34,7 @@ const Projects = () => {
           github_link="https://github.com/lavaman131/Disaster-Relief-Project"
         ></ProjectWidget>
         <ProjectWidget
-          project_name="Operating System"
+          project_name="Custom Operating System"
           project_img={operating_system}
           github_link="https://github.com/lavaman131/custom-arch-linux-build"
         ></ProjectWidget>
@@ -37,12 +44,12 @@ const Projects = () => {
           github_link="https://github.com/lavaman131/Puber"
         ></ProjectWidget>
         <ProjectWidget
-          project_name="BullyProof"
+          project_name="Twitter Hate Speech Filter"
           project_img={bullyproof}
           github_link="https://github.com/lavaman131/BullyProof"
         ></ProjectWidget>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

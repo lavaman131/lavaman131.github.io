@@ -1,8 +1,15 @@
 import React from "react";
 import profile_img from "../imgs/profile_about_me.webp";
+import { motion } from "framer-motion";
 
 const About = () => (
-  <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-0">
+  <motion.div
+    className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-0"
+    initial={{ opacity: 0, y: 200 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -200 }}
+    transition={{ duration: 0.3 }}
+  >
     <div className="flex items-center justify-center m-8">
       <div className="rounded-full p-2 bg-gradient-to-t from-red-600 to-magic_purple w-3/5 md:w-5/6">
         <img
@@ -39,7 +46,7 @@ const About = () => (
         </p>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
 export default About;

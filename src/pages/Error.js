@@ -1,9 +1,16 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import corgi from "../imgs/corgi.webp";
 
 const Error = () => {
   return (
-    <div className="flex-grow bg-deep_space flex items-center justify-center">
+    <motion.div
+      className="flex-grow bg-deep_space flex items-center justify-center"
+      initial={{ opacity: 0, y: 200 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -200 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 justify-center place-items-center gap-0">
         <div className="flex flex-col items-center justify-center gap-10 m-4">
           <h1 className="text-dark_gold font-bold font-baskerville text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
@@ -27,7 +34,7 @@ const Error = () => {
           ></img>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
