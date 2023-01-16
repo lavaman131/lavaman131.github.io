@@ -6,6 +6,6 @@
 
 @layer base {
   body {
-    @apply bg-space_2 bg-no-repeat bg-cover bg-center bg-fixed;
+    @apply bg-space bg-no-repeat bg-cover bg-center bg-fixed;
   }
 }

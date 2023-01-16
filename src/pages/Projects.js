@@ -11,13 +11,13 @@ import bullyproof from "../imgs/projects/bullyproof.svg";
 const Projects = () => {
   return (
     <motion.div
-      className="flex-grow grid place-items-center bg-deep_space"
+      className="flex-grow grid place-items-center bg-space_blue"
       initial={{ opacity: 0, y: 200 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -200 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="grid bg-deep_space grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 m-4">
+      <div className="grid bg-deep_space grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 m-8 sm:m-16">
         <ProjectWidget
           project_name="Autism Brain Region Detection"
           project_img={human_connectome}

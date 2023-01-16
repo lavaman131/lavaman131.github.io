@@ -15,7 +15,7 @@ const Navbar = () => {
     });
   }, []);
   return (
-    <nav className="bg-midnight_blue sticky top-0 z-50">
+    <nav className="bg-cloudy_white sticky top-0 z-50 bg-opacity-10">
       <div className="flex-initial max-w-7xl mx-auto px-4">
         <div className="flex justify-between">
           <div className="flex space-x-4">

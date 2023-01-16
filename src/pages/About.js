@@ -11,7 +11,7 @@ const About = () => (
     transition={{ duration: 0.3 }}
   >
     <div className="flex items-center justify-center m-8">
-      <div className="rounded-full p-2 bg-gradient-to-t from-red-600 to-magic_purple w-3/5 md:w-5/6">
+      <div className="rounded-full p-2 bg-space_blue w-3/5 md:w-5/6">
         <img
           alt="Alex Lavaee"
           className="rounded-full w-full h-full"
@@ -19,7 +19,7 @@ const About = () => (
         ></img>
       </div>
     </div>
-    <div className="flex flex-col items-center justify-center bg-deep_space font-baskerville text-creamy_white xl:text-xl">
+    <div className="flex flex-col items-center justify-center bg-space_blue font-baskerville text-creamy_white xl:text-xl">
       <div>
         <p className="mx-8 my-4">
           I am a computer science and data science student at Boston
