@@ -5,7 +5,7 @@ import corgi from "../imgs/corgi.webp";
 const Error = () => {
   return (
     <motion.div
-      className="flex-grow bg-deep_space flex items-center justify-center"
+      className="flex-grow bg-space_blue flex items-center justify-center"
       initial={{ opacity: 0, y: 200 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -200 }}

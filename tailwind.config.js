@@ -39,7 +39,8 @@ module.exports = {
         light_gold: "rgb(222, 188, 92)",
         space_blue: "rgb(3, 13, 45)",
         cloudy_blue: "rgb(28, 70, 154)",
-        cloudy_white: "rgb(186, 222, 251)"
+        cloudy_white: "rgb(186, 222, 251)",
+        cloudy_black: "rgb(21, 24, 28)"
       },
       backgroundImage: {
         space: "url(./imgs/space_3.jpg)",
