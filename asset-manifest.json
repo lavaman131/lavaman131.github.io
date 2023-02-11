@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.65b1a8b3.css",
-    "main.js": "/static/js/main.ed726ccb.js",
+    "main.css": "/static/css/main.58c42481.css",
+    "main.js": "/static/js/main.0463e1d7.js",
     "static/js/787.fb771931.chunk.js": "/static/js/787.fb771931.chunk.js",
     "static/media/disaster_relief.png": "/static/media/disaster_relief.9abe5ffcde718ad46c0f.png",
     "static/media/profile_2_tb.png": "/static/media/profile_2_tb.5cd99049c566fb1cb082.png",
@@ -16,12 +16,12 @@
     "static/media/logo.webp": "/static/media/logo.42df8f0ccb48f5334604.webp",
     "static/media/bullyproof.svg": "/static/media/bullyproof.e40164d5b4e40207e56f48cfb0c1e2d2.svg",
     "index.html": "/index.html",
-    "main.65b1a8b3.css.map": "/static/css/main.65b1a8b3.css.map",
-    "main.ed726ccb.js.map": "/static/js/main.ed726ccb.js.map",
+    "main.58c42481.css.map": "/static/css/main.58c42481.css.map",
+    "main.0463e1d7.js.map": "/static/js/main.0463e1d7.js.map",
     "787.fb771931.chunk.js.map": "/static/js/787.fb771931.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.65b1a8b3.css",
-    "static/js/main.ed726ccb.js"
+    "static/css/main.58c42481.css",
+    "static/js/main.0463e1d7.js"
   ]
 }
