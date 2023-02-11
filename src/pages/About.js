@@ -22,10 +22,10 @@ const About = () => (
     <div className="flex flex-col items-center justify-center bg-space_blue font-baskerville text-creamy_white xl:text-xl">
       <div>
         <p className="mx-8 my-4">
-          I am a computer science and data science student at Boston
-          University's college of Computing & Data Sciences (CDS) with
-          experience in Agile development, Scrum, Object-oriented programming,
-          Test-driven development, and Cloud computing.
+          I am a data science student at Boston University's college of
+          Computing & Data Sciences (CDS) with experience in Agile development,
+          Scrum, Object-oriented programming, Test-driven development, and Cloud
+          computing.
         </p>
         <p className="mx-8 my-4">
           I have experience implementing DevOps practices and have successfully
