@@ -7,6 +7,9 @@ import puber from "../imgs/projects/PUber.png";
 import disaster_relief from "../imgs/projects/disaster_relief.png";
 import operating_system from "../imgs/projects/operating_system.jpg";
 import bullyproof from "../imgs/projects/bullyproof.svg";
+import mlb from "../imgs/projects/mlb.webp";
+import jarvis from "../imgs/projects/jarvis.png";
+import comic_books from "../imgs/projects/comic_books.png";
 
 const Projects = () => {
   return (
@@ -47,6 +50,21 @@ const Projects = () => {
           project_name="Twitter Hate Speech Filter"
           project_img={bullyproof}
           github_link="https://github.com/lavaman131/BullyProof"
+        ></ProjectWidget>
+        <ProjectWidget
+          project_name="MLB Attendance Prediction"
+          project_img={mlb}
+          github_link="https://github.com/lavaman131/minnemudac2023"
+        ></ProjectWidget>
+        <ProjectWidget
+          project_name="AI Voice Assistant"
+          project_img={jarvis}
+          github_link="https://github.com/lavaman131/jarvis"
+        ></ProjectWidget>
+        <ProjectWidget
+          project_name="Statistical Analysis of Comic Books"
+          project_img={comic_books}
+          github_link="https://alexlavaee.me/graphic_memoir_analysis/"
         ></ProjectWidget>
       </div>
     </motion.div>

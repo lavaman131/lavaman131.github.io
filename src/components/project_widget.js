@@ -9,7 +9,7 @@ const ProjectWidget = ({ project_name, project_img, github_link }) => {
           {project_name}
         </span>
       </div>
-      <img src={project_img} alt="" className="flex-grow"></img>
+      <img src={project_img} alt="" className="aspect-video flex-grow"></img>
     </a>
   );
 };
