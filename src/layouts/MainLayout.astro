@@ -1,0 +1,28 @@
+---
+import Navbar from "../components/Navbar.astro";
+import "../styles/global.css";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Alex Lavaee</title>
+  </head>
+  <body class="grid h-screen grid-rows-[auto,1fr]" onload="startAnimation()">
+    <Navbar />
+
+    <main id="swup" class="wrapper flex flex-col justify-center items-center">
+      <slot />
+    </main>
+    <script type="module" src="../../public/app.js"></script>
+  </body>
+</html>
+
+<script is:inline>
+  function startAnimation() {
+    document.body.classList.add("slide-in-bottom");
+  }
+</script>

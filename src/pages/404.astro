@@ -1,0 +1,27 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import corgi from "../imgs/corgi.webp";
+---
+
+<MainLayout>
+  <div
+    class="flex flex-col items-center justify-center gap-10 bg-corgi h-full w-full bg-cover bg-center"
+  >
+    <h1
+      class="text-dark_gold font-bold font-baskerville text-6xl md:text-7xl lg:text-8xl xl:text-9xl"
+    >
+      Oops!
+    </h1>
+    <p
+      class="text-center text-dark_gold font-baskerville text-lg md:text-2xl xl:text-3xl"
+    >
+      Sorry, an unexpected error has occurred.
+    </p>
+    <a
+      class="text-dark_gold font-baskerville text-lg md:text-xl lg:text-2xl xl:text-3xl rounded-lg px-4 py-2 bg-magic_purple hover:bg-slate-700"
+      href="/"
+    >
+      Back Home
+    </a>
+  </div>
+</MainLayout>
