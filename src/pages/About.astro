@@ -1,20 +1,20 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import profile_img from "../imgs/profile_about_me.webp";
+import profile_img from "../imgs/profile.png";
 ---
 
 <MainLayout>
-  <div class="grid grid-cols-1 md:grid-cols-2 h-full">
+  <div class="grid grid-cols-1 md:grid-cols-2 h-full w-full m-4">
     <div class="flex items-center justify-center">
       <img
         alt="Alex Lavaee"
-        class="rounded-full w-2/3 border-4 border-creamy_white m-8"
+        class="rounded-full w-2/3 border-4 border-creamy_white"
         src={profile_img}
       />
     </div>
 
     <div
-      class="flex flex-col items-center justify-center bg-slate-950 font-baskerville text-creamy_white xl:text-xl"
+      class="flex flex-col items-center justify-center bg-slate-950 font-baskerville text-creamy_white xl:text-xl rounded-2xl m-4"
     >
       <div>
         <p class="mx-8 my-4">

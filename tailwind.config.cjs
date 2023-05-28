@@ -46,6 +46,7 @@ module.exports = {
 		  space: "url(/src/imgs/space_3.jpg)",
 		  space_2: "url(/src/imgs/space_2.jpg)",
 		  corgi: "url(/src/imgs/corgi.jpg)",
+		  galaxy: "url(/src/imgs/galaxy.png)",
 		},
 		fontFamily: {
 		  code_font: ["Source Code Pro"],

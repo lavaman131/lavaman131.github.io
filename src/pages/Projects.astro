@@ -10,10 +10,12 @@ import bullyproof from "../imgs/projects/bullyproof.svg";
 import mlb from "../imgs/projects/mlb.webp";
 import jarvis from "../imgs/projects/jarvis.png";
 import comic_books from "../imgs/projects/comic_books.png";
+import covid_19 from "../imgs/projects/covid_19.jpg";
+import electric_vehicle from "../imgs/projects/electric_vehicle.png";
 ---
 
 <MainLayout>
-  <div class="bg-slate-950 h-full w-full">
+  <div class="h-full w-full">
     <div
       class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 m-8 sm:m-16"
     >
@@ -61,6 +63,16 @@ import comic_books from "../imgs/projects/comic_books.png";
         project_name="Statistical Analysis of Comic Books"
         project_img={comic_books}
         github_link="https://alexlavaee.me/graphic_memoir_analysis/"
+      />
+      <ProjectWidget
+        project_name="Electric Vehicle Range Prediction"
+        project_img={electric_vehicle}
+        github_link="https://alexlavaee.me/EV_range_prediction/"
+      />
+      <ProjectWidget
+        project_name="Covid Mitigation Strategies"
+        project_img={covid_19}
+        github_link="https://github.com/lavaman131/covid-mitigation-analysis"
       />
     </div>
   </div>
