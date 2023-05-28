@@ -3,6 +3,17 @@ import Navbar from "../components/Navbar.astro";
 import "../styles/global.css";
 ---
 
+<script>
+  import Swup from "swup";
+  import SwupA11yPlugin from "@swup/a11y-plugin";
+  import SwupHeadPlugin from "@swup/head-plugin";
+  import SwupSlideTheme from "@swup/slide-theme";
+
+  const swup = new Swup({
+    plugins: [new SwupA11yPlugin(), new SwupHeadPlugin(), new SwupSlideTheme()],
+  });
+</script>
+
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -17,6 +28,5 @@ import "../styles/global.css";
     <main id="swup" class="wrapper flex flex-col justify-center items-center">
       <slot />
     </main>
-    <script type="module" src="/app.js"></script>
   </body>
 </html>
