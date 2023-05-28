@@ -43,9 +43,9 @@ module.exports = {
 		  cloudy_black: "rgb(21, 24, 28)"
 		},
 		backgroundImage: {
-		  space: "url(./src/imgs/space_3.jpg)",
-		  space_2: "url(./src/imgs/space_2.jpg)",
-		  corgi: "url(./src/imgs/corgi.jpg)",
+		  space: "url(/src/imgs/space_3.jpg)",
+		  space_2: "url(/src/imgs/space_2.jpg)",
+		  corgi: "url(/src/imgs/corgi.jpg)",
 		},
 		fontFamily: {
 		  code_font: ["Source Code Pro"],
