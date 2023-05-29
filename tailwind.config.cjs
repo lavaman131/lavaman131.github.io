@@ -1,59 +1,76 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-	content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
-	darkMode: "class",
-	theme: {
-	  extend: {
-		screens: {
-		  sm: "640px",
-		  md: "826px",
-		  lg: "1024px",
-		  xl: "1280px",
-		  "2xl": "1536px",
-		},
-		spacing: {
-		  128: "32rem",
-		  144: "36rem",
-		},
-		colors: {
-		  // https://coolors.co/f72585-b5179e-7209b7-560bad-480ca8-3a0ca3-3f37c9-4361ee-4895ef-4cc9f0
-		  dark_pink: "#F72585",
-		  violet: "#B5179E",
-		  light_purple: "#7209B7",
-		  dark_purple: "#560BAD",
-		  midnight_purple: "#480CA8",
-		  magic_purple: "rgb(56, 20, 241)",
-		  indigo: "#3A0CA3",
-		  dark_blue: "rgb(15, 8, 150)",
-		  med_blue: "rgb(43, 62, 206)",
-		  sky_blue: "#4895EF",
-		  midnight_blue: "rgb(22, 43, 56)",
-		  teal: "#4CC9F0",
-		  aqua: "rgb(150, 227, 215)",
-		  deep_space: "rgb(23, 25, 37)",
-		  light_green: "#06D6A0",
-		  creamy_white: "rgb(250, 242, 225)",
-		  red_orange: "#FF4500",
-		  code_block: "rgb(32, 41, 58)",
-		  dark_gold: "rgb(196, 154, 72)",
-		  light_gold: "rgb(222, 188, 92)",
-		  space_blue: "rgb(3, 13, 45)",
-		  cloudy_blue: "rgb(28, 70, 154)",
-		  cloudy_white: "rgb(186, 222, 251)",
-		  cloudy_black: "rgb(21, 24, 28)"
-		},
-		backgroundImage: {
-		  space: "url(/src/imgs/space_3.jpg)",
-		  space_2: "url(/src/imgs/space_2.jpg)",
-		  corgi: "url(/src/imgs/corgi.jpg)",
-		  galaxy: "url(/src/imgs/galaxy.png)",
-		},
-		fontFamily: {
-		  code_font: ["Source Code Pro"],
-		  baskerville: ["Libre Baskerville", "serif"],
-		},
-	  },
-	},
-	plugins: [],
-  };
-  
+  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
+  darkMode: "class",
+  theme: {
+    extend: {
+      screens: {
+        sm: "640px",
+        md: "826px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
+      },
+      spacing: {
+        128: "32rem",
+        144: "36rem",
+      },
+      colors: {
+        // https://coolors.co/f72585-b5179e-7209b7-560bad-480ca8-3a0ca3-3f37c9-4361ee-4895ef-4cc9f0
+        dark_pink: "#F72585",
+        violet: "#B5179E",
+        light_purple: "#7209B7",
+        dark_purple: "#560BAD",
+        midnight_purple: "#480CA8",
+        magic_purple: "rgb(56, 20, 241)",
+        indigo: "#3A0CA3",
+        dark_blue: "rgb(15, 8, 150)",
+        med_blue: "rgb(43, 62, 206)",
+        sky_blue: "#4895EF",
+        midnight_blue: "rgb(22, 43, 56)",
+        teal: "#4CC9F0",
+        aqua: "rgb(150, 227, 215)",
+        deep_space: "rgb(23, 25, 37)",
+        light_green: "#06D6A0",
+        creamy_white: "rgb(250, 242, 225)",
+        red_orange: "#FF4500",
+        code_block: "rgb(32, 41, 58)",
+        dark_gold: "rgb(196, 154, 72)",
+        light_gold: "rgb(222, 188, 92)",
+        space_blue: "rgb(3, 13, 45)",
+        cloudy_blue: "rgb(28, 70, 154)",
+        cloudy_white: "rgb(186, 222, 251)",
+        cloudy_black: "rgb(21, 24, 28)",
+      },
+      backgroundImage: {
+        space: "url(/src/imgs/space_3.jpg)",
+        space_2: "url(/src/imgs/space_2.jpg)",
+        corgi: "url(/src/imgs/corgi.jpg)",
+        galaxy: "url(/src/imgs/galaxy.png)",
+      },
+      fontFamily: {
+        code_font: ["Source Code Pro"],
+        baskerville: ["Libre Baskerville", "serif"],
+      },
+      animation: {
+        type: "type 2.7s ease-out .8s infinite alternate both",
+      },
+      keyframes: {
+        type: {
+          "0%": { transform: "translateX(0ch)" },
+          "5%, 10%": { transform: "translateX(1ch)" },
+          "15%, 20%": { transform: "translateX(2ch)" },
+          "25%, 30%": { transform: "translateX(3ch)" },
+          "35%, 40%": { transform: "translateX(4ch)" },
+          "45%, 50%": { transform: "translateX(5ch)" },
+          "55%, 60%": { transform: "translateX(6ch)" },
+          "65%, 70%": { transform: "translateX(7ch)" },
+          "75%, 80%": { transform: "translateX(8ch)" },
+          "85%, 90%": { transform: "translateX(9ch)" },
+          "95%, 100%": { transform: "translateX(11ch)" },
+        },
+      },
+    },
+  },
+  plugins: [],
+};

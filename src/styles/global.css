@@ -6,7 +6,7 @@
 
 @layer base {
   body {
-    @apply bg-galaxy bg-no-repeat bg-cover bg-center bg-fixed;
+    @apply bg-slate-950 bg-no-repeat bg-cover bg-center bg-fixed;
   }
 }
 
@@ -24,4 +24,23 @@
 
 .hover-tint:hover::before {
   opacity: 0.5;
+}
+
+.typing-effect {
+  animation: typing 5s linear infinite;
+  -webkit-clip-path: inset(0);
+  clip-path: inset(0);
+  white-space: nowrap;
+}
+
+@keyframes typing {
+  0% {
+      clip-path: inset(0 100% 0 0);
+  }
+  80% {
+      clip-path: inset(0 0 0 0);
+  }
+  100% {
+      clip-path: inset(0 0 0 0);
+  }
 }

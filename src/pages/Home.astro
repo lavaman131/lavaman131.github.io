@@ -1,37 +1,36 @@
 ---
-import MainLayour from "../layouts/MainLayout.astro";
 import profile_img from "../imgs/profile_2_tb.png";
-import AutoTypingHelper from "../components/auto-typing-helper.astro";
 import CodingSkillsWidget from "../components/coding_skills.astro";
 import MainLayout from "../layouts/MainLayout.astro";
 ---
 
-
 <MainLayout>
-  <div class="flex flex-col items-center justify-center relative">
-    <img src={profile_img} alt="Alex Lavaee" class="max-h-screen"></img>
-    <div class="flex flex-col items-center absolute bottom-6 sm:bottom-14 md:bottom-20 gap-4">
-      <div class="bg-gradient-to-t from-yellow-300 via-red-300 to-magic_purple font-extrabold font-baskerville bg-clip-text text-transparent text-5xl lg:text-6xl xl:text-7xl">
-        Alex Lavaee
-      </div>
-      <div class="text-creamy_white font-baskerville text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
-        <AutoTypingHelper></AutoTypingHelper>
-      </div>
-      <svg
-        class="animate-bounce w-10 h-10 text-red-300 border-2 border-magic_purple rounded-full invisible md:visible"
-        fill="none"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
+  <div class="grid grid-cols-1 h-full w-full">
+    
+    
+
+  
+  <div class="bg-galaxy flex flex-col items-center justify-center relative">  
+    <img src={profile_img} alt="Alex Lavaee" class="max-h-screen" />
+    <div class="group flex flex-col items-center absolute bottom-6 sm:bottom-14 md:bottom-20 gap-4">
+      <h1 class="font-mono text-gray-100 text-4xl sm:text-5xl lg:text-6xl 2xl:text-7xl">
+        <span class="relative">
+          <span class="h-20 pt-2 overflow-x-hidden whitespace-nowrap text-brand-accent typing-effect">
+            Hi, I&apos;m Alex <span>👋</span>
+          </span>
+        </span>
+      </h1>
+
+      <svg class="animate-bounce w-10 h-10 text-red-300 border-2 border-magic_purple rounded-full invisible md:visible" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
         <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
       </svg>
     </div>
   </div>
   <div class="bg-slate-950">
-    <CodingSkillsWidget></CodingSkillsWidget>
+    <CodingSkillsWidget />
   </div>
-
+</div>
 </MainLayout>
+
+
+
