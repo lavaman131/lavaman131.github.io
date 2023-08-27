@@ -2,6 +2,10 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import ProjectWidget from "../components/project_widget.astro";
 import human_connectome from "../imgs/projects/human_connectome.jpg";
+import thvTranscribe from "../imgs/projects/thvTranscribe.png";
+import thvGPT from "../imgs/projects/thvGPT.png";
+import AS_DL from "../imgs/projects/AS_DL.png";
+import pcd from "../imgs/projects/3d_pcd.png";
 import plantifydr from "../imgs/projects/plantifydr.png";
 import puber from "../imgs/projects/PUber.png";
 import disaster_relief from "../imgs/projects/disaster_relief.png";
@@ -15,10 +19,29 @@ import electric_vehicle from "../imgs/projects/electric_vehicle.png";
 ---
 
 <MainLayout>
-  <div class="h-full w-full">
     <div
       class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 m-8 sm:m-16"
     >
+    <ProjectWidget
+        project_name="3D Object Detection Algorithm (Proprietary)"
+        project_img={pcd}
+        github_link=""
+      />
+    <ProjectWidget
+        project_name="Medical Transcription Web App (Proprietary)"
+        project_img={thvTranscribe}
+        github_link=""
+      />
+      <ProjectWidget
+        project_name="Privately Hosted Chatbot (Proprietary)"
+        project_img={thvGPT}
+        github_link=""
+      />
+      <ProjectWidget
+        project_name="Aortic Stenosis Detection Deep Learning Algorithm (Proprietary)"
+        project_img={AS_DL}
+        github_link=""
+      />
       <ProjectWidget
         project_name="Autism Brain Region Detection"
         project_img={human_connectome}
@@ -75,5 +98,4 @@ import electric_vehicle from "../imgs/projects/electric_vehicle.png";
         github_link="https://github.com/lavaman131/covid-mitigation-analysis"
       />
     </div>
-  </div>
 </MainLayout>

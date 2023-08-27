@@ -2,17 +2,17 @@
 const { project_name, project_img, github_link } = Astro.props;
 ---
 
-<div class="rounded-lg bg-magic_purple group p-1 relative transform transition duration-200 hover:bg-green-500 hover:cursor-grab hover:scale-105">
+<div class="rounded-lg bg-dark_gold group p-1 relative transform transition duration-200 hover:cursor-grab hover:scale-105">
   <a
     href={github_link}
-    class="flex flex-col font-mono text-slate-300 text-bold rounded-lg group-hover:text-green-500"
+    class="flex flex-col font-mono text-black text-bold rounded-lg"
   >
     <div>
-      <span
-        class="absolute w-full py-2.5 inset-x-0 bottom-0 bg-magic_purple text-center leading-4 rounded-b-lg group-hover:bg-green-500 group-hover:text-white"
+      <p
+        class="absolute w-full inset-x-0 bottom-0 bg-dark_gold text-center leading-relaxed rounded-b-lg"
       >
         {project_name}
-      </span>
+    </p>
     </div>
     <img src={project_img} alt="" class="aspect-video flex-grow rounded-lg" /></a
   >

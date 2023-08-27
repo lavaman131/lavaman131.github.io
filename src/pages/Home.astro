@@ -1,36 +1,40 @@
 ---
-import profile_img from "../imgs/profile_2_tb.png";
+import profile_img from "../imgs/profile.webp";
 import CodingSkillsWidget from "../components/coding_skills.astro";
 import MainLayout from "../layouts/MainLayout.astro";
 ---
 
 <MainLayout>
-  <div class="grid grid-cols-1 h-full w-full">
-    
-    
-
-  
-  <div class="bg-galaxy flex flex-col items-center justify-center relative">  
-    <img src={profile_img} alt="Alex Lavaee" class="max-h-screen" />
-    <div class="group flex flex-col items-center absolute bottom-6 sm:bottom-14 md:bottom-20 gap-4">
-      <h1 class="font-mono text-gray-100 text-4xl sm:text-5xl lg:text-6xl 2xl:text-7xl">
-        <span class="relative">
-          <span class="h-20 pt-2 overflow-x-hidden whitespace-nowrap text-brand-accent typing-effect">
-            Hi, I&apos;m Alex <span>👋</span>
-          </span>
-        </span>
+  <div class="grid grid-cols-1 gap-6 m-4">
+    <div class="flex flex-col items-center gap-4">
+      <h1
+        class="font-code_font bg-gradient-to-t from-yellow-300 via-red-300 to-magic_purple bg-clip-text text-transparent text-4xl sm:text-5xl lg:text-6xl 2xl:text-7xl"
+      >
+        Hi, I&apos;m Alex <span class="text-white">👋</span>
       </h1>
-
-      <svg class="animate-bounce w-10 h-10 text-red-300 border-2 border-magic_purple rounded-full invisible md:visible" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
-        <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-      </svg>
+      <div class="relative">
+        <div class="absolute inset-0 bg-dark_gold rounded-full blur"></div>
+        <div class="relative w-80 h-80 rounded-full overflow-hidden">
+          <img
+            src={profile_img}
+            alt="Alex Lavaee"
+            class="w-full h-full object-contain object-center"
+          />
+        </div>
+      </div>
     </div>
+
+    <div
+      class="text-gray-100 text-md sm:text-lg md:text-2xl lg:text-3xl font-code_font max-w-3xl"
+    >
+      🎓 I am an undergraduate student at Boston University's College of
+      Computing & Data Sciences (CDS). I'm passionately pursuing excellence in
+      both theoretical foundations and practical applications of software
+      engineering, machine learning, data science, and research. Please take a look at my <a class="underline text-dark_gold" href="/Projects">projects</a> 🚀
+    </div>
+    <div>
+    </div>
+
+    <!-- <CodingSkillsWidget /> -->
   </div>
-  <div class="bg-slate-950">
-    <CodingSkillsWidget />
-  </div>
-</div>
 </MainLayout>
-
-
-
