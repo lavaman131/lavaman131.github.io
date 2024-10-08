@@ -1,0 +1,50 @@
+---
+import ImageComparisonSlider from './ImageComparisonSlider.astro';
+---
+
+<div class="flex flex-col gap-4">
+  <ImageComparisonSlider
+    baseImageSrc="/images/profile-pixel.webp"
+    overlayImageSrc="/images/profile.webp"
+    baseImageAlt="Pixelated Profile picture"
+    overlayImageAlt="Regular Profile picture"
+    initialPosition={33}
+    sliderWidth="w-56 sm:w-64 md:w-72 lg:w-80"
+    sliderHeight="h-56 sm:h-64 md:h-72 lg:h-80"
+    instructionText="Slide to view grayscale image"
+  />
+  <div class="flex flex-col gap-4">
+  <p>
+    Hey there! 👋🏼 I'm Alex, a data science undergraduate and pursuing AI research @ Harvard working
+    on a 3D computer vision foundation model for cellular and molecular biology.
+    🧬
+  </p>
+  <p>
+    Previously, I interned as a SWE, MLE, and data scientist at Microsoft,
+    Boeing, Edwards Lifesciences, and AI startups (including an MIT CSAIL
+    spinoff), gaining hands-on experience in developing scalable AI products.
+    I'm passionate about driving innovation and making a meaningful impact
+    through technology that benefits humanity. 🚀
+  </p>
+  <p>
+    Feel free to reach out and connect—I look forward to collaborating and
+    sharing ideas!
+    </p>
+  </div>
+</div>
+
+<style>
+  @keyframes slideAnimation {
+    0%,
+    100% {
+      transform: translateX(-10px);
+    }
+    50% {
+      transform: translateX(10px);
+    }
+  }
+
+  .slide-animation {
+    animation: slideAnimation 1.5s ease-in-out;
+  }
+</style>
