@@ -6,13 +6,10 @@ description: Simple linear regression with linear algebra and Python.
 date: 2024-10-24
 ---
 
-
-<div style={{backgroundColor: 'violet', padding: '1rem'}}>
-  Try and change the background color to `tomato`.
-</div>
-
+![Simple Linear Regression](/images/blog/simple-linear-regression/r_2.jpg)
 
 ## Definition
 
-$$y = mx + b$$
-
+\begin{equation}
+y = mx + b
+\end{equation}

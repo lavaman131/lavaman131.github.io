@@ -1,10 +1,6 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
-
-import mdx from "@astrojs/mdx";
 
 /* 
   We are doing some URL mumbo jumbo here to tell Astro what the URL of your website will be.
@@ -36,10 +32,5 @@ export default defineConfig({
   output: "static",
   integrations: [sitemap(), tailwind({
     config: { applyBaseStyles: false },
-  }), mdx()],
-  markdown: {
-    syntaxHighlight: "prism",
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex],
-  },
+  })],
 });
