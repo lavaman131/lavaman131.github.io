@@ -151,112 +151,118 @@ declare module 'astro:content' {
 	>;
 
 	type ContentEntryMap = {
-		"blog": Record<string, {
-  id: string;
-  slug: string;
-  body: string;
-  collection: "blog";
-  data: any;
-  render(): Render[".md"];
-}>;
-"projects": {
+		"projects": {
 "baseball-attendance.mdx": {
 	id: "baseball-attendance.mdx";
   slug: "baseball-attendance";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
+} & { render(): Render[".mdx"] };
+"bullyproof.mdx": {
+	id: "bullyproof.mdx";
+  slug: "bullyproof";
+  body: string;
+  collection: "projects";
+  data: any
 } & { render(): Render[".mdx"] };
 "cartoonify.mdx": {
 	id: "cartoonify.mdx";
   slug: "cartoonify";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "ev-range-pred.mdx": {
 	id: "ev-range-pred.mdx";
   slug: "ev-range-pred";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "finger-sign-language.mdx": {
 	id: "finger-sign-language.mdx";
   slug: "finger-sign-language";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "grammar-ninja.mdx": {
 	id: "grammar-ninja.mdx";
   slug: "grammar-ninja";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "graphic-memoir-analysis.mdx": {
 	id: "graphic-memoir-analysis.mdx";
   slug: "graphic-memoir-analysis";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "human-connectome.mdx": {
 	id: "human-connectome.mdx";
   slug: "human-connectome";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "jarvis.mdx": {
 	id: "jarvis.mdx";
   slug: "jarvis";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "llm-inference-engine.mdx": {
 	id: "llm-inference-engine.mdx";
   slug: "llm-inference-engine";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
+} & { render(): Render[".mdx"] };
+"motion-gpt1.5.mdx": {
+	id: "motion-gpt1.5.mdx";
+  slug: "motion-gpt15";
+  body: string;
+  collection: "projects";
+  data: any
 } & { render(): Render[".mdx"] };
 "multi-object-tracking.mdx": {
 	id: "multi-object-tracking.mdx";
   slug: "multi-object-tracking";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "plantify-dr.mdx": {
 	id: "plantify-dr.mdx";
   slug: "plantify-dr";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "puber.mdx": {
 	id: "puber.mdx";
   slug: "puber";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "responsible-ai-audit.mdx": {
 	id: "responsible-ai-audit.mdx";
   slug: "responsible-ai-audit";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 "sketch-n-solve.mdx": {
 	id: "sketch-n-solve.mdx";
   slug: "sketch-n-solve";
   body: string;
   collection: "projects";
-  data: InferEntrySchema<"projects">
+  data: any
 } & { render(): Render[".mdx"] };
 };
 
@@ -268,5 +274,5 @@ declare module 'astro:content' {
 
 	type AnyEntryMap = ContentEntryMap & DataEntryMap;
 
-	export type ContentConfig = typeof import("../../src/content/config.js");
+	export type ContentConfig = never;
 }

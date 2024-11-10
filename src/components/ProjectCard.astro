@@ -28,9 +28,13 @@ const {
   >
     <div class="w-full aspect-[16/9]">
       <div
-        class="w-full h-full bg-gray-100 dark:bg-[#1a242f] flex items-center justify-center rounded-md overflow-hidden"
+        class="relative w-full h-full bg-gray-100 dark:bg-[#1a242f] rounded-md overflow-hidden"
       >
-        <Image src={image} alt={title} class="w-full h-full object-cover" />
+        <Image
+          src={image}
+          alt={title}
+          class="absolute inset-0 w-full h-full object-cover object-top"
+        />
       </div>
     </div>
     <div class="p-2 2xl:p-3 flex flex-col gap-1 2xl:gap-2">
