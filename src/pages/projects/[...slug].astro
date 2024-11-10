@@ -1,5 +1,5 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import ContentLayout from "../../layouts/ContentLayout.astro";
 import { SITE_TITLE } from "../../config";
 import { getCollection } from "astro:content";
 
@@ -17,6 +17,6 @@ const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
 
-<Layout title={`${entry.data.title} | Projects`}>
+<ContentLayout frontmatter={entry.data}>
   <Content />
-</Layout>
+</ContentLayout>

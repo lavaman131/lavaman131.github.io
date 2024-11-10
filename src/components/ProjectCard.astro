@@ -20,15 +20,15 @@ const {
 ---
 
 <li
-  class="group h-full flex flex-col overflow-hidden bg-white dark:bg-[#0e141b] rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-yellow-400 transition-colors duration-200"
+  class="group h-full flex flex-col overflow-hidden bg-[#eff1f5] dark:bg-[#1e1e2e] rounded-lg border border-[#ccd0da] dark:border-[#313244] hover:border-[#fe640b] dark:hover:border-[#f9e2af] transition-colors duration-200"
 >
   <a
     href={href}
-    class="unset flex flex-col h-full text-text-heading p-2 2xl:p-3"
+    class="unset flex flex-col h-full text-[#4c4f69] dark:text-[#cdd6f4] p-2 2xl:p-3"
   >
     <div class="w-full aspect-[16/9]">
       <div
-        class="relative w-full h-full bg-gray-100 dark:bg-[#1a242f] rounded-md overflow-hidden"
+        class="relative w-full h-full bg-[#e6e9ef] dark:bg-[#181825] rounded-md overflow-hidden"
       >
         <Image
           src={image}
@@ -39,14 +39,16 @@ const {
     </div>
     <div class="p-2 2xl:p-3 flex flex-col gap-1 2xl:gap-2">
       <h2
-        class="text-lg 2xl:text-xl font-bold leading-tight m-0 text-text-heading"
+        class="text-lg 2xl:text-xl font-bold leading-tight m-0 text-[#4c4f69] dark:text-[#cdd6f4]"
       >
         {title}
       </h2>
-      <div class="flex items-center gap-2 text-xs 2xl:text-sm text-text-muted">
+      <div
+        class="flex items-center gap-2 text-xs 2xl:text-sm text-[#6c6f85] dark:text-[#a6adc8]"
+      >
         {
           source && (
-            <span class="inline-flex items-center bg-gray-100 dark:bg-[#1a242f] px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-800">
+            <span class="inline-flex items-center bg-[#e6e9ef] dark:bg-[#181825] px-2 py-0.5 rounded-md border border-[#ccd0da] dark:border-[#313244]">
               {source}
             </span>
           )

@@ -5,10 +5,12 @@ import overlayImage from "../assets/images/profile.png";
 import { LINKEDIN_HANDLE } from "../config";
 ---
 
-<section class="mb-8">
-  <div class="mb-6">
+<section
+  class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col min-h-[calc(100vh-12rem)]"
+>
+  <div class="text-center mb-4">
     <h1
-      class="font-extrabold text-5xl md:text-6xl tracking-tight overflow-hidden"
+      class="font-extrabold text-3xl sm:text-4xl lg:text-5xl tracking-tight mb-2"
     >
       <span
         class="bg-gradient-to-br from-[#fb923c] via-[#f97316] to-[#ea580c] dark:from-primary-main dark:via-primary-main dark:to-primary-main bg-clip-text text-transparent"
@@ -16,61 +18,72 @@ import { LINKEDIN_HANDLE } from "../config";
         Alex Lavaee
       </span>
     </h1>
-    <p class="text-xl md:text-2xl text-nowrap">
+    <p
+      class="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 font-light"
+    >
       Engineer. Researcher. Lifelong learner.
     </p>
   </div>
-</section>
-
-<div
-  class="flex flex-col lg:flex-row items-center justify-center lg:gap-8 xl:gap-12 mt-6 px-4"
->
-  <div class="lg:flex-shrink-0 flex justify-center">
-    <ImageComparisonSlider
-      baseImageSrc={baseImage}
-      overlayImageSrc={overlayImage}
-      baseImageAlt="Pixelated Profile picture"
-      overlayImageAlt="Regular Profile picture"
-      initialPosition={33}
-      sliderWidth="w-48 sm:w-56 md:w-64 lg:w-72 xl:w-80"
-      sliderHeight="h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80"
-      instructionText=`
-        <p class="text-xs text-gray-400 mb-1 text-center">
-          Slide to view <a href="https://arxiv.org/abs/2403.10516">feature image</a>
-        </p>
-      `
-    />
-  </div>
 
   <div
-    class="flex flex-col gap-3 mt-6 lg:mt-0 max-w-3xl lg:max-w-2xl xl:max-w-3xl"
+    class="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8 flex-1"
   >
-    <p class="text-base lg:text-lg">
-      Hey there! 👋🏼 I'm Alex, a data science undergrad @ BU and AI research
-      intern @ Harvard working on a 3D computer vision foundation model for
-      cellular and molecular biology. 🧬
-    </p>
-    <p class="text-base lg:text-lg">
-      My broad research interest encompasses using self-supervised techniques to
-      learn accurate representations of the world, reconstructing 3D structures,
-      materials, and semantic meaning from visual input such as videos. 🎥
-    </p>
-    <p class="text-base lg:text-lg">
-      Previously, I interned as a SWE, MLE, and data scientist at Microsoft,
-      Boeing, Edwards Lifesciences, and AI startups (including an MIT CSAIL
-      spinoff), gaining hands-on experience in developing scalable AI products.
-      I'm passionate about driving innovation and making a meaningful impact
-      through technology that benefits humanity. 🚀
-    </p>
-    <p class="text-base lg:text-lg">
-      Feel free to reach out and connect on
-      <a href={`https://linkedin.com/in/${LINKEDIN_HANDLE}`}>LinkedIn</a> or email
-      at lavaalex3 [at] gmail [dot] com. I look forward to collaborating and sharing
-      ideas!
-      <span class="font-bold">&lt|endoftext|&gt</span>
-    </p>
+    <div class="w-full max-w-[350px] flex flex-col items-center">
+      <div class="w-full flex-col justify-center">
+        <ImageComparisonSlider
+          baseImageSrc={baseImage}
+          overlayImageSrc={overlayImage}
+          baseImageAlt="Pixelated Profile picture"
+          overlayImageAlt="Regular Profile picture"
+          initialPosition={33}
+          sliderWidth="w-56 sm:w-64 lg:w-[300px] xl:w-[350px]"
+          sliderHeight="h-56 sm:h-64 lg:h-[300px] xl:h-[350px]"
+          instructionText={`
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+              Slide to view <a
+                href="https://arxiv.org/abs/2403.10516"
+              class="underline hover:text-primary-main">feature image</a
+              >
+            </p>
+          `}
+        />
+      </div>
+    </div>
+
+    <div
+      class="w-full max-w-[350px] flex flex-col gap-3 text-center lg:text-left"
+    >
+      <p class="text-sm leading-relaxed">
+        Hey there! 👋🏼 I'm Alex, a data science undergrad @ BU and AI research
+        intern @ Harvard working on a 3D computer vision foundation model for
+        cellular and molecular biology. 🧬
+      </p>
+      <p class="text-sm leading-relaxed">
+        My broad research interest encompasses using self-supervised techniques
+        to learn accurate representations of the world, reconstructing 3D
+        structures, materials, and semantic meaning from visual input such as
+        videos. 🎥
+      </p>
+      <p class="text-sm leading-relaxed">
+        Previously, I interned as a SWE, MLE, and data scientist at Microsoft,
+        Boeing, Edwards Lifesciences, and AI startups (including an MIT CSAIL
+        spinoff), gaining hands-on experience in developing scalable AI
+        products. I'm passionate about driving innovation and making a
+        meaningful impact through technology that benefits humanity. 🚀
+      </p>
+      <p class="text-sm leading-relaxed">
+        Feel free to reach out and connect on
+        <a
+          href={`https://linkedin.com/in/${LINKEDIN_HANDLE}`}
+          class="text-primary-main hover:text-primary-dark font-medium transition-colors"
+          >LinkedIn</a
+        > or email at lavaalex3 [at] gmail [dot] com. I look forward to collaborating
+        and sharing ideas!
+        <span class="font-bold">&lt|endoftext|&gt</span>
+      </p>
+    </div>
   </div>
-</div>
+</section>
 
 <style>
   @keyframes slideAnimation {

@@ -25,15 +25,38 @@ const { frontmatter } = Astro.props;
     <title>{`${frontmatter.title} | Projects`}</title>
     <GoogleFont />
     <ThemeScript />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+      integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+"
+      crossorigin="anonymous"
+    />
+
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
+      integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg"
+      crossorigin="anonymous"></script>
+
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+      integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk"
+      crossorigin="anonymous"
+      onload="renderMathInElement(document.body);"></script>
   </head>
   <body class="min-h-screen max-w-[2000px] mx-auto flex flex-col">
     <Navigation />
-    <main id="main" class="flex-1">
-      <section class="prose max-w-none prose-sleek mx-auto pt-24 sm:pt-28">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <main id="main" class="flex-1 mt-16 sm:mt-20 flex flex-col">
+      <section
+        class="prose max-w-none prose-sleek mx-auto h-full flex flex-col"
+      >
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <h1 class="font-bold mb-8">{frontmatter.title}</h1>
-          <img
-            src={getImage(frontmatter.image)}
+          <Image
+            src={frontmatter.cover}
             alt={frontmatter.title}
             class="w-full"
           />

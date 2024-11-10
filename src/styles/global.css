@@ -12,65 +12,326 @@
 
     /* light theme */
     .theme-sleek {
-        /* Tailwind orange-500 #f97316 */
-        --color-primary-main: 249 115 22;
+        /* Catppuccin Latte Peach #fe640b */
+        --color-primary-main: 254 100 11;
 
-        /* Tailwind gray-700 #374151 */
-        --color-text-body: 55 65 81;
-        /* Tailwind gray-700 #374151 */
-        --color-text-heading: 55 65 81;
-        /* Tailwind gray-700 #374151 */
-        --color-text-bold: 55 65 81;
-        /* Tailwind gray-500 #6b7280 */
-        --color-text-muted: 107 114 128;
-        /* Tailwind orange-500 #f97316 */
-        --color-text-link: 249 115 22;
-        /* black */
-        --color-text-code: 0 0 0;
-        /* black */
-        --color-text-selection: 0 0 0;
+        /* Catppuccin Latte Text #4c4f69 */
+        --color-text-body: 76 79 105;
+        /* Catppuccin Latte Text #4c4f69 */
+        --color-text-heading: 76 79 105;
+        /* Catppuccin Latte Text #4c4f69 */
+        --color-text-bold: 76 79 105;
+        /* Catppuccin Latte Subtext0 #6c6f85 */
+        --color-text-muted: 108 111 133;
+        /* Catppuccin Latte Peach #fe640b */
+        --color-text-link: 254 100 11;
+        /* Catppuccin Latte Text #4c4f69 */
+        --color-text-code: 76 79 105;
+        /* Catppuccin Latte Text #4c4f69 */
+        --color-text-selection: 76 79 105;
 
-        /* white */
-        --color-bg-body: 255 255 255;
-        /* Tailwind orange-50 #fff7ed */
-        --color-bg-code: 255 247 237;
-        /* Tailwind amber-200 #fde68a */
-        --color-bg-selection: 253 230 138;
+        /* Catppuccin Latte Base #eff1f5 */
+        --color-bg-body: 239 241 245;
+        /* Catppuccin Latte Mantle #e6e9ef */
+        --color-bg-code: 230 233 239;
+        /* Catppuccin Latte Peach #fe640b with reduced opacity */
+        --color-bg-selection: 254 100 11;
 
-        /* Tailwind orange-100 #ffedd5 */
-        --color-border-code: 255 237 213;
+        /* Catppuccin Latte Surface0 #ccd0da */
+        --color-border-code: 204 208 218;
 
+        /* Add Catppuccin Latte syntax highlighting */
+        & code[class*="language-"],
+        & pre[class*="language-"] {
+            color: #4c4f69;
+        }
+
+        & :not(pre) > code[class*="language-"],
+        & pre[class*="language-"] {
+            background: #e6e9ef;
+        }
+
+        & .token.keyword {
+            color: #8839ef;
+        }
+
+        & .token.builtin {
+            color: #d20f39;
+        }
+
+        & .token.class-name {
+            color: #df8e1d;
+        }
+
+        & .token.function {
+            color: #1e66f5;
+        }
+
+        & .token.boolean,
+        & .token.number {
+            color: #fe640b;
+        }
+
+        & .token.string,
+        & .token.char {
+            color: #40a02b;
+        }
+
+        & .token.symbol {
+            color: #df8e1d;
+        }
+
+        & .token.regex {
+            color: #ea76cb;
+        }
+
+        & .token.url {
+            color: #40a02b;
+        }
+
+        & .token.operator {
+            color: #04a5e5;
+        }
+
+        & .token.variable {
+            color: #4c4f69;
+        }
+
+        & .token.constant {
+            color: #fe640b;
+        }
+
+        & .token.property {
+            color: #1e66f5;
+        }
+
+        & .token.punctuation {
+            color: #7c7f93;
+        }
+
+        & .token.important {
+            color: #8839ef;
+        }
+
+        & .token.comment {
+            color: #7c7f93;
+        }
+
+        & .token.tag {
+            color: #1e66f5;
+        }
+
+        & .token.attr-name {
+            color: #df8e1d;
+        }
+
+        & .token.attr-value {
+            color: #40a02b;
+        }
+
+        & .token.namespace {
+            color: #df8e1d;
+        }
+
+        & .token.prolog,
+        & .token.doctype {
+            color: #8839ef;
+        }
+
+        & .token.cdata {
+            color: #179299;
+        }
+
+        & .token.entity {
+            color: #d20f39;
+        }
+
+        & .token.atrule {
+            color: #8839ef;
+        }
+
+        & .token.selector {
+            color: #1e66f5;
+        }
+
+        & .token.deleted {
+            color: #d20f39;
+        }
+
+        & .token.inserted {
+            color: #40a02b;
+        }
+
+        & .token.important,
+        & .token.bold {
+            font-weight: bold;
+        }
+
+        & .token.italic {
+            font-style: italic;
+        }
     }
 
     /* dark theme */
     .theme-sleek.dark {
-        /* Tailwind yellow-400 #facc15 */
-        --color-primary-main: 250 204 21;
+        /* Catppuccin Mocha Yellow #f9e2af */
+        --color-primary-main: 249 226 175;
 
-        /* Tailwind stone-300 #d6d3d1 */
-        --color-text-body: 214 211 209;
-        /* white */
-        --color-text-heading: 255 255 255;
-        /* white */
-        --color-text-bold: 255 255 255;
-        /* Tailwind stone-400 #a8a29e */
-        --color-text-muted: 168 162 158;
-        /* Tailwind yellow-400 #facc15 */
-        --color-text-link: 250 204 21;
-        /* black */
-        --color-text-code: 255 255 255;
-        /* black */
-        --color-text-selection: 0 0 0;
+        /* Catppuccin Mocha Text #cdd6f4 */
+        --color-text-body: 205 214 244;
+        /* Catppuccin Mocha Text #cdd6f4 */
+        --color-text-heading: 205 214 244;
+        /* Catppuccin Mocha Text #cdd6f4 */
+        --color-text-bold: 205 214 244;
+        /* Catppuccin Mocha Subtext0 #a6adc8 */
+        --color-text-muted: 166 173 200;
+        /* Catppuccin Mocha Yellow #f9e2af */
+        --color-text-link: 249 226 175;
+        /* Catppuccin Mocha Text #cdd6f4 */
+        --color-text-code: 205 214 244;
+        /* Catppuccin Mocha Text #cdd6f4 */
+        --color-text-selection: 205 214 244;
 
-        /* #0e141b */
-        --color-bg-body: 14 20 27;
-        /* Tailwind yellow-500 #eab308 */
-        --color-bg-code: 234 179 8;
-        /* Tailwind yellow-300 #fde047 */
-        --color-bg-selection: 253 224 71;
+        /* Catppuccin Mocha Base #1e1e2e */
+        --color-bg-body: 30 30 46;
+        /* Catppuccin Mocha Mantle #181825 */
+        --color-bg-code: 24 24 37;
+        /* Catppuccin Mocha Yellow #f9e2af with reduced opacity */
+        --color-bg-selection: 249 226 175;
 
-        /* Tailwind yellow-100 #fef9c3 */
-        --color-border-code: 254 243 199;
+        /* Catppuccin Mocha Surface0 #313244 */
+        --color-border-code: 49 50 68;
+
+        /* Add Catppuccin Mocha syntax highlighting */
+        & code[class*="language-"],
+        & pre[class*="language-"] {
+            color: #cdd6f4;
+        }
+
+        & :not(pre) > code[class*="language-"],
+        & pre[class*="language-"] {
+            background: #181825;
+        }
+
+        & .token.keyword {
+            color: #cba6f7;
+        }
+
+        & .token.builtin {
+            color: #f38ba8;
+        }
+
+        & .token.class-name {
+            color: #f9e2af;
+        }
+
+        & .token.function {
+            color: #89b4fa;
+        }
+
+        & .token.boolean,
+        & .token.number {
+            color: #fab387;
+        }
+
+        & .token.string,
+        & .token.char {
+            color: #a6e3a1;
+        }
+
+        & .token.symbol {
+            color: #f9e2af;
+        }
+
+        & .token.regex {
+            color: #f5c2e7;
+        }
+
+        & .token.url {
+            color: #a6e3a1;
+        }
+
+        & .token.operator {
+            color: #89dceb;
+        }
+
+        & .token.variable {
+            color: #cdd6f4;
+        }
+
+        & .token.constant {
+            color: #fab387;
+        }
+
+        & .token.property {
+            color: #89b4fa;
+        }
+
+        & .token.punctuation {
+            color: #9399b2;
+        }
+
+        & .token.important {
+            color: #cba6f7;
+        }
+
+        & .token.comment {
+            color: #9399b2;
+        }
+
+        & .token.tag {
+            color: #89b4fa;
+        }
+
+        & .token.attr-name {
+            color: #f9e2af;
+        }
+
+        & .token.attr-value {
+            color: #a6e3a1;
+        }
+
+        & .token.namespace {
+            color: #f9e2af;
+        }
+
+        & .token.prolog,
+        & .token.doctype {
+            color: #cba6f7;
+        }
+
+        & .token.cdata {
+            color: #94e2d5;
+        }
+
+        & .token.entity {
+            color: #f38ba8;
+        }
+
+        & .token.atrule {
+            color: #cba6f7;
+        }
+
+        & .token.selector {
+            color: #89b4fa;
+        }
+
+        & .token.deleted {
+            color: #f38ba8;
+        }
+
+        & .token.inserted {
+            color: #a6e3a1;
+        }
+
+        & .token.important,
+        & .token.bold {
+            font-weight: bold;
+        }
+
+        & .token.italic {
+            font-style: italic;
+        }
     }
 
     :root {
