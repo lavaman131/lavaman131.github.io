@@ -1,6 +1,19 @@
 ---
-
+// Astro frontmatter goes here
 ---
+
+<link
+  href="/prism/mocha.css"
+  rel="stylesheet"
+  id="prism-dark"
+  media="not all"
+/>
+<link
+  href="/prism/latte.css"
+  rel="stylesheet"
+  id="prism-light"
+  media="not all"
+/>
 
 <mode-toggle class="flex">
   <button
@@ -70,6 +83,8 @@
     const themeColorMetaTag = document.head.querySelector(
       'meta[name="theme-color"]'
     );
+    const darkSyntaxTheme = document.querySelector("#prism-dark");
+    const lightSyntaxTheme = document.querySelector("#prism-light");
 
     if (mode === "dark") {
       document.documentElement.classList.remove("light");
@@ -78,12 +93,22 @@
         // @ts-ignore
         themeColorMetaTag.content = "#0e141b";
       }
+      // Toggle syntax highlighting themes
+      if (darkSyntaxTheme && lightSyntaxTheme) {
+        darkSyntaxTheme.media = "";
+        lightSyntaxTheme.media = "not all";
+      }
     } else {
       document.documentElement.classList.remove("dark");
       document.documentElement.classList.add("light");
       if (themeColorMetaTag) {
         // @ts-ignore
         themeColorMetaTag.content = "#ffffff";
+      }
+      // Toggle syntax highlighting themes
+      if (darkSyntaxTheme && lightSyntaxTheme) {
+        darkSyntaxTheme.media = "not all";
+        lightSyntaxTheme.media = "";
       }
     }
   }

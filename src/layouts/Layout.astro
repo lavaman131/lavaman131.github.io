@@ -49,9 +49,12 @@ const { title } = Astro.props;
       crossorigin="anonymous"
       onload="renderMathInElement(document.body);"></script>
   </head>
-  <body class="min-h-screen max-w-[2000px] mx-auto flex flex-col">
+  <body class="min-h-screen max-w-[2000px] mx-auto flex flex-col bg-bg-body">
     <Navigation />
-    <main id="main" class="flex-1 mt-16 sm:mt-20 flex flex-col">
+    <main
+      id="main"
+      class="flex-1 mt-16 sm:mt-20 flex flex-col px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full"
+    >
       <slot name="main" />
     </main>
     <Footer />

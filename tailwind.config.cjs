@@ -94,6 +94,29 @@ module.exports = {
               "blockquote p:last-of-type::after": {
                 content: "",
               },
+              pre: {
+                backgroundColor: "rgb(var(--color-bg-code))",
+                padding: "0",
+                borderRadius: "0.5rem",
+                margin: "1rem 0",
+              },
+              "pre code": {
+                backgroundColor: "transparent",
+                borderWidth: "0",
+                borderRadius: "0",
+                padding: "0",
+                fontWeight: "400",
+                color: "inherit",
+                fontSize: "inherit",
+                fontFamily: "inherit",
+                lineHeight: "inherit",
+              },
+              "code::before": {
+                content: "none",
+              },
+              "code::after": {
+                content: "none",
+              },
             },
           },
           sleek: {
@@ -110,8 +133,6 @@ module.exports = {
               "--tw-prose-quote-borders": "rgb(var(--color-primary-main))",
               "--tw-prose-captions": "rgb(var(--color-primary-heading))",
               "--tw-prose-quote-captions": "rgb(var(--color-primary-heading))",
-              "--tw-prose-code": "rgb(var(--color-text-code))",
-              "--tw-prose-pre-code": "rgb(var(--color-text-code))",
               "--tw-prose-pre-bg": "rgb(var(--color-bg-code))",
               "--tw-prose-th-borders": "rgb(var(--color-text-muted))",
               "--tw-prose-td-borders": "rgb(var(--color-text-muted))",

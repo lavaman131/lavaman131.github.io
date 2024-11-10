@@ -40,138 +40,7 @@
         /* Catppuccin Latte Surface0 #ccd0da */
         --color-border-code: 204 208 218;
 
-        /* Add Catppuccin Latte syntax highlighting */
-        & code[class*="language-"],
-        & pre[class*="language-"] {
-            color: #4c4f69;
-        }
-
-        & :not(pre) > code[class*="language-"],
-        & pre[class*="language-"] {
-            background: #e6e9ef;
-        }
-
-        & .token.keyword {
-            color: #8839ef;
-        }
-
-        & .token.builtin {
-            color: #d20f39;
-        }
-
-        & .token.class-name {
-            color: #df8e1d;
-        }
-
-        & .token.function {
-            color: #1e66f5;
-        }
-
-        & .token.boolean,
-        & .token.number {
-            color: #fe640b;
-        }
-
-        & .token.string,
-        & .token.char {
-            color: #40a02b;
-        }
-
-        & .token.symbol {
-            color: #df8e1d;
-        }
-
-        & .token.regex {
-            color: #ea76cb;
-        }
-
-        & .token.url {
-            color: #40a02b;
-        }
-
-        & .token.operator {
-            color: #04a5e5;
-        }
-
-        & .token.variable {
-            color: #4c4f69;
-        }
-
-        & .token.constant {
-            color: #fe640b;
-        }
-
-        & .token.property {
-            color: #1e66f5;
-        }
-
-        & .token.punctuation {
-            color: #7c7f93;
-        }
-
-        & .token.important {
-            color: #8839ef;
-        }
-
-        & .token.comment {
-            color: #7c7f93;
-        }
-
-        & .token.tag {
-            color: #1e66f5;
-        }
-
-        & .token.attr-name {
-            color: #df8e1d;
-        }
-
-        & .token.attr-value {
-            color: #40a02b;
-        }
-
-        & .token.namespace {
-            color: #df8e1d;
-        }
-
-        & .token.prolog,
-        & .token.doctype {
-            color: #8839ef;
-        }
-
-        & .token.cdata {
-            color: #179299;
-        }
-
-        & .token.entity {
-            color: #d20f39;
-        }
-
-        & .token.atrule {
-            color: #8839ef;
-        }
-
-        & .token.selector {
-            color: #1e66f5;
-        }
-
-        & .token.deleted {
-            color: #d20f39;
-        }
-
-        & .token.inserted {
-            color: #40a02b;
-        }
-
-        & .token.important,
-        & .token.bold {
-            font-weight: bold;
-        }
-
-        & .token.italic {
-            font-style: italic;
-        }
     }
-
     /* dark theme */
     .theme-sleek.dark {
         /* Catppuccin Mocha Yellow #f9e2af */
@@ -201,137 +70,6 @@
 
         /* Catppuccin Mocha Surface0 #313244 */
         --color-border-code: 49 50 68;
-
-        /* Add Catppuccin Mocha syntax highlighting */
-        & code[class*="language-"],
-        & pre[class*="language-"] {
-            color: #cdd6f4;
-        }
-
-        & :not(pre) > code[class*="language-"],
-        & pre[class*="language-"] {
-            background: #181825;
-        }
-
-        & .token.keyword {
-            color: #cba6f7;
-        }
-
-        & .token.builtin {
-            color: #f38ba8;
-        }
-
-        & .token.class-name {
-            color: #f9e2af;
-        }
-
-        & .token.function {
-            color: #89b4fa;
-        }
-
-        & .token.boolean,
-        & .token.number {
-            color: #fab387;
-        }
-
-        & .token.string,
-        & .token.char {
-            color: #a6e3a1;
-        }
-
-        & .token.symbol {
-            color: #f9e2af;
-        }
-
-        & .token.regex {
-            color: #f5c2e7;
-        }
-
-        & .token.url {
-            color: #a6e3a1;
-        }
-
-        & .token.operator {
-            color: #89dceb;
-        }
-
-        & .token.variable {
-            color: #cdd6f4;
-        }
-
-        & .token.constant {
-            color: #fab387;
-        }
-
-        & .token.property {
-            color: #89b4fa;
-        }
-
-        & .token.punctuation {
-            color: #9399b2;
-        }
-
-        & .token.important {
-            color: #cba6f7;
-        }
-
-        & .token.comment {
-            color: #9399b2;
-        }
-
-        & .token.tag {
-            color: #89b4fa;
-        }
-
-        & .token.attr-name {
-            color: #f9e2af;
-        }
-
-        & .token.attr-value {
-            color: #a6e3a1;
-        }
-
-        & .token.namespace {
-            color: #f9e2af;
-        }
-
-        & .token.prolog,
-        & .token.doctype {
-            color: #cba6f7;
-        }
-
-        & .token.cdata {
-            color: #94e2d5;
-        }
-
-        & .token.entity {
-            color: #f38ba8;
-        }
-
-        & .token.atrule {
-            color: #cba6f7;
-        }
-
-        & .token.selector {
-            color: #89b4fa;
-        }
-
-        & .token.deleted {
-            color: #f38ba8;
-        }
-
-        & .token.inserted {
-            color: #a6e3a1;
-        }
-
-        & .token.important,
-        & .token.bold {
-            font-weight: bold;
-        }
-
-        & .token.italic {
-            font-style: italic;
-        }
     }
 
     :root {
@@ -383,53 +121,6 @@
     a:not(.unset):hover {
         color: theme('colors.text.link');
     }
-
-    code:not(pre code):not(.unset) {
-        background-color: theme('colors.bg.code');
-        color: theme('colors.text.code');
-        padding: 0.125rem 0.25rem;
-        border-radius: 0.25rem;
-        font-size: 0.875em;
-        font-weight: 600;
-        border: 1px solid theme('colors.border.code');
-        margin-bottom: 1.25em;
-    }
-
-    html.dark code:not(pre code) {
-        background-color: rgb(var(--color-bg-code) / 0.15);
-        border-color: rgb(var(--color-border-code) / 0.15);
-    }
-
-    /* ul:not(.unset):not(:where([class~="prose"] *)) {
-        padding-left: 0;
-        list-style: none;
-    }
-
-    ul:not(:where([class~="prose"] *))>li {
-        position: relative;
-        padding-left: 1.375rem;
-    }
-
-    ul:not(.unset):not(:where([class~="prose"] *))>li::before {
-        position: absolute;
-        left: 0;
-        content: "»";
-        color: rgb(var(--color-text-muted));
-    }
-
-    ol:not(.unset):not(:where([class~="prose"] *)) {
-        padding-left: 1.125rem;
-    }
-
-    ol:not(.unset):not(:where([class~="prose"] *))>li::marker {
-        color: rgb(var(--color-text-muted))
-    }
-
-    ul:not(.unset):not(:where([class~="prose"] *))>li,
-    ol:not(.unset):not(:where([class~="prose"] *))>li {
-        margin-top: 0.5em;
-        margin-bottom: 0.5em;
-    } */
 
     ::selection {
         background: theme('colors.bg.selection');
@@ -493,4 +184,74 @@
     }
 
     /* ------ REUSABLE UTILS - END ------ */
+
+    /* Inline code styling */
+    *:not(pre) > code:not([class*="language-"]) {
+        background-color: theme('colors.bg.code');
+        color: theme('colors.text.code');
+        padding: 0.2em 0.4em;
+        border-radius: 0.25rem;
+        font-size: 0.875em;
+        font-weight: 400;
+        border: 1px solid theme('colors.border.code');
+    }
+
+    /* Code block styling */
+    pre {
+        padding: 1rem !important;
+        margin: 1rem 0 !important;
+        border-radius: 0.5rem;
+    }
+    
+    pre[class*="language-"] {
+        padding: 1rem !important;
+        margin: 1rem 0 !important;
+        border-radius: 0.5rem;
+    }
+
+    /* Reset any padding/margins for code inside pre blocks */
+    pre code,
+    pre[class*="language-"] code,
+    pre code[class*="language-"] {
+        padding: 0 !important;
+        margin: 0 !important;
+        text-indent: 0 !important;
+        background: none !important;
+        white-space: pre !important;
+        word-spacing: normal !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        line-height: 1.5 !important;
+        tab-size: 4 !important;
+    }
+
+    /* Force all code blocks to have no indentation */
+    pre,
+    pre[class*="language-"],
+    .prose pre,
+    :not(pre) > code[class*="language-"],
+    pre[class*="language-"]:not(.prose) {
+        padding: 1rem !important;
+        margin: 1rem 0 !important;
+        border-radius: 0.5rem !important;
+        text-indent: 0 !important;
+    }
+
+    /* Target the actual code element inside */
+    pre > code,
+    pre code,
+    pre[class*="language-"] > code,
+    pre[class*="language-"] code,
+    .prose pre code {
+        padding: 0 !important;
+        margin: 0 !important;
+        text-indent: 0 !important;
+        background: none !important;
+        white-space: pre !important;
+        word-spacing: normal !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+        line-height: 1.5 !important;
+        tab-size: 4 !important;
+    }
 }

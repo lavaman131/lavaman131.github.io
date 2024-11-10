@@ -1,27 +1,38 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { SITE_TITLE } from "../config";
-import { Code } from "astro:components";
-const errorCode = `CUDA Error: out of memory
-Try:
-- Reducing batch size
-- Using a smaller model
-- Offloading the model to a CPU
-- Checking for a memory leak 
-- Sacrificing a rubber duck to the CUDA Gods 🦆`;
+import { Prism } from "@astrojs/prism";
+const errorCode = `const foo = 'hello'
+const bar = ' world'
+console.log(foo + bar) // [!code focus]
+`;
 ---
 
 <Layout title={`404 | ${SITE_TITLE}`}>
-  <section slot="main">
-    <h1 class="text-4xl font-bold text-red-600 mb-4">
-      Error 404: CUDA Out of Memory
-    </h1>
-    <p class="text-xl mb-6">
-      Oops! It looks like our GPU ran out of VRAM trying to find this page.
-    </p>
-    <Code code={errorCode} lang="bash" />
-    <p class="mt-6">
-      Don't worry, you can still head back to the <a href="/">homepage</a>.
-    </p>
+  <section
+    slot="main"
+    class="flex flex-col items-center justify-center min-h-[70vh] max-w-2xl mx-auto px-4"
+  >
+    <div class="w-full text-left">
+      <h1 class="text-5xl font-bold text-red-600 mb-6">
+        Error 404: CUDA Out of Memory
+      </h1>
+      <p class="text-xl mb-8 text-gray-700 dark:text-gray-300">
+        Oops! It looks like our GPU ran out of VRAM trying to find this page.
+      </p>
+      <div class="w-full max-w-xl">
+        <div class="rounded-lg overflow-hidden">
+          <Prism code={errorCode} lang="bash" />
+        </div>
+      </div>
+      <p class="mt-8 text-lg">
+        Don't worry, you can still head back to the
+        <a
+          href="/"
+          class="text-primary-main hover:text-primary-dark underline transition-colors"
+          >homepage</a
+        >.
+      </p>
+    </div>
   </section>
 </Layout>

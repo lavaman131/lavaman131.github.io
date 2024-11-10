@@ -1,5 +1,7 @@
 ---
 import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
+import { SITE_URL } from "../config";
 interface Props {
   title: string;
   href: string;
@@ -7,16 +9,10 @@ interface Props {
   date?: string;
   authors?: string;
   source?: string;
+  githubUrl?: string;
 }
 
-const {
-  href,
-  title,
-  image,
-  date = "",
-  authors = "Lavaee",
-  source = "",
-} = Astro.props;
+const { href, title, image, githubUrl = `${SITE_URL}/404` } = Astro.props;
 ---
 
 <li
@@ -46,15 +42,12 @@ const {
       <div
         class="flex items-center gap-2 text-xs 2xl:text-sm text-[#6c6f85] dark:text-[#a6adc8]"
       >
-        {
-          source && (
-            <span class="inline-flex items-center bg-[#e6e9ef] dark:bg-[#181825] px-2 py-0.5 rounded-md border border-[#ccd0da] dark:border-[#313244]">
-              {source}
-            </span>
-          )
-        }
-        {date && <span>{date}</span>}
-        {authors && <span>{authors}</span>}
+        <a
+          href={githubUrl}
+          class="inline-flex items-center unset hover:text-[#fe640b] dark:hover:text-[#f9e2af] transition-colors duration-200"
+        >
+          <Icon name="fa-brands:github" class="w-4 h-4" />
+        </a>
       </div>
     </div>
   </a>
