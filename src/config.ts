@@ -4,7 +4,7 @@
 export const SITE_TITLE = "Alex Lavaee";
 export const SITE_DESCRIPTION =
   "Welcome to my personal website and blog! I write about machine learning, AI, and all things tech.";
-export const TWITTER_HANDLE = "@alex_lavaee";
+export const LINKEDIN_HANDLE = "alexlavaee";
 export const MY_NAME = "Alex Lavaee";
 
 // setup in astro.config.mjs

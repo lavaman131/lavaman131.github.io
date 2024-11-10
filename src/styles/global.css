@@ -139,7 +139,7 @@
         border-color: rgb(var(--color-border-code) / 0.15);
     }
 
-    ul:not(.unset):not(:where([class~="prose"] *)) {
+    /* ul:not(.unset):not(:where([class~="prose"] *)) {
         padding-left: 0;
         list-style: none;
     }
@@ -168,7 +168,7 @@
     ol:not(.unset):not(:where([class~="prose"] *))>li {
         margin-top: 0.5em;
         margin-bottom: 0.5em;
-    }
+    } */
 
     ::selection {
         background: theme('colors.bg.selection');
@@ -203,6 +203,32 @@
 
     .animated-link.show:after {
         transform: translateZ(0) scale(1);
+    }
+
+    .sr-only,
+    .fa-sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+    .sr-only-focusable:not(:focus),
+    .fa-sr-only-focusable:not(:focus) {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
     }
 
     /* ------ REUSABLE UTILS - END ------ */

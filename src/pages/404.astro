@@ -1,24 +1,27 @@
 ---
-import PageLayout from "../layouts/PageLayout.astro";
+import Layout from "../layouts/Layout.astro";
 import { SITE_TITLE } from "../config";
-import PageMeta from "../components/PageMeta.astro";
-import CodeBlock from "../components/CodeBlock.astro";
-
-const errorCode = `CUDAError: out of memory
+import { Code } from "astro:components";
+const errorCode = `CUDA Error: out of memory
 Try:
 - Reducing batch size
 - Using a smaller model
 - Offloading the model to a CPU
 - Checking for a memory leak 
-- Sacrificing a rubber duck to the CUDA Gods`;
+- Sacrificing a rubber duck to the CUDA Gods 🦆`;
 ---
 
-<PageLayout>
-  <PageMeta title={`404 | ${SITE_TITLE}`} slot="meta" />
+<Layout title={`404 | ${SITE_TITLE}`}>
   <section slot="main">
-		<h1 class="text-4xl font-bold text-red-600 mb-4">Error 404: CUDA Out of Memory</h1>
-		<p class="text-xl mb-6">Oops! It looks like our GPU ran out of VRAM trying to find this page.</p>
-			<CodeBlock language="text" content={errorCode} />
-		<p class="mt-6">Don't worry, you can still head back to the <a href="/">homepage</a>.</p>
+    <h1 class="text-4xl font-bold text-red-600 mb-4">
+      Error 404: CUDA Out of Memory
+    </h1>
+    <p class="text-xl mb-6">
+      Oops! It looks like our GPU ran out of VRAM trying to find this page.
+    </p>
+    <Code code={errorCode} lang="bash" />
+    <p class="mt-6">
+      Don't worry, you can still head back to the <a href="/">homepage</a>.
+    </p>
   </section>
-</PageLayout>
+</Layout>

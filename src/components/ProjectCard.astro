@@ -1,0 +1,55 @@
+---
+interface Props {
+  title: string;
+  href: string;
+  image: string;
+  date?: string;
+  authors?: string;
+  source?: string;
+}
+
+const {
+  href,
+  title,
+  image,
+  date = "",
+  authors = "Lavaee",
+  source = "",
+} = Astro.props;
+---
+
+<li
+  class="group h-full flex flex-col overflow-hidden bg-white dark:bg-[#0e141b] rounded-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-primary-main p-2 2xl:p-3"
+>
+  <a href={href} class="unset flex flex-col h-full text-text-heading">
+    <div class="w-full aspect-[16/9]">
+      <div
+        class="w-full h-full bg-gray-100 dark:bg-[#1a242f] flex items-center justify-center p-2 2xl:p-3 rounded-md"
+      >
+        <img
+          src={image}
+          alt={title}
+          class="max-w-[85%] max-h-[85%] object-contain transition-transform duration-300 group-hover:scale-105"
+        />
+      </div>
+    </div>
+    <div class="p-2 2xl:p-3 flex flex-col gap-1 2xl:gap-2">
+      <h2
+        class="text-lg 2xl:text-xl font-bold leading-tight m-0 text-text-heading"
+      >
+        {title}
+      </h2>
+      <div class="flex items-center gap-2 text-xs 2xl:text-sm text-text-muted">
+        {
+          source && (
+            <span class="inline-flex items-center bg-gray-100 dark:bg-[#1a242f] px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-800">
+              {source}
+            </span>
+          )
+        }
+        {date && <span>{date}</span>}
+        {authors && <span>{authors}</span>}
+      </div>
+    </div>
+  </a>
+</li>

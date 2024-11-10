@@ -1,9 +1,11 @@
 ---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
 
 // Define component props
 interface Props {
-  baseImageSrc: string;
-  overlayImageSrc: string;
+  baseImageSrc: ImageMetadata;
+  overlayImageSrc: ImageMetadata;
   baseImageAlt?: string;
   overlayImageAlt?: string;
   initialPosition?: number; // Percentage (0 to 100)
@@ -16,21 +18,23 @@ interface Props {
 const {
   baseImageSrc,
   overlayImageSrc,
-  baseImageAlt = 'Base Image',
-  overlayImageAlt = 'Overlay Image',
+  baseImageAlt = "Base Image",
+  overlayImageAlt = "Overlay Image",
   initialPosition = 33,
-  sliderWidth = 'w-64 sm:w-72 md:w-80 lg:w-96',
-  sliderHeight = 'h-64 sm:h-72 md:h-80 lg:h-96',
-  instructionText = 'Slide to compare images',
+  sliderWidth = "w-64 sm:w-72 md:w-80 lg:w-96",
+  sliderHeight = "h-64 sm:h-72 md:h-80 lg:h-96",
+  instructionText = `
+    <p class="text-sm text-gray-400 mb-2">Slide to compare images</p>
+  `,
 } = Astro.props as Props;
 
 // Type guards to check event type
 function isMouseEvent(event: Event): event is MouseEvent {
-  return 'clientX' in event;
+  return "clientX" in event;
 }
 
 function isTouchEvent(event: Event): event is TouchEvent {
-  return 'touches' in event;
+  return "touches" in event;
 }
 
 const getPositionX = (event: Event): number => {
@@ -39,11 +43,16 @@ const getPositionX = (event: Event): number => {
   } else if (isTouchEvent(event) && event.touches.length > 0) {
     return event.touches[0].clientX;
   } else {
-    throw new Error('Unsupported event type');
+    throw new Error("Unsupported event type");
   }
 };
 
-const setPositionX = (positionX: number, slider: HTMLElement, sliderHandle: HTMLElement, imageOverlay: HTMLElement): void => {
+const setPositionX = (
+  positionX: number,
+  slider: HTMLElement,
+  sliderHandle: HTMLElement,
+  imageOverlay: HTMLElement
+): void => {
   const sliderRect = slider.getBoundingClientRect();
   const position = (positionX - sliderRect.left) / sliderRect.width;
   const clampedPosition = Math.max(0, Math.min(position, 1));
@@ -53,14 +62,26 @@ const setPositionX = (positionX: number, slider: HTMLElement, sliderHandle: HTML
   imageOverlay.style.clipPath = `inset(0 0 0 ${percentage}%)`;
 };
 
-const onDrag = (event: Event, isDragging: boolean, slider: HTMLElement, sliderHandle: HTMLElement, imageOverlay: HTMLElement): void => {
+const onDrag = (
+  event: Event,
+  isDragging: boolean,
+  slider: HTMLElement,
+  sliderHandle: HTMLElement,
+  imageOverlay: HTMLElement
+): void => {
   if (!isDragging) return;
   event.preventDefault();
   const positionX = getPositionX(event);
   setPositionX(positionX, slider, sliderHandle, imageOverlay);
 };
 
-const onDragStart = (event: Event, isDragging: boolean, slider: HTMLElement, sliderHandle: HTMLElement, imageOverlay: HTMLElement): void => {
+const onDragStart = (
+  event: Event,
+  isDragging: boolean,
+  slider: HTMLElement,
+  sliderHandle: HTMLElement,
+  imageOverlay: HTMLElement
+): void => {
   isDragging = true;
   event.preventDefault();
   const positionX = getPositionX(event);
@@ -70,18 +91,21 @@ const onDragStart = (event: Event, isDragging: boolean, slider: HTMLElement, sli
 const onDragEnd = (isDragging: boolean): void => {
   isDragging = false;
 };
-
 ---
 
 <script>
   function initializeSlider() {
-    const slider = document.querySelector('.image-comparison-slider') as HTMLElement;
-    const sliderHandle = slider.querySelector('.slider-handle') as HTMLElement;
-    const imageOverlay = slider.querySelector('.image-overlay') as HTMLElement;
+    const slider = document.querySelector(
+      ".image-comparison-slider"
+    ) as HTMLElement;
+    const sliderHandle = slider.querySelector(".slider-handle") as HTMLElement;
+    const imageOverlay = slider.querySelector(".image-overlay") as HTMLElement;
     let isDragging = false;
 
     function getPositionX(event: MouseEvent | TouchEvent): number {
-      return event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
+      return event instanceof MouseEvent
+        ? event.clientX
+        : event.touches[0].clientX;
     }
 
     function setPositionX(positionX: number): void {
@@ -140,17 +164,17 @@ const onDragEnd = (isDragging: boolean): void => {
     }
 
     // Set up event listeners
-    slider.addEventListener('mousedown', onDragStart);
-    slider.addEventListener('touchstart', onDragStart, { passive: false });
+    slider.addEventListener("mousedown", onDragStart);
+    slider.addEventListener("touchstart", onDragStart, { passive: false });
 
-    window.addEventListener('mousemove', onDrag);
-    window.addEventListener('touchmove', onDrag, { passive: false });
+    window.addEventListener("mousemove", onDrag);
+    window.addEventListener("touchmove", onDrag, { passive: false });
 
-    window.addEventListener('mouseup', onDragEnd);
-    window.addEventListener('touchend', onDragEnd);
+    window.addEventListener("mouseup", onDragEnd);
+    window.addEventListener("touchend", onDragEnd);
 
     // Allow dragging to start from anywhere in the slider
-    slider.addEventListener('click', (event: MouseEvent) => {
+    slider.addEventListener("click", (event: MouseEvent) => {
       const positionX = getPositionX(event);
       setPositionX(positionX);
     });
@@ -163,10 +187,10 @@ const onDragEnd = (isDragging: boolean): void => {
   }
 
   // Initialize the slider when the DOM is ready
-  document.addEventListener('DOMContentLoaded', initializeSlider);
-  
+  document.addEventListener("DOMContentLoaded", initializeSlider);
+
   // Re-initialize the slider when Astro's view transitions are used
-  document.addEventListener('astro:page-load', initializeSlider);
+  document.addEventListener("astro:page-load", initializeSlider);
 </script>
 
 <style>
@@ -180,33 +204,27 @@ const onDragEnd = (isDragging: boolean): void => {
 </style>
 
 <div class="flex flex-col items-center my-8">
-  {instructionText && (
-    <p class="text-sm text-gray-400 mb-2">{instructionText}</p>
-  )}
+  <Fragment set:html={instructionText} />
   <div
-    class={`relative ${sliderWidth} ${sliderHeight} overflow-hidden image-comparison-slider`}>
+    class={`relative ${sliderWidth} ${sliderHeight} overflow-hidden image-comparison-slider`}
+  >
     <!-- Base Image (bottom layer) -->
-    <img
-      src={baseImageSrc}
-      alt={baseImageAlt}
-      class="absolute top-0 left-0 w-full h-full object-cover"
-    />
+    <Image src={baseImageSrc} alt={baseImageAlt} />
     <!-- Overlay Image (top layer) -->
     <div
       class="absolute top-0 left-0 w-full h-full overflow-hidden image-overlay"
-      style="clip-path: inset(0 0 0 33%);">
-      <img
-        src={overlayImageSrc}
-        alt={overlayImageAlt}
-        class="absolute top-0 left-0 w-full h-full object-cover"
-      />
+      style="clip-path: inset(0 0 0 33%);"
+    >
+      <Image src={overlayImageSrc} alt={overlayImageAlt} />
     </div>
     <!-- Slider Handle -->
     <div
       class="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize slider-handle"
-      style={`left: ${initialPosition}%;`}>
+      style={`left: ${initialPosition}%;`}
+    >
       <div
-        class="absolute top-1/2 left-1/2 w-8 h-8 -mt-4 -ml-4 bg-white rounded-full shadow-md flex items-center justify-center">
+        class="absolute top-1/2 left-1/2 w-8 h-8 -mt-4 -ml-4 bg-white rounded-full shadow-md flex items-center justify-center"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -217,7 +235,8 @@ const onDragEnd = (isDragging: boolean): void => {
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="text-gray-600">
+          class="text-gray-600"
+        >
           <path d="M18 8L22 12L18 16"></path>
           <path d="M6 8L2 12L6 16"></path>
         </svg>

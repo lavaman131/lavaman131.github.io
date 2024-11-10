@@ -1,60 +1,41 @@
 ---
-import { readAll } from "../lib/markdoc/read";
-import { project } from "../lib/markdoc/frontmatter.schema";
-import PageLayout from "../layouts/PageLayout.astro";
-import PageMeta from "../components/PageMeta.astro";
+import Layout from "../layouts/Layout.astro";
 import { SITE_TITLE } from "../config";
+import ProjectCard from "../components/ProjectCard.astro";
 
-const projects = await readAll({
-  directory: "projects",
-  frontmatterSchema: project,
+interface ProjectFrontmatter {
+  href: string;
+  title: string;
+  image: string;
+}
+
+const matches = await import.meta.glob<ProjectFrontmatter>("./projects/*.mdx", {
+  eager: true,
 });
-
-const sortedProjects = projects
-  .filter((p) => p.frontmatter.draft !== true)
-  .sort(
-    (a, b) =>
-      new Date(b.frontmatter.date).valueOf() -
-      new Date(a.frontmatter.date).valueOf()
-  );
+const projects = Object.values(matches).map((project) => ({
+  href: project.href,
+  title: project.title,
+  image: project.image,
+}));
 ---
 
-<PageLayout>
-  <PageMeta title={`Projects | ${SITE_TITLE}`} slot="meta" />
-  <section slot="main">
-    <ul>
-      {
-        sortedProjects.map((project) => {
-          const formattedDate = new Date(
-            project.frontmatter.date
-          ).toLocaleDateString("en-us", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          });
-          return (
-            <li class="grid grid-cols-[1fr] md:grid-cols-[1fr_auto] mb-3 md:gap-2 items-start">
-              <div class="title">
-                <a
-                  href={project.frontmatter.url}
-                  target="_blank"
-                  class="unset hover:text-text-link"
-                >
-                  <span>{project.frontmatter.title}</span>
-                  <span>
-                    <i class="ml-1 mr-1 text-[12px] pb-2 fa-solid fa-up-right-from-square" />
-                  </span>
-                </a>
-              </div>
-              <div class="text-text-muted text-sm italic pt-1">
-                <time datetime={project.frontmatter.date.toISOString()}>
-                  {formattedDate}
-                </time>
-              </div>
-            </li>
-          );
-        })
-      }
-    </ul>
-  </section>
-</PageLayout>
+<Layout title={`Projects | ${SITE_TITLE}`}>
+  <Fragment slot="main">
+    <div class="container mx-auto px-3 sm:px-6">
+      <ul
+        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-6 p-0 m-0 list-none max-w-[2000px] mx-auto"
+        style="--min-card-width: min(350px, 100%);"
+      >
+        {
+          projects.map((project) => (
+            <ProjectCard
+              href={project.href}
+              title={project.title}
+              image={project.image}
+            />
+          ))
+        }
+      </ul>
+    </div>
+  </Fragment>
+</Layout>
