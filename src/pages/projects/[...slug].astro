@@ -1,0 +1,22 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { SITE_TITLE } from "../../config";
+import { getCollection } from "astro:content";
+
+// Add getStaticPaths for dynamic routing
+export async function getStaticPaths() {
+  const allProjects = await getCollection("projects");
+  return allProjects.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+// Get the entry from props
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<Layout title={`${entry.data.title} | Projects`}>
+  <Content />
+</Layout>

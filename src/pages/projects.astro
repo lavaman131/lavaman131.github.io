@@ -2,21 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import { SITE_TITLE } from "../config";
 import ProjectCard from "../components/ProjectCard.astro";
-
-interface ProjectFrontmatter {
-  href: string;
-  title: string;
-  image: string;
-}
-
-const matches = await import.meta.glob<ProjectFrontmatter>("./projects/*.mdx", {
-  eager: true,
-});
-const projects = Object.values(matches).map((project) => ({
-  href: project.href,
-  title: project.title,
-  image: project.image,
-}));
+import { getCollection } from "astro:content";
+const allProjects = await getCollection("projects");
 ---
 
 <Layout title={`Projects | ${SITE_TITLE}`}>
@@ -27,11 +14,11 @@ const projects = Object.values(matches).map((project) => ({
         style="--min-card-width: min(350px, 100%);"
       >
         {
-          projects.map((project) => (
+          allProjects.map((project) => (
             <ProjectCard
-              href={project.href}
-              title={project.title}
-              image={project.image}
+              href={`/projects/${project.slug}`}
+              title={project.data.title}
+              image={project.data.cover}
             />
           ))
         }

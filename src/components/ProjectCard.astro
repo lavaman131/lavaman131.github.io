@@ -1,8 +1,9 @@
 ---
+import { Image } from "astro:assets";
 interface Props {
   title: string;
   href: string;
-  image: string;
+  image: ImageMetadata;
   date?: string;
   authors?: string;
   source?: string;
@@ -19,18 +20,17 @@ const {
 ---
 
 <li
-  class="group h-full flex flex-col overflow-hidden bg-white dark:bg-[#0e141b] rounded-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 hover:border-primary-main p-2 2xl:p-3"
+  class="group h-full flex flex-col overflow-hidden bg-white dark:bg-[#0e141b] rounded-lg border border-gray-200 dark:border-gray-700 hover:border-orange-500 dark:hover:border-yellow-400 transition-colors duration-200"
 >
-  <a href={href} class="unset flex flex-col h-full text-text-heading">
+  <a
+    href={href}
+    class="unset flex flex-col h-full text-text-heading p-2 2xl:p-3"
+  >
     <div class="w-full aspect-[16/9]">
       <div
-        class="w-full h-full bg-gray-100 dark:bg-[#1a242f] flex items-center justify-center p-2 2xl:p-3 rounded-md"
+        class="w-full h-full bg-gray-100 dark:bg-[#1a242f] flex items-center justify-center rounded-md overflow-hidden"
       >
-        <img
-          src={image}
-          alt={title}
-          class="max-w-[85%] max-h-[85%] object-contain transition-transform duration-300 group-hover:scale-105"
-        />
+        <Image src={image} alt={title} class="w-full h-full object-cover" />
       </div>
     </div>
     <div class="p-2 2xl:p-3 flex flex-col gap-1 2xl:gap-2">
