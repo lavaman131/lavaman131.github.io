@@ -110,16 +110,28 @@
         just add a class `unset` to it. 
     */
     a:not(.unset) {
-        text-decoration: none;
-        background-repeat: no-repeat;
-        background-size: 100% 1.5px;
-        background-position: 0 100%;
-        background-image:
-            linear-gradient(to right, theme('colors.text.link'), theme('colors.text.link'));
+        text-decoration: underline;
+        color: rgb(var(--color-text-link));
+        transition: opacity 0.2s ease;
     }
 
     a:not(.unset):hover {
-        color: theme('colors.text.link');
+        opacity: 0.6;
+    }
+
+    /* Links without href maintain body color by default */
+    a:not([href]):not(.unset) {
+        color: rgb(var(--color-text-body));
+    }
+
+    /* Links without href change to link color on hover */
+    a:not([href]):not(.unset):hover {
+        color: rgb(var(--color-text-link));
+    }
+
+    /* Links with href are always link colored */
+    a[href]:not(.unset) {
+        color: rgb(var(--color-text-link));
     }
 
     ::selection {
@@ -206,16 +218,31 @@
     }
 
     .copy-code {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1rem;
+    }
 
     .copy-code:hover {
         color: theme('colors.text.link');
     }
 
+    /* Add table hover styling */
+    tr:hover {
+        background-color: rgb(var(--color-bg-selection) / 0.1);
+        transition: background-color 0.2s ease;
+    }
+
+    /* Optional: Add some basic table styling if needed */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    td, th {
+        padding: 0.75rem;
+    }
 }

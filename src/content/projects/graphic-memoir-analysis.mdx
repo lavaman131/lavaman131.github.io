@@ -1,4 +1,97 @@
 ---
-title: "Graphic Memoir Analysis"
+title: "LLM-based Literature Analysis + Generation"
 cover: "../../assets/images/projects/graphic-memoir-analysis/thumbnail.gif"
+githubUrl: "https://github.com/lavaman131/graphic_memoir_analysis"
 ---
+
+import { Image } from "astro:assets";
+import panel_detection from "../../assets/images/projects/graphic-memoir-analysis/report/panel_detection.png";
+import avg_panels from "../../assets/images/projects/graphic-memoir-analysis/report/avg_panels.png";
+import avg_words from "../../assets/images/projects/graphic-memoir-analysis/report/avg_words.png";
+import word_cloud from "../../assets/images/projects/graphic-memoir-analysis/report/word_cloud.png";
+import ratio from "../../assets/images/projects/graphic-memoir-analysis/report/ratio.png";
+import sentiment from "../../assets/images/projects/graphic-memoir-analysis/report/sentiment.png";
+import GPT2 from "../../assets/images/projects/graphic-memoir-analysis/report/GPT2.gif";
+
+## Introduction
+
+According to Anantrasirichai and Bull's "Artificial Intelligence in the Creative Industries: a Review," artificial intelligence is described as an algorithmic process which allows "a computer system to develop and emulate human-like behavior and hence make decisions similar to (or in some cases, better than) humans" (591). A large branch of AI is machine learning (ML) which "employs computational methods to 'learn' information directly from large amounts of example data without relying on a predetermined equation or model" (591). Among the most recent developments in artificial intelligence is generative AI which utilizes algorithms to very accurately (measured as the algorithm's ability to effectively predict the next word/token given a previous sequence of words/tokens) create or generate text and image content. Artificial intelligence (AI) and statistical analysis is an exciting and rapidly evolving field, but its impact on literature has yet to be fully explored. In the first part of my research I will attempt to create a statistical tool to analyze graphic memoirs with Marjane Satrapi's graphic memoir, *The Complete Persepolis*, as a case study by closely examining the text and image content (features) of her memoir utilizing machine learning techniques. I will then follow my analysis with an experiment using generative AI to recreate text in the style of Satrapi in order to explore the capabilities of AI. While there are previous papers describing the influence of Satrapi's work as a medium to promote political and social activism against Iran's strict Islamic regime (Stromberg 91-119), none follow a statistical and machine learning approach to automatically identify unique features in Satrapi's memoir for analysis and directly assess the effects of generative AI for this matter. My work also provides a baseline as well as an open-source tool for statistical methods in comparing different graphic memoirs.
+
+## Methods
+
+There are numerous features of a graphic memoir that allow it to convey different messages. For instance, the average number of words per page which can be extracted using optical character recognition algorithms presented in Vetulani, Zygmunt, et al. can reveal much about an author's style—short versus long sentences can have different effects on readers. Additionally, the number of panels in a page allows certain authors to underscore a particular scene in their memoir. Using object recognition or shape detection algorithms, it may be possible to count the number of panels per page in a given graphic memoir. Also, there are currently sentiment analysis algorithms in place that allow computers to recognize the connotation of certain words and phrases with the capabilities of large language models (LLMs) which are algorithms that have the ability to effectively interpret and generate natural language. Looking at the ratio of positive, negative, and neutral sentiment words may reveal important information in that regard. Another important metric would be to consider the average ratio of words to images in each page of the memoir. Additionally, whether a memoir is illustrated in black and white may reveal much about the work versus colored content. The author's background including race, age, nationality, gender, and any other personal information all could be indirectly related to the aforementioned statistics. Through statistical analysis of these features I can gain a greater context of the features that allow Satrapi's work to be such an effective medium for political and social protest as well as create a new form of computational literary analysis that can be embedded with traditional analysis of text.
+
+## Findings
+
+### Object Detection for Counting Panels
+
+Using traditional object detection algorithms and appropriate shape thresholding it is possible to get an accurate count of the average number of panels per page in a given chapter of Satrapi's work. Through observing the number of panels per page, the reader can understand and compare the presence or lack-thereof of images in different memoirs. In the case of Satrapi's memoir, the strong presence of images aligns well with a study by psychologists Piotr Winkielman and Yekaterina Gogolushko on the "Influence of Suboptimally and Optimally Presented Affective Pictures and Words on Consumption-Related Behavior" which reveals that a single image elicits a stronger emotional response than a single word. In this particular sample page below we can observe the results of the object detection algorithm. In this specific case, the algorithm detects 6 panels denoted by the green outlines in the right-most image:
+
+<Image src={panel_detection} class="w-full sm:w-2/3" alt="Panel Detection" />
+
+### Chapter vs Average Number of Panels Per Page
+
+Furthermore, digging deeper into the distribution of chapters versus the average number of panels per page one can see that Satrapi typically does not use more than seven panels on average per page. With this information, one can use the average number of panels per page to compare different memoirs.
+
+<Image src={avg_panels} class="w-full sm:w-2/3" alt="Average Panels" />
+
+### Chapter vs Average Number of Words Per Page
+
+Moving on to the average number of words per page, due to the nature of *The Complete Persepolis* being a graphic memoir, it is much less dense in terms of average word (at most 200 words) count per page compared to novels which typically average to much more. The statistic of average number of words per page can be used to contrast the writing styles of different authors in graphic memoirs and weigh the advantages and disadvantages of denser texts. A highly debated topic in literature is finding this optimal word-count balance. By repeating this analysis for multiple memoirs it may be possible to find a general trend in word-count.
+
+<Image src={avg_words} class="w-full sm:w-2/3" alt="Average Words" />
+
+### Words Frequencies
+
+The frequency of certain words in a graphic memoir can also reveal more about the theme of a particular memoir. In the case of Satrapi's *The Complete Persepolis*, below is a visualization (word cloud) of the most common words in the entire memoir along with an accompanying table:
+
+<Image src={word_cloud} alt="Word Cloud" />
+
+As seen in the table above, among the most common words is "know". The word "know" may appear frequently because it shows Satrapi's continual quest for knowledge of the world around her through her childhood in Iran, teenage years in Austria, and early adulthood in Iran. Arguably, this statistic reveals Satrapi's focus on knowledge acquired through interpersonal relationships with family, friends, and acquaintances. These relationships lead Satrapi to develop a knack for social and political activism in order to inform individuals with stereotypical and disillusioned perspectives of her Iranian nationality. This raises the ultimate question if the knowledge we gain from other people is as reliable as the research we conduct. The broader implications of Satrapi's concept of social disillusionment through her encounters with the global community while in school at Austria can be related to the effects of social media today and false narratives surrounding demographics of people.
+
+### Chapter vs Word to Image Ratio
+
+A highly discussed topic introduced by Scott McCloud in the chapter "Show and Tell" of his work, *Understanding Comics: The Invisible Art*, is finding the "perfect" balance between words and images. According to McCloud the norm in literature is that great works of art and literature are only possible when the words and images are kept separate. In Scott's perspective, people are often taught with picture books as children because they are "easier" and less nuanced than the more "real" novels read as adults. However, the art of comics is finding the right balance of words and images. Specifically, Satrapi's memoir utilizes a word and picture combination known as interdependent which involves words and pictures going hand in hand to convey an idea that neither could convey alone. The graph below shows the word to image ratios in every chapter of Marjane Satrapi's graphic memoir, *The Complete Persepolis*. For reference, the higher the word to image ratio, the greater the number of words relative to images there are. By repeating this analysis, it is possible to compare the interaction between words and images to study the ratio of each and their relative effectiveness in graphic memoirs.
+
+<Image src={ratio} class="w-full sm:w-2/3" alt="Average Ratio" />
+
+### Colors Present in Memoir
+
+Another undervalued property of graphic memoirs is their color palette. Scott McCloud describes the effect of color in the chapter "A Word About Color" of his work, *Understanding Comics: The Invisible Art*. According to McCloud, while color gives the author more ability to explore with the expression of their images and "objectify their subjects" (189), "unfortunately, color is still an expensive option and has historically been in the hands of larger, more conservative publishers" (191). This leads to most comic artists to be forced to experiment with shades of black and white. As explained by McCloud, "the differences between black-and-white and color comics are vast and profound affecting every level of the reading experience." (192) McCloud states that in "black and white, the ideas behind the art are communicated more directly [where] meaning transcends form [and] art approaches language." (192) Furthermore, McCloud states that flat colors "take on more significance...and through more expressive colors comics can become an intoxicating environment of sensations that only color can give." (192) Thus, color plays an important role in the meaning of graphic memoirs, however, cost can be prohibitive. This could be a potential reason Satrapi uses a black and white color palette as well as to communicate a more direct meaning of her work:
+
+
+## Discussion
+
+One interesting statistic to explore is the sentiment of a graphic memoir. Using state of the art language models it is possible to identify the connotation and tone of pages in a graphic memoir. As a good starting point, we can place the concept of sentiment into three broad categories: negative, neutral, and positive. Linguistically speaking, it can be possible to create datasets that roughly map common English words and their meaning to these categories. In the case of Marjane's work, it is not surprising to see that the majority of pages are detected as negative because the graphic memoir is centered around the difficulty of her life with the Iranian Revolution of 1979, Iran-Iraq War, separation from her family, loss of loved ones, and other trauma. However, this method is still lacking in understanding the nuance of combinations of multiple sentiments being expressed in a page. While it is possible to take the ratio of positive, neutral, and negative to aggregate a statistic of each, it leads to difficulty in effectively communicating my analysis. Hence, sentiment as a comparison metric of different memoirs has the potential to be further explored in future works. A graph of the highest sentiment score for each page of the memoir can be visualized in the bar graph below:
+
+<Image src={sentiment} class="w-full sm:w-2/3" alt="Sentiment" />
+
+### AI Generated Text Using GPT2
+
+As a final experiment, the capabilities of generative AI are explored through a transfer learning application on a LLM architecture known as GPT2 (Generative Pre-Trained Transformer). The model was fine-tuned (trained) on Satrapi's memoir and then tasked with sentence-completion of similar style text to her memoir. An example of the results are shown below. In this example, it can be seen that there are generally inconsistencies in the AI-generated text such as repetitive statements and logical fallacies. Through this initial case study, generative AI is still a long way from effectively and convincingly generating text. In fact, the simplest case of the algorithm involves probabilistically generating text based on the context of previous words (tokens) in the text. In most cases, similar types of algorithms are found to regurgitate information that they are trained on rather than generating unique information.
+
+<Image src={GPT2} class="w-full sm:w-2/3" alt="GPT2" />
+
+## Conclusion
+
+The space of AI and literature is an exciting and upcoming field. It is possible to explore human creativity and the effectiveness of literature by utilizing statistics and machine learning. My work sets a framework for future statistical tools that can be used to compare and contrast pieces of literature, especially graphic memoirs.
+
+
+## References
+
+* Anantrasirichai, Nantheera, and David Bull. "Artificial Intelligence in the Creative Industries: a Review." *The Artificial Intelligence Review*, vol. 55, no. 1, 2022, pp. 589-656. <a href="https://doi.org/10.1007/s10462-021-10039-7">https://doi.org/10.1007/s10462-021-10039-7</a>
+
+* McCloud, Scott. *Understanding Comics*. William Morrow Paperbacks, 1994.
+
+* Satrapi, Marjane. *The Complete Persepolis*. Pantheon Books, 2007.
+
+* Stromberg, Fredrik. "Schemata in the Graphic Novel Persepolis." *European Comic Art*, vol. 13, no. 2, 2020, pp. 91-119. <a href="https://doi.org/10.3167/eca.2020.130205">https://doi.org/10.3167/eca.2020.130205</a>
+
+
+* Vetulani, Zygmunt, et al. "How to Improve Optical Character Recognition of Historical Finnish Newspapers Using Open Source Tesseract OCR Engine - Final Notes on Development and Evaluation." *Human Language Technology. Challenges for Computer Science and Linguistics*, vol. 12598, Springer International Publishing AG, Switzerland, 2020, pp. 17-30. Lecture Notes in Computer Science. <a href="https://doi.org/10.1007/978-3-030-66527-2_2">https://doi.org/10.1007/978-3-030-66527-2_2</a>
+
+* Winkielman, Piotr, and Yekaterina Gogolushko. "Influence of Suboptimally and Optimally Presented Affective Pictures and Words on Consumption-Related Behavior." *Frontiers in Psychology*, vol. 8, 2018, p. 2261. <a href="https://doi.org/10.3389/fpsyg.2017.02261">https://doi.org/10.3389/fpsyg.2017.02261</a>
+
+## 👥 Collaborators
+
+* None

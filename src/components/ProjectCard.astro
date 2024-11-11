@@ -40,11 +40,13 @@ const { href, title, image, githubUrl = `${SITE_URL}/404` } = Astro.props;
         {title}
       </h2>
       <div
-        class="flex items-center gap-2 text-xs 2xl:text-sm text-[#6c6f85] dark:text-[#a6adc8]"
+        class="flex items-center justify-end gap-2 text-xs 2xl:text-sm text-[#6c6f85] dark:text-[#a6adc8]"
       >
         <a
           href={githubUrl}
           class="inline-flex items-center unset hover:text-[#fe640b] dark:hover:text-[#f9e2af] transition-colors duration-200"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <Icon name="fa-brands:github" class="w-4 h-4" />
         </a>

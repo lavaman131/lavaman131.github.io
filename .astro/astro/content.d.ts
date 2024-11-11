@@ -152,20 +152,6 @@ declare module 'astro:content' {
 
 	type ContentEntryMap = {
 		"projects": {
-"baseball-attendance.mdx": {
-	id: "baseball-attendance.mdx";
-  slug: "baseball-attendance";
-  body: string;
-  collection: "projects";
-  data: InferEntrySchema<"projects">
-} & { render(): Render[".mdx"] };
-"bullyproof.mdx": {
-	id: "bullyproof.mdx";
-  slug: "bullyproof";
-  body: string;
-  collection: "projects";
-  data: InferEntrySchema<"projects">
-} & { render(): Render[".mdx"] };
 "cartoonify.mdx": {
 	id: "cartoonify.mdx";
   slug: "cartoonify";
@@ -208,20 +194,6 @@ declare module 'astro:content' {
   collection: "projects";
   data: InferEntrySchema<"projects">
 } & { render(): Render[".mdx"] };
-"jarvis.mdx": {
-	id: "jarvis.mdx";
-  slug: "jarvis";
-  body: string;
-  collection: "projects";
-  data: InferEntrySchema<"projects">
-} & { render(): Render[".mdx"] };
-"llm-inference-engine.mdx": {
-	id: "llm-inference-engine.mdx";
-  slug: "llm-inference-engine";
-  body: string;
-  collection: "projects";
-  data: InferEntrySchema<"projects">
-} & { render(): Render[".mdx"] };
 "motion-gpt1.5.mdx": {
 	id: "motion-gpt1.5.mdx";
   slug: "motion-gpt15";
@@ -229,9 +201,9 @@ declare module 'astro:content' {
   collection: "projects";
   data: InferEntrySchema<"projects">
 } & { render(): Render[".mdx"] };
-"multi-object-tracking.mdx": {
-	id: "multi-object-tracking.mdx";
-  slug: "multi-object-tracking";
+"object-tracking.mdx": {
+	id: "object-tracking.mdx";
+  slug: "object-tracking";
   body: string;
   collection: "projects";
   data: InferEntrySchema<"projects">
@@ -239,13 +211,6 @@ declare module 'astro:content' {
 "plantify-dr.mdx": {
 	id: "plantify-dr.mdx";
   slug: "plantify-dr";
-  body: string;
-  collection: "projects";
-  data: InferEntrySchema<"projects">
-} & { render(): Render[".mdx"] };
-"puber.mdx": {
-	id: "puber.mdx";
-  slug: "puber";
   body: string;
   collection: "projects";
   data: InferEntrySchema<"projects">

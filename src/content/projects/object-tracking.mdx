@@ -1,0 +1,130 @@
+---
+title: "👣 Single Object Tracking, Multi-Object Tracking, and Data Association"
+cover: "../../assets/images/projects/object-tracking/thumbnail.gif"
+githubUrl: "https://github.com/lavaman131/object_tracking"
+---
+
+import { Image } from "astro:assets";
+import mot from "../../assets/images/projects/object-tracking/report/mot.gif";
+import sot from "../../assets/images/projects/object-tracking/report/sot.gif";
+
+## 📚 Problem Definition
+
+### Single Object Tracking
+
+In the realm of computer vision and video processing, tracking the movement of objects across a sequence of frames is a fundamental challenge. One specific aspect of this challenge is Single Object Tracking (SOT), where the goal is to follow the trajectory of a single entity, such as a vehicle, across multiple frames.
+
+The core task is to process detected 2D locations (x, y coordinates) of a vehicle as it moves across various frames of a video. These detections are inherently noisy due to various factors like camera movement, changes in lighting, and occlusions. The objective is to implement a filtering technique that can generate a smooth and continuous 2D track of the vehicle, mitigating the noise and inaccuracies in the observed locations. The choice of an alpha-beta filter or a Kalman filter allows for a balance between simplicity and effectiveness, leveraging predictions and measurements to estimate the vehicle's current and future states with a higher degree of accuracy.
+
+### Multi-Object Tracking and Data Association
+
+Expanding the challenge to Multi-Object Tracking (MOT), this project addresses the complexity of tracking multiple objects simultaneously. In real-world scenarios, a video may contain several objects of interest, each requiring tracking and identification over time. The task involves processing bounding boxes for multiple detected objects across video frames and efficiently tracking them by assigning a unique ID to each object. This ID must persist as long as the object is present and detected in the video.
+
+The critical challenge in MOT is the Data Association problem, which involves correctly associating the detected bounding boxes with the corresponding tracks (or IDs) over time, especially in scenarios where objects may intersect, occlude each other, or leave and re-enter the frame. This requires sophisticated algorithms that can manage uncertainties and ambiguities in object detection and identification, ensuring accurate and consistent tracking of multiple objects throughout the video sequence.
+
+This project aims to develop and implement solutions for both SOT and MOT, leveraging filtering techniques and data association strategies to achieve robust and reliable object tracking in video data.
+
+## 🛠 Methods
+
+### Alpha-Beta Filtering in 1D and 2D
+
+To smooth out the noisy detections and predict future positions of the tracked objects, we implemented the alpha-beta filter, a simplified form of the Kalman filter. The alpha-beta filter is well-suited for real-time applications due to its computational efficiency and ease of implementation.
+
+#### 1D Alpha-Beta Filter
+
+In the 1D case, the alpha-beta filter estimates the position and velocity along a single axis. The filter operates in two main steps: prediction and update.
+
+**Prediction Step:**
+
+- **Position Prediction:** $\hat{x}_{k|k-1} = \hat{x}_{k-1|k-1} + \hat{v}_{k-1|k-1} \Delta t$
+- **Velocity Prediction:** $\hat{v}_{k|k-1} = \hat{v}_{k-1|k-1}$
+
+**Update Step:**
+
+- **Measurement Residual:** $r_k = z_k - \hat{x}_{k|k-1}$
+- **Position Update:** $\hat{x}_{k|k} = \hat{x}_{k|k-1} + \alpha r_k$
+- **Velocity Update:** $\hat{v}_{k|k} = \hat{v}_{k|k-1} + \left( \frac{\beta}{\Delta t} \right) r_k$
+
+Where:
+- $\hat{x}_{k|k}$ and $\hat{v}_{k|k}$ are the updated estimates of position and velocity at time $k$.
+- $z_k$ is the measured position at time $k$.
+- $\Delta t$ is the time interval between measurements.
+- $\alpha$ and $\beta$ are the filter gains controlling the responsiveness to new measurements.
+
+#### 2D Extension
+
+For 2D tracking, the alpha-beta filter is applied separately to the x and y coordinates. This assumes that the motion in each dimension is independent, which is acceptable in many tracking scenarios.
+
+**Prediction Step:**
+
+- **Position Prediction:** $\hat{\mathbf{x}}_{k|k-1} = \hat{\mathbf{x}}_{k-1|k-1} + \hat{\mathbf{v}}_{k-1|k-1} \Delta t$
+- **Velocity Prediction:** $\hat{\mathbf{v}}_{k|k-1} = \hat{\mathbf{v}}_{k-1|k-1}$
+
+**Update Step:**
+
+- **Measurement Residual:** $\mathbf{r}_k = \mathbf{z}_k - \hat{\mathbf{x}}_{k|k-1}$
+- **Position Update:** $\hat{\mathbf{x}}_{k|k} = \hat{\mathbf{x}}_{k|k-1} + \alpha \mathbf{r}_k$
+- **Velocity Update:** $\hat{\mathbf{v}}_{k|k} = \hat{\mathbf{v}}_{k|k-1} + \left( \frac{\beta}{\Delta t} \right) \mathbf{r}_k$
+
+Where:
+- $\hat{\mathbf{x}}_{k|k}$ and $\hat{\mathbf{v}}_{k|k}$ are the updated estimates of position and velocity vectors.
+- $\mathbf{z}_k$ is the measured position vector at time $k$.
+
+#### Selection of Filter Gains
+
+The values of $\alpha$ and $\beta$ determine the filter's performance:
+
+- **High $\alpha$ and $\beta$:** More responsive to new measurements but less smooth trajectories.
+- **Low $\alpha$ and $\beta$:** Smoother trajectories but slower to react to changes.
+
+These gains are typically tuned empirically based on the characteristics of the motion and the measurement noise.
+
+### Data Association Using the Hungarian Algorithm
+
+In multi-object tracking, correctly associating detections to existing tracks is crucial. We implemented the Hungarian matching algorithm as our data association approach due to its ability to find the optimal assignment between detections and tracks efficiently.
+
+#### Cost Matrix Construction
+
+We construct a cost matrix $C$ where each element $c_{ij}$ represents the cost of assigning detection $i$ to track $j$. The cost is computed based on a distance metric, such as the Euclidean distance between the predicted position of the track and the detected position:
+
+$$c_{ij} = \| \hat{\mathbf{x}}_{j|k-1} - \mathbf{z}_i \| $$
+
+#### Hungarian Algorithm Steps
+
+1. **Initialization:** Start with the cost matrix $C$.
+2. **Row Reduction:** Subtract the minimum value in each row from all the elements of that row.
+3. **Column Reduction:** Subtract the minimum value in each column from all the elements of that column.
+4. **Assignment:** Cover all zeros in the matrix using the minimum number of horizontal and vertical lines. If the number of lines equals the number of tracks, an optimal assignment is found.
+5. **Adjustment:** If not all zeros are covered, find the smallest uncovered value, subtract it from all uncovered elements, and add it to elements at the intersections of the covering lines. Repeat the assignment step.
+
+#### Updating Tracks
+
+After obtaining the optimal assignment:
+
+- **Matched Pairs:** Update the state estimates of the tracks using the associated detections.
+- **Unmatched Detections:** Initialize new tracks for these detections.
+- **Unmatched Tracks:** Increase the missed detection count; if it exceeds a threshold, the track is terminated.
+
+#### Advantages
+
+- **Optimal Matching:** Ensures the minimum total cost, reducing the likelihood of incorrect associations.
+- **Scalability:** Efficient for a reasonable number of objects, making it suitable for real-time applications.
+- **Flexibility:** Can incorporate additional factors like appearance similarity by adjusting the cost function.
+
+## 📈 Results
+
+### Single Object Tracking
+
+<Image src={sot} alt="Single Object Tracking" />
+
+The alpha-beta filter effectively smoothed out the noise in the detected positions, resulting in a more accurate and stable trajectory of the vehicle. By adjusting the filter gains, we achieved a balance between responsiveness and smoothness, accommodating both steady motion and sudden maneuvers.
+
+### Multi-Object Tracking
+
+<Image src={mot} alt="Multi-Object Tracking" />
+
+The implementation of the Hungarian algorithm for data association enabled reliable tracking of multiple vehicles simultaneously. The algorithm efficiently matched detections to existing tracks, even in challenging scenarios with occlusions and crossing paths. The combination of alpha-beta filtering for state estimation and optimal assignment through the Hungarian algorithm resulted in robust multi-object tracking performance.
+
+## 👥 Collaborators
+
+* None
