@@ -183,75 +183,39 @@
         border-width: 0;
     }
 
-    /* ------ REUSABLE UTILS - END ------ */
-
-    /* Inline code styling */
-    *:not(pre) > code:not([class*="language-"]) {
+    /* Code block base styling */
+    pre {
+        position: relative !important;
+        padding: 1.5rem 1rem 1rem 1rem !important;
+        margin: 1rem 0 !important;
+        border-radius: 0.5rem !important;
+        overflow: auto !important;
         background-color: theme('colors.bg.code');
-        color: theme('colors.text.code');
-        padding: 0.2em 0.4em;
-        border-radius: 0.25rem;
-        font-size: 0.875em;
-        font-weight: 400;
         border: 1px solid theme('colors.border.code');
     }
 
-    /* Code block styling */
-    pre {
-        padding: 1rem !important;
-        margin: 1rem 0 !important;
-        border-radius: 0.5rem;
-    }
-    
-    pre[class*="language-"] {
-        padding: 1rem !important;
-        margin: 1rem 0 !important;
-        border-radius: 0.5rem;
+    /* Add inline code styling */
+    code:not(pre code) {
+        background-color: theme('colors.bg.code');
+        color: rgb(var(--color-text-code)) !important;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-size: 0.875em;
+        font-weight: 400 !important;
+        border: 1px solid theme('colors.border.code');
     }
 
-    /* Reset any padding/margins for code inside pre blocks */
-    pre code,
-    pre[class*="language-"] code,
-    pre code[class*="language-"] {
-        padding: 0 !important;
-        margin: 0 !important;
-        text-indent: 0 !important;
-        background: none !important;
-        white-space: pre !important;
-        word-spacing: normal !important;
-        word-break: normal !important;
-        overflow-wrap: normal !important;
-        line-height: 1.5 !important;
-        tab-size: 4 !important;
+    .copy-code {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+    .copy-code:hover {
+        color: theme('colors.text.link');
     }
 
-    /* Force all code blocks to have no indentation */
-    pre,
-    pre[class*="language-"],
-    .prose pre,
-    :not(pre) > code[class*="language-"],
-    pre[class*="language-"]:not(.prose) {
-        padding: 1rem !important;
-        margin: 1rem 0 !important;
-        border-radius: 0.5rem !important;
-        text-indent: 0 !important;
-    }
-
-    /* Target the actual code element inside */
-    pre > code,
-    pre code,
-    pre[class*="language-"] > code,
-    pre[class*="language-"] code,
-    .prose pre code {
-        padding: 0 !important;
-        margin: 0 !important;
-        text-indent: 0 !important;
-        background: none !important;
-        white-space: pre !important;
-        word-spacing: normal !important;
-        word-break: normal !important;
-        overflow-wrap: normal !important;
-        line-height: 1.5 !important;
-        tab-size: 4 !important;
-    }
 }

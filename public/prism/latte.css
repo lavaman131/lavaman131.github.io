@@ -1,28 +1,10 @@
-/* Add at the top of the file */
-pre[class*="language-"] {
-    padding: 0 !important;
-    margin: 0 !important;
-    text-indent: 0 !important;
-}
-
-pre[class*="language-"] > code {
-    padding: 1rem !important;
-    margin: 0 !important;
-    text-indent: 0 !important;
-    display: block !important;
-}
-
-:not(pre.prose) > code[class*="language-"],
+code[class*="language-"],
 pre[class*="language-"] {
 	color: #4c4f69;
-    border-radius: 0.5rem;
-    margin: 1rem 0;
-    tab-size: 2;
-    -moz-tab-size: 2;
 }
 
-:not(pre.prose) > code[class*="language-"],
-pre[class*="language-"]:not(.prose) {
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
 	background: #e6e9ef;
 }
 
@@ -149,11 +131,4 @@ pre[class*="language-"]:not(.prose) {
 }
 .token.italic {
 	font-style: italic;
-}
-
-/* Add this to remove indentation */
-pre[class*="language-"] code {
-    padding: 0 !important;
-    margin: 0 !important;
-    text-indent: 0 !important;
 }

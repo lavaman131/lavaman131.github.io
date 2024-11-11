@@ -1,10 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { SITE_TITLE } from "../config";
-import { Prism } from "@astrojs/prism";
-const errorCode = `const foo = 'hello'
-const bar = ' world'
-console.log(foo + bar) // [!code focus]
+const errorCode = `CUDAError: out of memory
+Did you try?
+- Reducing batch size
+- Using a smaller model
+- Offloading the model to a CPU
+- Checking for a memory leak 
+- Sacrificing a rubber duck to the CUDA Gods 🦆
 `;
 ---
 
@@ -22,7 +25,7 @@ console.log(foo + bar) // [!code focus]
       </p>
       <div class="w-full max-w-xl">
         <div class="rounded-lg overflow-hidden">
-          <Prism code={errorCode} lang="bash" />
+          <pre class="m-0 p-0"><code>{errorCode}</code></pre>
         </div>
       </div>
       <p class="mt-8 text-lg">
