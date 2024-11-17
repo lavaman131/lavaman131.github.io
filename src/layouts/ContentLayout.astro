@@ -63,7 +63,9 @@ const { frontmatter } = Astro.props;
         codeBlock.setAttribute("tabindex", "0");
         codeBlock.appendChild(copyButton);
         // wrap codebock with relative parent element
-        codeBlock.parentNode.insertBefore(wrapper, codeBlock);
+        if (codeBlock.parentNode) {
+          codeBlock.parentNode.insertBefore(wrapper, codeBlock);
+        }
         wrapper.appendChild(codeBlock);
 
         copyButton.addEventListener("click", async () => {
@@ -71,9 +73,9 @@ const { frontmatter } = Astro.props;
         });
       }
 
-      async function copyCode(block, button) {
+      async function copyCode(block: HTMLElement, button: HTMLButtonElement) {
         let code = block.querySelector("code");
-        let text = code.innerText;
+        let text = code?.innerText || "";
 
         await navigator.clipboard.writeText(text);
 
