@@ -1,26 +1,31 @@
 ---
+
 ---
 
-<footer class="text-sm leading-[1.75] mt-4">
-  <div>
+<footer class="text-sm leading-[1.75] py-4 mt-auto">
+  <div
+    class="flex items-center justify-center text-text-muted px-4 sm:px-6 md:px-8"
+  >
     This site is built with
     <a
-      class="unset gradient-link tracking-wider font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#f57111] to-[#f79605] hover:after:bg-gradient-to-r hover:after:from-[#f57111] hover:after:to-[#f79605]"
+      class="unset gradient-link tracking-wider font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#f57111] to-[#f79605] hover:after:bg-gradient-to-r hover:after:from-[#f57111] hover:after:to-[#f79605] mx-2"
       href={"https://github.com/flexdinesh/blogster"}
       target="_blank"
     >
-      Blogster</a
-    >
+      Blogster
+    </a>
   </div>
 </footer>
 
 <style>
   footer {
-    grid-area: footer;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-top: 1px solid rgba(128, 128, 128, 0.1);
+    width: 100%;
+    min-height: 60px;
   }
 
   .gradient-link {

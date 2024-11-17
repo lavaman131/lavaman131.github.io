@@ -12,65 +12,64 @@
 
     /* light theme */
     .theme-sleek {
-        /* Tailwind orange-500 #f97316 */
-        --color-primary-main: 249 115 22;
+        /* Catppuccin Latte Peach #fe640b */
+        --color-primary-main: 254 100 11;
 
-        /* Tailwind gray-700 #374151 */
-        --color-text-body: 55 65 81;
-        /* Tailwind gray-700 #374151 */
-        --color-text-heading: 55 65 81;
-        /* Tailwind gray-700 #374151 */
-        --color-text-bold: 55 65 81;
-        /* Tailwind gray-500 #6b7280 */
-        --color-text-muted: 107 114 128;
-        /* Tailwind orange-500 #f97316 */
-        --color-text-link: 249 115 22;
-        /* black */
-        --color-text-code: 0 0 0;
-        /* black */
-        --color-text-selection: 0 0 0;
+        /* Catppuccin Latte Text #4c4f69 */
+        --color-text-body: 76 79 105;
+        /* Catppuccin Latte Text #4c4f69 */
+        --color-text-heading: 76 79 105;
+        /* Catppuccin Latte Text #4c4f69 */
+        --color-text-bold: 76 79 105;
+        /* Catppuccin Latte Subtext0 #6c6f85 */
+        --color-text-muted: 108 111 133;
+        /* Catppuccin Latte Peach #fe640b */
+        --color-text-link: 254 100 11;
+        /* Catppuccin Latte Text #4c4f69 */
+        --color-text-code: 76 79 105;
+        /* Catppuccin Latte Text #4c4f69 */
+        --color-text-selection: 76 79 105;
 
-        /* white */
-        --color-bg-body: 255 255 255;
-        /* Tailwind orange-50 #fff7ed */
-        --color-bg-code: 255 247 237;
-        /* Tailwind amber-200 #fde68a */
-        --color-bg-selection: 253 230 138;
+        /* Catppuccin Latte Base #eff1f5 */
+        --color-bg-body: 239 241 245;
+        /* Catppuccin Latte Mantle #e6e9ef */
+        --color-bg-code: 230 233 239;
+        /* Catppuccin Latte Peach #fe640b with reduced opacity */
+        --color-bg-selection: 254 100 11;
 
-        /* Tailwind orange-100 #ffedd5 */
-        --color-border-code: 255 237 213;
+        /* Catppuccin Latte Surface0 #ccd0da */
+        --color-border-code: 204 208 218;
 
     }
-
     /* dark theme */
     .theme-sleek.dark {
-        /* Tailwind yellow-400 #facc15 */
-        --color-primary-main: 250 204 21;
+        /* Catppuccin Mocha Yellow #f9e2af */
+        --color-primary-main: 249 226 175;
 
-        /* Tailwind stone-300 #d6d3d1 */
-        --color-text-body: 214 211 209;
-        /* white */
-        --color-text-heading: 255 255 255;
-        /* white */
-        --color-text-bold: 255 255 255;
-        /* Tailwind stone-400 #a8a29e */
-        --color-text-muted: 168 162 158;
-        /* Tailwind yellow-400 #facc15 */
-        --color-text-link: 250 204 21;
-        /* black */
-        --color-text-code: 255 255 255;
-        /* black */
-        --color-text-selection: 0 0 0;
+        /* Catppuccin Mocha Text #cdd6f4 */
+        --color-text-body: 205 214 244;
+        /* Catppuccin Mocha Text #cdd6f4 */
+        --color-text-heading: 205 214 244;
+        /* Catppuccin Mocha Text #cdd6f4 */
+        --color-text-bold: 205 214 244;
+        /* Catppuccin Mocha Subtext0 #a6adc8 */
+        --color-text-muted: 166 173 200;
+        /* Catppuccin Mocha Yellow #f9e2af */
+        --color-text-link: 249 226 175;
+        /* Catppuccin Mocha Text #cdd6f4 */
+        --color-text-code: 205 214 244;
+        /* Catppuccin Mocha Text #cdd6f4 */
+        --color-text-selection: 205 214 244;
 
-        /* #0e141b */
-        --color-bg-body: 14 20 27;
-        /* Tailwind yellow-500 #eab308 */
-        --color-bg-code: 234 179 8;
-        /* Tailwind yellow-300 #fde047 */
-        --color-bg-selection: 253 224 71;
+        /* Catppuccin Mocha Base #1e1e2e */
+        --color-bg-body: 30 30 46;
+        /* Catppuccin Mocha Mantle #181825 */
+        --color-bg-code: 24 24 37;
+        /* Catppuccin Mocha Yellow #f9e2af with reduced opacity */
+        --color-bg-selection: 249 226 175;
 
-        /* Tailwind yellow-100 #fef9c3 */
-        --color-border-code: 254 243 199;
+        /* Catppuccin Mocha Surface0 #313244 */
+        --color-border-code: 49 50 68;
     }
 
     :root {
@@ -111,63 +110,28 @@
         just add a class `unset` to it. 
     */
     a:not(.unset) {
-        text-decoration: none;
-        background-repeat: no-repeat;
-        background-size: 100% 1.5px;
-        background-position: 0 100%;
-        background-image:
-            linear-gradient(to right, theme('colors.text.link'), theme('colors.text.link'));
+        text-decoration: underline;
+        color: rgb(var(--color-text-link));
+        transition: opacity 0.2s ease;
     }
 
     a:not(.unset):hover {
-        color: theme('colors.text.link');
+        opacity: 0.6;
     }
 
-    code:not(pre code):not(.unset) {
-        background-color: theme('colors.bg.code');
-        color: theme('colors.text.code');
-        padding: 0.125rem 0.25rem;
-        border-radius: 0.25rem;
-        font-size: 0.875em;
-        font-weight: 600;
-        border: 1px solid theme('colors.border.code');
-        margin-bottom: 1.25em;
+    /* Links without href maintain body color by default */
+    a:not([href]):not(.unset) {
+        color: rgb(var(--color-text-body));
     }
 
-    html.dark code:not(pre code) {
-        background-color: rgb(var(--color-bg-code) / 0.15);
-        border-color: rgb(var(--color-border-code) / 0.15);
+    /* Links without href change to link color on hover */
+    a:not([href]):not(.unset):hover {
+        color: rgb(var(--color-text-link));
     }
 
-    ul:not(.unset):not(:where([class~="prose"] *)) {
-        padding-left: 0;
-        list-style: none;
-    }
-
-    ul:not(:where([class~="prose"] *))>li {
-        position: relative;
-        padding-left: 1.375rem;
-    }
-
-    ul:not(.unset):not(:where([class~="prose"] *))>li::before {
-        position: absolute;
-        left: 0;
-        content: "»";
-        color: rgb(var(--color-text-muted));
-    }
-
-    ol:not(.unset):not(:where([class~="prose"] *)) {
-        padding-left: 1.125rem;
-    }
-
-    ol:not(.unset):not(:where([class~="prose"] *))>li::marker {
-        color: rgb(var(--color-text-muted))
-    }
-
-    ul:not(.unset):not(:where([class~="prose"] *))>li,
-    ol:not(.unset):not(:where([class~="prose"] *))>li {
-        margin-top: 0.5em;
-        margin-bottom: 0.5em;
+    /* Links with href are always link colored */
+    a[href]:not(.unset) {
+        color: rgb(var(--color-text-link));
     }
 
     ::selection {
@@ -205,5 +169,94 @@
         transform: translateZ(0) scale(1);
     }
 
-    /* ------ REUSABLE UTILS - END ------ */
+    .sr-only,
+    .fa-sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+    .sr-only-focusable:not(:focus),
+    .fa-sr-only-focusable:not(:focus) {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+    /* Code block base styling */
+    pre {
+        position: relative !important;
+        padding: 1.5rem 1rem 1rem 1rem !important;
+        margin: 1rem 0 !important;
+        border-radius: 0.5rem !important;
+        overflow: auto !important;
+        background-color: theme('colors.bg.code');
+        border: 1px solid theme('colors.border.code');
+    }
+
+    /* Add inline code styling */
+    code:not(pre code) {
+        background-color: theme('colors.bg.code');
+        color: rgb(var(--color-text-code)) !important;
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-size: 0.875em;
+        font-weight: 400 !important;
+        border: 1px solid theme('colors.border.code');
+    }
+
+    .copy-code {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1rem;
+    }
+
+    .copy-code:hover {
+        color: theme('colors.text.link');
+    }
+
+    /* Add table hover styling */
+    tr:hover {
+        background-color: rgb(var(--color-bg-selection) / 0.1);
+        transition: background-color 0.2s ease;
+    }
+
+    /* Optional: Add some basic table styling if needed */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    td, th {
+        padding: 0.75rem;
+    }
+
+    @keyframes slideAnimation {
+        0%,
+    100% {
+      transform: translateX(-10px);
+    }
+    50% {
+      transform: translateX(10px);
+    }
+  }
+
+  .slide-animation {
+    animation: slideAnimation 1.5s ease-in-out;
+    }
 }

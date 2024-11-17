@@ -1,0 +1,49 @@
+---
+import HeaderLink from "./HeaderLink.astro";
+import DarkModeToggle from "./DarkModeToggle.astro";
+import { LINKEDIN_HANDLE } from "../config";
+import { Icon } from "astro-icon/components";
+---
+
+<header
+  class="fixed top-0 left-0 right-0 z-50 bg-bg-body/95 backdrop-blur-md px-4 sm:px-6 md:px-8 lg:px-12 border-b border-gray-200 dark:border-gray-800 h-[var(--navbar-height)]"
+>
+  <div class="mx-auto flex justify-between items-center h-full">
+    <nav>
+      <section class="text-text-bold">
+        <ul class="unset flex gap-6 [&>li]:p-0">
+          <li><HeaderLink href="/">Home</HeaderLink></li>
+          <li><HeaderLink href="/projects">Projects</HeaderLink></li>
+        </ul>
+      </section>
+    </nav>
+    <div class="flex items-center gap-6 text-text-bold">
+      <a
+        class="unset text-xl hover:text-text-link transition-colors duration-200"
+        href="https://github.com/lavaman131"
+      >
+        <Icon name="fa-brands:github" />
+        <span class="fa-sr-only">Alex on GitHub</span>
+      </a>
+      <a
+        class="unset text-xl hover:text-text-link transition-colors duration-200"
+        href={`https://linkedin.com/in/${LINKEDIN_HANDLE}`}
+      >
+        <Icon name="fa-brands:linkedin" />
+        <span class="fa-sr-only">Alex on LinkedIn</span>
+      </a>
+      <DarkModeToggle />
+    </div>
+  </div>
+</header>
+
+<style>
+  :root {
+    --navbar-height: 4rem; /* 64px */
+  }
+  @media (min-width: 640px) {
+    :root {
+      --navbar-height: 5rem; /* 80px */
+    }
+  }
+</style>

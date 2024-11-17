@@ -1,5 +1,19 @@
 ---
+// Astro frontmatter goes here
 ---
+
+<link
+  href="/prism/mocha.css"
+  rel="stylesheet"
+  id="prism-dark"
+  media="not all"
+/>
+<link
+  href="/prism/latte.css"
+  rel="stylesheet"
+  id="prism-light"
+  media="not all"
+/>
 
 <mode-toggle class="flex">
   <button
@@ -69,6 +83,8 @@
     const themeColorMetaTag = document.head.querySelector(
       'meta[name="theme-color"]'
     );
+    const darkSyntaxTheme = document.querySelector("#prism-dark");
+    const lightSyntaxTheme = document.querySelector("#prism-light");
 
     if (mode === "dark") {
       document.documentElement.classList.remove("light");
@@ -77,12 +93,22 @@
         // @ts-ignore
         themeColorMetaTag.content = "#0e141b";
       }
+      // Toggle syntax highlighting themes
+      if (darkSyntaxTheme && lightSyntaxTheme) {
+        darkSyntaxTheme.media = "";
+        lightSyntaxTheme.media = "not all";
+      }
     } else {
       document.documentElement.classList.remove("dark");
       document.documentElement.classList.add("light");
       if (themeColorMetaTag) {
         // @ts-ignore
         themeColorMetaTag.content = "#ffffff";
+      }
+      // Toggle syntax highlighting themes
+      if (darkSyntaxTheme && lightSyntaxTheme) {
+        darkSyntaxTheme.media = "not all";
+        lightSyntaxTheme.media = "";
       }
     }
   }
@@ -91,9 +117,25 @@
     localStorage.setItem("theme", mode);
   }
 
+  // Add this function to get the current theme
+  function getStoredTheme(): "light" | "dark" {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme === "light" || storedTheme === "dark") {
+      return storedTheme;
+    }
+    // Check user preference if no theme is stored
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+
   class ModeToggle extends HTMLElement {
     constructor() {
       super();
+
+      // Apply stored theme on page load
+      const storedTheme = getStoredTheme();
+      updateHTMLTheme(storedTheme);
 
       const lightButton = this.querySelector("#light-mode-button");
       const darkButton = this.querySelector("#dark-mode-button");
@@ -121,6 +163,12 @@
       });
     }
   }
+
+  // Add this to ensure theme is applied before component initialization
+  document.addEventListener("DOMContentLoaded", () => {
+    const storedTheme = getStoredTheme();
+    updateHTMLTheme(storedTheme);
+  });
 
   customElements.define("mode-toggle", ModeToggle);
 </script>

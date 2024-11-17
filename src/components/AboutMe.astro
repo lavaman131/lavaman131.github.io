@@ -1,50 +1,88 @@
 ---
-import ImageComparisonSlider from './ImageComparisonSlider.astro';
+import ImageComparisonSlider from "./ImageComparisonSlider.astro";
+import baseImage from "../assets/images/profile-featup.png";
+import overlayImage from "../assets/images/profile.png";
+import { LINKEDIN_HANDLE } from "../config";
 ---
 
-<div class="flex flex-col gap-4">
-  <ImageComparisonSlider
-    baseImageSrc="/images/profile-pixel.webp"
-    overlayImageSrc="/images/profile.webp"
-    baseImageAlt="Pixelated Profile picture"
-    overlayImageAlt="Regular Profile picture"
-    initialPosition={33}
-    sliderWidth="w-56 sm:w-64 md:w-72 lg:w-80"
-    sliderHeight="h-56 sm:h-64 md:h-72 lg:h-80"
-    instructionText="Slide to view grayscale image"
-  />
-  <div class="flex flex-col gap-4">
-  <p>
-    Hey there! 👋🏼 I'm Alex, a data science undergraduate and pursuing AI research @ Harvard working
-    on a 3D computer vision foundation model for cellular and molecular biology.
-    🧬
-  </p>
-  <p>
-    Previously, I interned as a SWE, MLE, and data scientist at Microsoft,
-    Boeing, Edwards Lifesciences, and AI startups (including an MIT CSAIL
-    spinoff), gaining hands-on experience in developing scalable AI products.
-    I'm passionate about driving innovation and making a meaningful impact
-    through technology that benefits humanity. 🚀
-  </p>
-  <p>
-    Feel free to reach out and connect—I look forward to collaborating and
-    sharing ideas!
+<section class="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+  <div class="text-center mb-12 sm:mb-16">
+    <h1
+      class="font-extrabold text-4xl sm:text-5xl lg:text-6xl tracking-tight mb-4"
+    >
+      <span
+        class="bg-gradient-to-br from-[#fb923c] via-[#f97316] to-[#ea580c] dark:from-primary-main dark:via-primary-main dark:to-primary-main bg-clip-text text-transparent"
+      >
+        Alex Lavaee
+      </span>
+    </h1>
+    <p
+      class="text-lg sm:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 font-light"
+    >
+      Engineer. Researcher. Lifelong learner.
     </p>
   </div>
-</div>
 
-<style>
-  @keyframes slideAnimation {
-    0%,
-    100% {
-      transform: translateX(-10px);
-    }
-    50% {
-      transform: translateX(10px);
-    }
-  }
+  <div
+    class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 flex-1"
+  >
+    <div class="w-full max-w-[400px] flex flex-col items-center">
+      <div class="w-full flex-col justify-center">
+        <ImageComparisonSlider
+          baseImageSrc={baseImage}
+          overlayImageSrc={overlayImage}
+          baseImageAlt="Pixelated Profile picture"
+          overlayImageAlt="Regular Profile picture"
+          initialPosition={33}
+          sliderWidth="w-64 sm:w-80 lg:w-[350px] xl:w-[400px]"
+          sliderHeight="h-64 sm:h-80 lg:h-[350px] xl:h-[400px]"
+          instructionText={`
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+              Slide to view <a
+                href="https://arxiv.org/abs/2403.10516"
+              class="underline hover:text-primary-main">feature image</a
+              >
+            </p>
+          `}
+        />
+      </div>
+    </div>
 
-  .slide-animation {
-    animation: slideAnimation 1.5s ease-in-out;
-  }
-</style>
+    <div
+      class="w-full max-w-[640px] lg:max-w-[500px] mx-auto flex flex-col gap-6 text-center lg:text-left"
+    >
+      <p class="text-base sm:text-lg leading-relaxed">
+        Hey there! 👋🏼 I'm Alex, a data science undergrad @ BU and AI research
+        intern @ Harvard working on a 3D computer vision foundation model for
+        cellular and molecular biology. 🧬
+      </p>
+      <p class="text-base sm:text-lg leading-relaxed">
+        My broad research interest encompasses using self-supervised techniques
+        to learn accurate representations of the world, reconstructing 3D
+        structures, materials, and semantic meaning from visual input such as
+        videos. 🎥
+      </p>
+      <p class="text-base sm:text-lg leading-relaxed">
+        Previously, I interned as a SWE, MLE, and data scientist at Microsoft,
+        Boeing, Edwards Lifesciences, and AI startups (including an MIT CSAIL
+        spinoff), gaining hands-on experience in developing scalable AI
+        products. I'm passionate about driving innovation and making a
+        meaningful impact through technology that benefits humanity. 🚀
+      </p>
+      <p class="text-base sm:text-lg leading-relaxed">
+        Feel free to reach out and connect on
+        <a
+          href={`https://linkedin.com/in/${LINKEDIN_HANDLE}`}
+          class="text-primary-main hover:text-primary-dark font-medium transition-colors"
+          >LinkedIn</a
+        > or email at lavaalex3 [at] gmail [dot] com. I look forward to collaborating
+        and sharing ideas! Finally, check out my <a
+          href="/projects"
+          class="text-primary-main hover:text-primary-dark font-medium transition-colors"
+          >projects</a
+        >!
+        <span class="font-bold">&lt|endoftext|&gt</span>
+      </p>
+    </div>
+  </div>
+</section>

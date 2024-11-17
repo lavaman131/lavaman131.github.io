@@ -1,0 +1,140 @@
+---
+title: "Detecting Brain Regions Associated with Autism Development"
+cover: "../../assets/images/projects/human-connectome/thumbnail.gif"
+githubUrl: "https://github.com/lavaman131/human_connectome"
+---
+
+import { Image } from "astro:assets";
+import connectome_diagram from "../../assets/images/projects/human-connectome/report/connectome_diagram.svg";
+
+
+## Inspiration
+Brain connectomics or brain network research has rapidly expanded using functional MRI (fMRI) and diffusion-weighted MRI (dwMRI). A common product of these varied analyses is a connectivity matrix (CM). A CM stores the connection strength between any two regions ("nodes") in a brain network. This format is useful for several reasons: 
+1. it is highly distilled, with minimal data size and complexity
+2. graph theory can be applied to characterize the network's topology
+3. it retains sufficient information to capture individual differences such as age, gender, intelligence quotient (IQ), or disease state
+
+In this project, the connectivity matrices of patients diagnosed with autism spectrum disorder (ASD) and typically developing (TD) autism are compared using graph statistical algorithms to determine regions of the brain associated with development of autism. 
+
+## Statistical Analysis
+This analysis relies on a simplified 2-complex based order d Forman–Ricci curvature [[1]](#1) of an edge $e = \{u, v\} \in E$ is given by:
+
+$$\begin{aligned} \mathfrak {C}_G^{\,2,d}(e) {\mathop {=}\limits ^{\mathrm {def}}}\mathfrak {C}_G^{\,2,d}(u,v) = \omega (e) \left[ \left( \sum _{e \sim f_d^2} \frac{\omega (e)}{\omega (f_d^2)} \,{+}\, \sum _{v \sim e} \frac{\omega (v)}{\omega (e)} \right) \ \text {---}\ \sum _{e'||e,\, e',e \sim f_d^2} \frac{ \sqrt{\omega (e) \omega (e')} }{ \omega (f_d^2)} \right] \end{aligned}$$
+
+The difference of the curvatures is found between a pair of autism spectrum disorder (ASD) and typically developing (TD) autism connectivity matrices each constructed by taking the aggregated mean of all such similar samples corresponding to each diagnosis.
+
+## Results
+
+### Top 10 Statistically Significant Curvature Differences
+It is important to note that some connections may occur in the same region of the brain, hence it may seem like a vertex is connected to itself which is not the case.
+
+#### 5 Most Negative Curvatures 
+
+| Connected Region                                 | Curvature Difference |
+| ------------------------------------------------ | -------------------- |
+| Right Putamen, Right Insular Cortex              | -2331330.433152141   |
+| Right Insular Cortex, Right Insular Cortex       | -1994182.8538039196  |
+| Right Frontal Pole, Right Frontal Orbital Cortex | -1845748.8731592936  |
+| Right Frontal Pole, Right Frontal Pole           | -1716334.5267126393  |
+| Right Insular Cortex, Right Insular Cortex       | -1614932.5721171317  |
+
+#### 5 Most Positive Curvatures 
+| Connected Region                                                                             | Curvature Difference |
+| -------------------------------------------------------------------------------------------- | -------------------- |
+| Left Central Opercular Cortex, Left Central Opercular Cortex                                 | 1934234.5367499162   |
+| Right Insular Cortex, Right Putamen                                                          | 1971224.916725241    |
+| Left Thalamus, Brain-Stem                                                                    | 2294358.294582237    |
+| Right Frontal Pole, Right Frontal Orbital Cortex                                             | 2565673.39796964     |
+| Left Middle Temporal Gyrus posterior division, Left Middle Temporal Gyrus posterior division | 3425965.9113210947   |
+
+## Discussion
+The ten connections between the brain yielding statistically significant results (from most significant to least significant) towards the development of autism are:
+
+1. Left Middle Temporal Gyrus posterior division, Left Middle Temporal Gyrus posterior division 
+2. Right Frontal Pole, Right Frontal Orbital Cortex
+3. Right Putamen, Right Insular Cortex   
+4. Left Thalamus, Brain-Stem     
+5. Right Insular Cortex, Right Insular Cortex   
+5. Right Insular Cortex, Right Putamen   
+6. Left Central Opercular Cortex, Left Central Opercular Cortex 
+8. Right Frontal Pole, Right Frontal Orbital Cortex
+7. Right Frontal Pole, Right Frontal Pole
+9. Right Insular Cortex, Right Insular Cortex   
+
+### Connections Visualized
+<Image src={connectome_diagram} alt="connectome_diagram" />
+
+## Replicate Results
+
+Visit the [repo](https://github.com/lavaman131/human_connectome) for more information.
+
+After running the analysis, the output will be the top 5 most positive and top 5 most negative edges based on curvature difference:
+
+<table className="table-auto">
+  <thead>
+    <tr>
+      <th>Connected Regions</th>
+      <th>Curvature Difference</th>
+      <th>Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Right Putamen ↔ Right Insular Cortex</td>
+      <td>-2,331,330.43</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>Right Insular Cortex ↔ Right Insular Cortex</td>
+      <td>-1,994,182.85</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>Right Frontal Pole ↔ Right Frontal Orbital Cortex</td>
+      <td>-1,845,748.87</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>Right Frontal Pole ↔ Right Frontal Pole</td>
+      <td>-1,716,334.53</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>Right Insular Cortex ↔ Right Insular Cortex</td>
+      <td>-1,614,932.57</td>
+      <td>Negative</td>
+    </tr>
+    <tr>
+      <td>Left Central Opercular Cortex ↔ Left Central Opercular Cortex</td>
+      <td>1,934,234.54</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>Right Insular Cortex ↔ Right Putamen</td>
+      <td>1,971,224.92</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>Left Thalamus ↔ Brain-Stem</td>
+      <td>2,294,358.29</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>Right Frontal Pole ↔ Right Frontal Orbital Cortex</td>
+      <td>2,565,673.40</td>
+      <td>Positive</td>
+    </tr>
+    <tr>
+      <td>Left Middle Temporal Gyrus posterior division ↔ Left Middle Temporal Gyrus posterior division</td>
+      <td>3,425,965.91</td>
+      <td>Positive</td>
+    </tr>
+  </tbody>
+</table>
+
+## References
+<a id="1">[1]</a> Chatterjee, T., Albert, R., Thapliyal, S. *et al.* Detecting network anomalies using Forman–Ricci curvature and a case study for human brain networks. *Sci Rep* **11**, 8121 (2021). https://doi.org/10.1038/s41598-021-87587-z
+
+## 👥 Collaborators
+
+* Dr. Tanima Chatterjee (Boston University)

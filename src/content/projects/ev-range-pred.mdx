@@ -1,0 +1,846 @@
+---
+title: "Electric Vehicle Range Prediction"
+cover: "../../assets/images/projects/ev-range-pred/thumbnail.gif"
+githubUrl: "https://github.com/lavaman131/EV_range_prediction/tree/main"
+---
+
+import { Image } from "astro:assets";
+import outliers from "../../assets/images/projects/ev-range-pred/report/outliers.png";
+import outliersResidual from "../../assets/images/projects/ev-range-pred/report/outliers_residual.png";
+import quantile from "../../assets/images/projects/ev-range-pred/report/quantile.png";
+import transforms from "../../assets/images/projects/ev-range-pred/report/transforms.png";
+import corr from "../../assets/images/projects/ev-range-pred/report/corr.png";
+
+## Introduction
+
+In recent years, more and more people are buying Electrical Vehicles
+(EVs) for environmental, aesthetic, and financial reasons. The number of
+car companies inventing EVs for their brand are increasing. Companies
+such as Tesla, Ford, and Rivian are taking advantage of this move toward
+EVs. The goal of our project is to examine just how much the range of
+EVs changes due to other factors such as battery pack. In this paper we
+analyze the relation between the range and other variables such as
+acceleration, top speed, battery pack, efficiency, fast charge and price
+in order to give us a deeper understanding of what element influences
+the range of EVs the most. Additionally, we can also see what car
+manufacturers should do to improve their EVs, and provide useful data
+for car companies.
+
+
+## Background
+
+### Dataset
+
+Divyanshu Gupta, Kaggle (2021), Cars Dataset with Battery Capacity Data File. Retrieved from [Kaggle](https://www.kaggle.com/datasets/divyanshugupta95/cars-dataset-with-battery-pack-capacity).
+
+### Data Collection Method
+
+The data was collected from different companies such as Tesla, Porsche,
+BMW. The data set also gives us the specific make and model of the cars.
+The dataset contains 14 explanatory variables with 1 response variable
+and a total of 102 data points.
+
+
+## Preliminary Analysis
+
+### Hypothesized Variables That Impact Electric Vehicle Range
+
+The main covariate that we believe will have the largest impact on the
+range of an electric vehicle is battery packs in kilowatts per hour. The
+other variables that we are looking at would be acceleration, top speed,
+efficiency, how fast the car charges, and price. Qualitative variables
+would be the plug style, number of seats, power train (all wheel drive
+vs. four wheel drive), and type of car. This mix of qualitative and
+quantitative variables will allow us to give a clearer understanding of
+how different factors affect the range of EVs.
+
+
+<div className="table-auto" style={{ overflowX: 'auto' }}>
+  <table style={{ minWidth: '100%', fontSize: '0.9em' }}>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Brand</th>
+        <th>Model</th>
+        <th>AccelSec</th>
+        <th>TopSpeed_KmH</th>
+        <th>Range_Km</th>
+        <th>Battery_Pack Kwh</th>
+        <th>Efficiency_WhKm</th>
+        <th>FastCharge_KmH</th>
+        <th>RapidCharge</th>
+        <th>PowerTrain</th>
+        <th>PlugType</th>
+        <th>BodyStyle</th>
+        <th>Segment</th>
+        <th>Seats</th>
+        <th>PriceEuro</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>0</th>
+        <td>Tesla</td>
+        <td>Model 3 Long Range Dual Motor</td>
+        <td>4.6</td>
+        <td>233</td>
+        <td>460</td>
+        <td>70.0</td>
+        <td>161</td>
+        <td>940</td>
+        <td>Yes</td>
+        <td>AWD</td>
+        <td>Type 2 CCS</td>
+        <td>Sedan</td>
+        <td>D</td>
+        <td>5</td>
+        <td>55480</td>
+      </tr>
+      <tr>
+        <th>1</th>
+        <td>Volkswagen</td>
+        <td>ID.3 Pure</td>
+        <td>10.0</td>
+        <td>160</td>
+        <td>270</td>
+        <td>45.0</td>
+        <td>167</td>
+        <td>250</td>
+        <td>Yes</td>
+        <td>RWD</td>
+        <td>Type 2 CCS</td>
+        <td>Hatchback</td>
+        <td>C</td>
+        <td>5</td>
+        <td>30000</td>
+      </tr>
+      <tr>
+        <th>2</th>
+        <td>Polestar</td>
+        <td>2</td>
+        <td>4.7</td>
+        <td>210</td>
+        <td>400</td>
+        <td>75.0</td>
+        <td>181</td>
+        <td>620</td>
+        <td>Yes</td>
+        <td>AWD</td>
+        <td>Type 2 CCS</td>
+        <td>Liftback</td>
+        <td>D</td>
+        <td>5</td>
+        <td>56440</td>
+      </tr>
+      <tr>
+        <th>3</th>
+        <td>BMW</td>
+        <td>iX3</td>
+        <td>6.8</td>
+        <td>180</td>
+        <td>360</td>
+        <td>74.0</td>
+        <td>206</td>
+        <td>560</td>
+        <td>Yes</td>
+        <td>RWD</td>
+        <td>Type 2 CCS</td>
+        <td>SUV</td>
+        <td>D</td>
+        <td>5</td>
+        <td>68040</td>
+      </tr>
+      <tr>
+        <th>4</th>
+        <td>Honda</td>
+        <td>e</td>
+        <td>9.5</td>
+        <td>145</td>
+        <td>170</td>
+        <td>28.5</td>
+        <td>168</td>
+        <td>190</td>
+        <td>Yes</td>
+        <td>RWD</td>
+        <td>Type 2 CCS</td>
+        <td>Hatchback</td>
+        <td>B</td>
+        <td>4</td>
+        <td>32997</td>
+      </tr>
+      <tr>
+        <th>...</th>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+      </tr>
+      <tr>
+        <th>97</th>
+        <td>Nissan</td>
+        <td>Ariya 63kWh</td>
+        <td>7.5</td>
+        <td>160</td>
+        <td>330</td>
+        <td>63.0</td>
+        <td>191</td>
+        <td>440</td>
+        <td>Yes</td>
+        <td>FWD</td>
+        <td>Type 2 CCS</td>
+        <td>Hatchback</td>
+        <td>C</td>
+        <td>5</td>
+        <td>45000</td>
+      </tr>
+      <tr>
+        <th>98</th>
+        <td>Audi</td>
+        <td>e-tron S Sportback 55 quattro</td>
+        <td>4.5</td>
+        <td>210</td>
+        <td>335</td>
+        <td>86.5</td>
+        <td>258</td>
+        <td>540</td>
+        <td>Yes</td>
+        <td>AWD</td>
+        <td>Type 2 CCS</td>
+        <td>SUV</td>
+        <td>E</td>
+        <td>5</td>
+        <td>96050</td>
+      </tr>
+      <tr>
+        <th>99</th>
+        <td>Nissan</td>
+        <td>Ariya e-4ORCE 63kWh</td>
+        <td>5.9</td>
+        <td>200</td>
+        <td>325</td>
+        <td>63.0</td>
+        <td>194</td>
+        <td>440</td>
+        <td>Yes</td>
+        <td>AWD</td>
+        <td>Type 2 CCS</td>
+        <td>Hatchback</td>
+        <td>C</td>
+        <td>5</td>
+        <td>50000</td>
+      </tr>
+      <tr>
+        <th>100</th>
+        <td>Nissan</td>
+        <td>Ariya e-4ORCE 87kWh Performance</td>
+        <td>5.1</td>
+        <td>200</td>
+        <td>375</td>
+        <td>87.0</td>
+        <td>232</td>
+        <td>450</td>
+        <td>Yes</td>
+        <td>AWD</td>
+        <td>Type 2 CCS</td>
+        <td>Hatchback</td>
+        <td>C</td>
+        <td>5</td>
+        <td>65000</td>
+      </tr>
+      <tr>
+        <th>101</th>
+        <td>Byton</td>
+        <td>M-Byte 95 kWh 2WD</td>
+        <td>7.5</td>
+        <td>190</td>
+        <td>400</td>
+        <td>95.0</td>
+        <td>238</td>
+        <td>480</td>
+        <td>Yes</td>
+        <td>AWD</td>
+        <td>Type 2 CCS</td>
+        <td>SUV</td>
+        <td>E</td>
+        <td>5</td>
+        <td>62000</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+### Exploring Influence of Outliers
+
+We tested different outlier removal methods such as taking away data
+that was two and three standard deviations away from mean. Figure 1
+compares the linear relationship of covariates against Range_Km with and
+without outliers respectively:
+
+<Image src={outliers} alt="outliers" />
+
+After analyzing the best-fit lines with and without outliers we went on
+to analyze the corresponding residual plots. Figure 2 compares the
+residual plots of covariates against Range_Km with and without outliers
+respectively:
+
+<Image src={outliersResidual} alt="outliersResidual" />
+
+We found a minimal difference in the strength of the linear relationship
+(measured with $R^2$) between the covariates and response variable when
+filtering outliers. Additionally, our dataset is relatively small with
+102 samples. For these reasons, we decided not to remove outliers for
+further stages of our analysis.
+
+<figure>
+  <table className="table-auto">
+    <thead>
+      <tr>
+        <th>Covariate</th>
+        <th>R² Before</th>
+        <th>R² After</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>AccelSec</td>
+        <td>0.46</td>
+        <td>0.522</td>
+      </tr>
+      <tr>
+        <td>TopSpeed_KmH</td>
+        <td>0.56</td>
+        <td>0.463</td>
+      </tr>
+      <tr>
+        <td>Battery_Pack Kwh</td>
+        <td>0.829</td>
+        <td>0.753</td>
+      </tr>
+      <tr>
+        <td>Efficiency_WhKm</td>
+        <td>0.098</td>
+        <td>0.068</td>
+      </tr>
+      <tr>
+        <td>FastCharge_KmH</td>
+        <td>0.569</td>
+        <td>0.6</td>
+      </tr>
+      <tr>
+        <td>PriceEuro</td>
+        <td>0.458</td>
+        <td>0.411</td>
+      </tr>
+    </tbody>
+  </table>
+  <figcaption className="text-center mt-2 text-sm italic">
+    Table 1
+  </figcaption>
+  </figure>
+
+### Normal Quantile Plot
+
+In order to verify one of the central assumptions of linear regression,
+normally distributed residuals, we created a Q-Q plot in Figure 3 for
+all of our covariates to observe that this assumption holds true for
+most of our covariates.
+
+<Image src={quantile} alt="normalQuantile" />
+
+## Transformations
+
+Analyzing most of the residuals we can see that most of them are random,
+normally distributed, independent, and show homoscedasticity. However,
+these conditions are not met for the covariates Battery pack and Price
+in Euro. For this reason, we decided that it is important to transform
+Battery pack and Price in Euro.
+
+We tested two conventional transformations. First, we applied square
+root transformations on Battery pack and Price in Euro. Next, we applied
+log transformations to the two covariates. We determined that the log
+transformations led to a stronger linear relationship ($R^2$) so our
+final transformation was a log transform on Battery Pack and Price.
+Figure 4 shows the improved residual plots after the log transformation:
+
+<Image src={transforms} alt="transforms" />
+
+<figure>
+  <table className="table-auto">
+    <thead>
+      <tr>
+        <th>Covariate</th>
+        <th>R² Before</th>
+        <th>R² After</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>AccelSec</td>
+        <td>0.46</td>
+        <td>0.539</td>
+      </tr>
+      <tr>
+        <td>TopSpeed_KmH</td>
+        <td>0.56</td>
+        <td>0.552</td>
+      </tr>
+      <tr>
+        <td>Battery_Pack Kwh</td>
+        <td>0.829</td>
+        <td>0.768</td>
+      </tr>
+      <tr>
+        <td>Efficiency_WhKm</td>
+        <td>0.098</td>
+        <td>0.087</td>
+      </tr>
+      <tr>
+        <td>FastCharge_KmH</td>
+        <td>0.569</td>
+        <td>0.187</td>
+      </tr>
+      <tr>
+        <td>PriceEuro</td>
+        <td>0.458</td>
+        <td>0.529</td>
+      </tr>
+    </tbody>
+  </table>
+  <figcaption className="text-center mt-2 text-sm italic">
+    Table 2
+  </figcaption>
+</figure>
+
+## Main Results
+
+### Multicollinearity
+
+We created a correlation coefficient matrix (Figure 5) in order to test
+for multicollinearity within our covariates. Range was highly correlated
+with all of our covariates which is a good sign that our model is
+predictive of range. We noticed that acceleration has a negative
+correlation with most of the other variables including range. The
+efficiency coefficient had the lowest correlation coefficient with range
+at 0.48. There is high correlation between price and our other
+covariates, and we believe there is evidence of multicollinearity
+because of the high correlation coefficient. Removing price may reduce
+the multicollinearity issues we encounter. It may be best to use a
+stepwise forward regression, to allow the model to remove covariates
+that are causing multicollinearity.
+
+<Image src={corr} alt="correlation" />
+
+With the covariates that remained after feature selection, we measured multicollinearity using the variance inflation factor (VIF) given by:
+
+$$
+VIF_i = \frac{1}{1 - {R_i}^2}
+$$
+
+The result (Table 3) shows that all of the selected covariates are below 5, which means that they will not have multicollinearity. The variable TopSpeed is less significant than the other covariates, but because it is significant at the 5% level and has a VIF level below 10, we believe it should still be included for analysis.
+
+<figure>
+  <table className="table-auto">
+    <thead>
+      <tr>
+      <th>Term</th>
+      <th>Estimate</th>
+      <th>Std Error</th>
+      <th>t Ratio</th>
+      <th>Prob > |t|</th>
+      <th>VIF</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Intercept</td>
+      <td>-511.9363</td>
+      <td>34.95776</td>
+      <td>-14.64</td>
+      <td>&lt; .0001*</td>
+      <td>.</td>
+    </tr>
+    <tr>
+      <td>TopSpeed_KmH</td>
+      <td>0.4494041</td>
+      <td>0.175015</td>
+      <td>2.57</td>
+      <td>0.0120*</td>
+      <td>1.9033032</td>
+    </tr>
+    <tr>
+      <td>Log(Battery_Pack KWh)</td>
+      <td>235.09752</td>
+      <td>14.19828</td>
+      <td>16.56</td>
+      <td>&lt; .0001*</td>
+      <td>2.7759986</td>
+    </tr>
+    <tr>
+      <td>Efficiency_WhKm</td>
+      <td>-1.013424</td>
+      <td>0.184575</td>
+      <td>-5.49</td>
+      <td>&lt; .0001*</td>
+      <td>1.8698509</td>
+    </tr>
+    </tbody>
+  </table>
+  <figcaption className="text-center mt-2 text-sm italic">
+    Table 3
+  </figcaption>
+</figure>
+
+### Variable Selection
+
+
+<figure>
+  <table className="table-auto">
+    <thead>
+      <tr>
+        <th>Method</th>
+        <th>Prob to enter/leave</th>
+        <th>Equation</th>
+        <th>Adjusted R²</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Forward Selection</td>
+        <td>PE: 0.25<br/>PL: 0.1</td>
+        <td>$\hat{y} = -909.39 + 0.29x_1 + 39.04x_2 - 2.08x_3 + 288.90x_4 - 28.80x_5 + 8.22x_6 - 45.13x_7 - 52.62x_8 + 70.71x_9 + 43.78x_{10}$</td>
+        <td>0.941</td>
+      </tr>
+      <tr>
+        <td>Backward Elimination</td>
+        <td>PE: 0.25<br/>PL: 0.1</td>
+        <td>$\hat{y} = -909.39 + 0.29x_1 + 39.04x_2 - 2.08x_3 + 288.90x_4 - 28.80x_5 + 8.22x_6 - 45.13x_7 - 52.62x_8 + 70.71x_9 + 43.78x_{10}$</td>
+        <td>0.941</td>
+      </tr>
+      <tr>
+        <td>Mixed</td>
+        <td>PE: 0.25<br/>PL:0.25</td>
+        <td>$\hat{y} = -909.39 + 0.29x_1 + 39.04x_2 - 2.08x_3 + 288.90x_4 - 28.80x_5 + 8.22x_6 - 45.13x_7 - 52.62x_8 + 70.71x_9 + 43.78x_{10}$</td>
+        <td>0.941</td>
+      </tr>
+      <tr>
+        <td>AICC</td>
+        <td>N/A</td>
+        <td>$\hat{y} = -909.39 + 0.29x_1 + 39.04x_2 - 2.08x_3 + 288.90x_4 - 28.80x_5 + 8.22x_6 - 45.13x_7 - 52.62x_8 + 70.71x_9 + 43.78x_{10}$</td>
+        <td>0.941</td>
+      </tr>
+      <tr>
+        <td>BIC</td>
+        <td>N/A</td>
+        <td>$\hat{y} = -909.39 + 0.29x_1 + 39.04x_2 - 2.08x_3 + 288.90x_4 - 28.80x_5 + 8.22x_6 - 45.13x_7 - 52.62x_8 + 70.71x_9 + 43.78x_{10}$</td>
+        <td>0.941</td>
+      </tr>
+    </tbody>
+  </table>
+  <figcaption className="text-center mt-2 text-sm italic">
+    Table 4
+  </figcaption>
+</figure>
+
+
+### Model Fit
+
+The transformations that we included in our model included the log of
+price and log of battery pack. We achieved a perfect ${R_a}^2$ value and
+realized that the car Model and brand covariate had a high cardinality
+(factor levels were equal to the number of data points in this case),
+hence, causing overfitting (over-generalization) of the fitted model.
+For this reason, we removed the a Model and brand covariate and were
+left with a much more applicable adjusted ${R_a}^2$ and low RMSE that
+predicts range.
+
+<figure>
+  <table className="table-auto">
+    <thead>
+      <tr>
+        <th colSpan="2">Summary of Fit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>RSquare</td>
+        <td>0.954078</td>
+      </tr>
+      <tr>
+        <td>RSquare Adj</td>
+        <td>0.949031</td>
+      </tr>
+      <tr>
+        <td>Root Mean Square Error</td>
+        <td>28.60422</td>
+      </tr>
+      <tr>
+        <td>Mean of Response</td>
+        <td>338.6275</td>
+      </tr>
+      <tr>
+        <td>Observations (or Sum Wgts)</td>
+        <td>102</td>
+      </tr>
+    </tbody>
+  </table>
+  <figcaption className="text-center mt-2 text-sm italic">
+    Table 5
+  </figcaption>
+</figure>
+
+<figure>
+  <table className="table-auto">
+  <thead>
+    <tr>
+      <th>Source</th>
+      <th>DF</th>
+      <th>Sum of Squares</th>
+      <th>Mean Square</th>
+      <th>F Ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Model</td>
+      <td>10</td>
+      <td>1546901.5</td>
+      <td>154690</td>
+      <td>189.0612</td>
+    </tr>
+    <tr>
+      <td>Error</td>
+      <td>91</td>
+      <td>74456.3</td>
+      <td>818</td>
+      <td>Prob > F</td>
+    </tr>
+    <tr>
+      <td>C. Total</td>
+      <td>101</td>
+      <td>1621357.8</td>
+      <td></td>
+      <td>&lt;.0001*</td>
+    </tr>
+    </tbody>
+  </table>
+  <figcaption className="text-center mt-2 text-sm italic">
+    Table 6
+  </figcaption>
+</figure>
+
+<figure>
+  <table className="table-auto">
+    <tr>
+      <th>Term</th>
+      <th>Estimate</th>
+      <th>Std Error</th>
+      <th>t Ratio</th>
+      <th>Prob &gt; |t|</th>
+    </tr>
+    <tr>
+      <th>Intercept</th>
+      <td>-909.3919</td>
+      <td>117.3835</td>
+      <td>-7.75</td>
+      <td>{'<'} .0001</td>
+    </tr>
+    <tr>
+      <th>TopSpeed_KmH</th>
+      <td>0.2942874</td>
+      <td>0.140142</td>
+      <td>2.10</td>
+      <td>0.0385</td>
+    </tr>
+    <tr>
+      <th>RapidCharge[No]</th>
+      <td>39.042448</td>
+      <td>8.552891</td>
+      <td>4.56</td>
+      <td>{'<'} .0001</td>
+    </tr>
+    <tr>
+      <th>Efficiency_WhKm</th>
+      <td>-2.078849</td>
+      <td>0.161668</td>
+      <td>-12.86</td>
+      <td>{'<'} .0001</td>
+    </tr>
+    <tr>
+      <th>Log(Battery_Pack Kwh)</th>
+      <td>288.89749</td>
+      <td>14.30833</td>
+      <td>20.19</td>
+      <td>{'<'} .0001*</td>
+    </tr>
+    <tr>
+      <th>BodyStyle{'{'}SPV&Hatchback&MPV&SUV-Station&Sedan&Cabrio&Liftback&Pickup{'}'}</th>
+      <td>-28.80209</td>
+      <td>5.374477</td>
+      <td>-5.36</td>
+      <td>{'<'} .0001*</td>
+    </tr>
+    <tr>
+      <th>BodyStyle{'{'}SPV&Hatchback-MPV&SUV{'}'}</th>
+      <td>8.2153396</td>
+      <td>3.623798</td>
+      <td>2.27</td>
+      <td>0.0258</td>
+    </tr>
+    <tr>
+      <th>BodyStyle{'{'}Station&Sedan&Cabrio&Liftback-Pickup{'}'}</th>
+      <td>-45.12672</td>
+      <td>12.9488</td>
+      <td>-3.49</td>
+      <td>0.0008*</td>
+    </tr>
+    <tr>
+      <th>BodyStyle{'{'}Station&Sedan-Cabrio&Liftback{'}'}</th>
+      <td>-52.61664</td>
+      <td>6.97113</td>
+      <td>-7.55</td>
+      <td>{'<'} .0001*</td>
+    </tr>
+    <tr>
+      <th>BodyStyle{'{'}Cabriolet-Liftback{'}'}</th>
+      <td>70.712853</td>
+      <td>11.46589</td>
+      <td>6.17</td>
+      <td>{'<'} .0001*</td>
+    </tr>
+    <tr>
+      <th>Log(PriceEuro)</th>
+      <td>43.782414</td>
+      <td>14.52427</td>
+      <td>3.01</td>
+      <td>0.0033*</td>
+    </tr>
+  </table>
+  <figcaption className="text-center mt-2 text-sm italic">
+    Table 7
+  </figcaption>
+</figure>
+
+
+
+After we used forward selection as our variable selection method and set
+p-value enter is 0.25 and p-value leave as 0.1, we determined our final
+model to be as follows:
+
+$$
+\begin{aligned}
+\hat{y} = & -909.39 + 0.29x_1 + 39.04x_2 - 2.08x_3 + 288.90x_4 \\
+& - 28.80x_5 + 8.22x_6 - 45.13x_7 - 52.62x_8 \\
+& + 70.71x_9 + 43.78x_{10}
+\end{aligned}
+$$
+
+where $x_i$ are listed in the table below:
+
+<figure>
+  <table className="table-auto">
+    <tbody>
+    <tr>
+      <td>$x_1$</td>
+      <td>Topspeed_KmH</td>
+    </tr>
+    <tr>
+      <td>$x_2$</td>
+      <td>Rapid Charge</td>
+    </tr>
+    <tr>
+      <td>$x_3$</td>
+      <td>Efficiency_WhKm</td>
+    </tr>
+    <tr>
+      <td>$x_4$</td>
+      <td>log(Battery_Pack Kwh)</td>
+    </tr>
+    <tr>
+      <td>$x_5$</td>
+      <td>BodyStyle{'{'}SPV&Hatchback&MPV&SUV–<br/>Station&Sedan&Cabriolet&Lift back&Pickup{'}'}</td>
+    </tr>
+    <tr>
+      <td>$x_6$</td>
+      <td>BodyStyle{'{'}SPV&Hatchback–MPV&SUV{'}'}</td>
+    </tr>
+    <tr>
+      <td>$x_7$</td>
+      <td>BodyStyle{'{'}Station&Sedan&Cabriolet&Lift<br/>back–Pickup{'}'}</td>
+    </tr>
+    <tr>
+      <td>$x_8$</td>
+      <td>BodyStyle{'{'}Station&Sedan–Cabriolet&Lift<br/>back{'}'}</td>
+    </tr>
+    <tr>
+      <td>$x_9$</td>
+      <td>BodyStyle{'{'}Cabriolet–Lift back{'}'}</td>
+    </tr>
+    <tr>
+      <td>$x_{10}$</td>
+      <td>log(PriceEuro)</td>
+      </tr>
+    </tbody>
+  </table>
+  <figcaption className="text-center mt-2 text-sm italic">
+    Table 8
+  </figcaption>
+</figure>
+
+We found our final model to be adequate as it had a high ${R_a}^2$ and
+all of the covariates we found were significant at the $\alpha = 0.05$
+level. The reason we used forward selection is to remove the issue of
+multicollinearity and it was the simplest and easiest model. Figure 9
+shows the performance of our model. Some points to highlight are that
+our model's ${R_a}^2$ is 0.949, has a statistically significant $F$
+statistic of 189.061 in the ANOVA test.
+
+### Model Interpretation
+
+There is a natural interpretation of the covariates in that each one
+shows us how much they affect the range of EVs. The data we got shows
+that the battery pack does affect the range the most. Other than the
+powertrain covariate, all of the data was significant at the 5% level of
+significance. We found how the different body styles of cars can affect
+the range as well.
+
+
+## Conclusion
+
+Based on the results of our model we can see that there is a strong
+positive correlation between battery pack and range. This can help
+consumers and car manufacturers when designing new EVs to create larger
+battery packs and understand that with the combination of Bodystyle we
+can see which are the best cars for range. For example, Cabrio or
+convertibles and hatchbacks have the greatest impact on range with their
+coefficient being 42. SUVs and pickup trucks for example have a negative
+effect on range.
+
+Another interesting covariate we found was how rapid charge effects
+range, with it being the third largest $\beta$ that we found. This makes
+sense as charging cars will lead to more range for the car, it could
+make the car more efficient. The price was also another factor that
+impacts range, one that makes sense as price increases, the technology
+and range of the EV increases as well. Our model allows car
+manufacturers, consumers, and investors to understand the factors of EVs
+that most affect range allowing for better improvement of EVs for the
+future, improving the environment and lowering the market for gas
+powered vehicles.
+
+## 👥 Collaborators
+
+* Yuhang Du (Boston University)
+* Matthew George (Boston University)
+* Xiangru He (Boston University)
+* Yujie Yang (Boston University)
