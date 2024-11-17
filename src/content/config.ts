@@ -8,6 +8,7 @@ const projectsCollection = defineCollection({
       authors: z.string().optional(),
       source: z.string().optional(),
       githubUrl: z.string().optional(),
+      paperUrl: z.string().optional(),
   }),
 });
 

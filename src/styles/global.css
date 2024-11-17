@@ -245,4 +245,18 @@
     td, th {
         padding: 0.75rem;
     }
+
+    @keyframes slideAnimation {
+        0%,
+    100% {
+      transform: translateX(-10px);
+    }
+    50% {
+      transform: translateX(10px);
+    }
+  }
+
+  .slide-animation {
+    animation: slideAnimation 1.5s ease-in-out;
+    }
 }

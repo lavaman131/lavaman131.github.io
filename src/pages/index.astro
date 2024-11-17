@@ -2,10 +2,15 @@
 import Layout from "../layouts/Layout.astro";
 import { SITE_TITLE } from "../config";
 import AboutMe from "../components/AboutMe.astro";
+import Achievements from "../components/Achievements.astro";
 ---
 
 <Layout title={`${SITE_TITLE}`}>
   <Fragment slot="main">
-    <AboutMe />
+    <div
+      class="flex-1 grid place-items-center min-h-[calc(100vh-var(--navbar-height)-60px)]"
+    >
+      <AboutMe />
+    </div>
   </Fragment>
 </Layout>

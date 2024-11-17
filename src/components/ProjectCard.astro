@@ -10,9 +10,10 @@ interface Props {
   authors?: string;
   source?: string;
   githubUrl?: string;
+  paperUrl?: string;
 }
 
-const { href, title, image, githubUrl = `${SITE_URL}/404` } = Astro.props;
+const { href, title, image, githubUrl, paperUrl } = Astro.props;
 ---
 
 <li
@@ -33,9 +34,11 @@ const { href, title, image, githubUrl = `${SITE_URL}/404` } = Astro.props;
         />
       </div>
     </div>
-    <div class="p-2 2xl:p-3 flex flex-col gap-1 2xl:gap-2">
+    <div
+      class="p-2 2xl:p-3 flex flex-col flex-1 justify-center gap-1 2xl:gap-2"
+    >
       <h2
-        class="text-lg 2xl:text-xl font-bold leading-tight m-0 text-[#4c4f69] dark:text-[#cdd6f4]"
+        class="text-center text-lg 2xl:text-xl font-bold leading-tight m-0 text-[#4c4f69] dark:text-[#cdd6f4]"
       >
         {title}
       </h2>
@@ -50,6 +53,18 @@ const { href, title, image, githubUrl = `${SITE_URL}/404` } = Astro.props;
         >
           <Icon name="fa-brands:github" class="w-4 h-4" />
         </a>
+        {
+          paperUrl && (
+            <a
+              href={paperUrl}
+              class="inline-flex items-center unset hover:text-[#fe640b] dark:hover:text-[#f9e2af] transition-colors duration-200"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon name="fa-solid:file-pdf" class="w-4 h-4" />
+            </a>
+          )
+        }
       </div>
     </div>
   </a>

@@ -102,7 +102,7 @@ const { frontmatter } = Astro.props;
 
           {
             frontmatter.githubUrl && (
-              <div class="mt-8">
+              <div class="mt-8 mb-8">
                 <h2 class="mb-4">Code Availability</h2>
                 <a
                   href={frontmatter.githubUrl}
@@ -112,6 +112,22 @@ const { frontmatter } = Astro.props;
                 >
                   <Icon name="fa-brands:github" class="w-5 h-5" />
                   View on GitHub
+                </a>
+              </div>
+            )
+          }
+          {
+            frontmatter.paperUrl && (
+              <div class="mt-8 mb-8">
+                <h2 class="mb-4">Paper</h2>
+                <a
+                  href={frontmatter.paperUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="unset cursor-pointer inline-flex items-center gap-2 px-4 py-2 text-sm font-medium var(--theme-text) bg-[--theme-bg] border border-[--theme-divider] rounded-lg hover:bg-[--theme-bg-hover] hover:text-[--theme-text] focus:outline-none transition-all duration-300 transform hover:scale-105"
+                >
+                  <Icon name="fa-solid:file-pdf" class="w-5 h-5" />
+                  View Paper
                 </a>
               </div>
             )

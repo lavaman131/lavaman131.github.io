@@ -64,7 +64,9 @@ const { title } = Astro.props;
         codeBlock.setAttribute("tabindex", "0");
         codeBlock.appendChild(copyButton);
         // wrap codebock with relative parent element
-        codeBlock.parentNode.insertBefore(wrapper, codeBlock);
+        if (codeBlock.parentNode) {
+          codeBlock.parentNode.insertBefore(wrapper, codeBlock);
+        }
         wrapper.appendChild(codeBlock);
 
         copyButton.addEventListener("click", async () => {
@@ -72,9 +74,9 @@ const { title } = Astro.props;
         });
       }
 
-      async function copyCode(block, button) {
+      async function copyCode(block: HTMLElement, button: HTMLButtonElement) {
         let code = block.querySelector("code");
-        let text = code.innerText;
+        let text = code?.innerText || "";
 
         await navigator.clipboard.writeText(text);
 
@@ -91,7 +93,7 @@ const { title } = Astro.props;
     <Navigation />
     <main
       id="main"
-      class="flex-1 mt-16 sm:mt-20 flex flex-col px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full"
+      class="flex-1 flex flex-col px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full mt-[var(--navbar-height)]"
     >
       <slot name="main" />
     </main>
