@@ -57,8 +57,12 @@
     const themeColorMetaTag = document.head.querySelector(
       'meta[name="theme-color"]'
     );
-    const darkSyntaxTheme = document.querySelector("#prism-dark");
-    const lightSyntaxTheme = document.querySelector("#prism-light");
+    const darkSyntaxTheme = document.querySelector(
+      "#prism-dark"
+    ) as HTMLLinkElement;
+    const lightSyntaxTheme = document.querySelector(
+      "#prism-light"
+    ) as HTMLLinkElement;
 
     if (mode === "dark") {
       document.documentElement.classList.remove("light");
