@@ -26,7 +26,7 @@ import { LINKEDIN_HANDLE } from "../config";
   <div
     class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 flex-1"
   >
-    <div class="w-full max-w-[400px] flex flex-col items-center">
+    <div class="w-full max-w-sm flex flex-col items-center">
       <div class="w-full flex-col justify-center">
         <ImageComparisonSlider
           baseImageSrc={baseImage}
@@ -49,7 +49,7 @@ import { LINKEDIN_HANDLE } from "../config";
     </div>
 
     <div
-      class="w-full max-w-[640px] lg:max-w-[500px] mx-auto flex flex-col gap-6 text-center lg:text-left"
+      class="w-full max-w-xl lg:max-w-lg mx-auto flex flex-col gap-6 text-center lg:text-left overflow-y-auto max-h-[600px] px-4 py-2 custom-scrollbar"
     >
       <p class="text-base sm:text-lg leading-relaxed">
         Hey there! 👋🏼 I'm Alex, a data science undergrad @ BU. I'm currently an
@@ -68,10 +68,9 @@ import { LINKEDIN_HANDLE } from "../config";
         model for understanding human motion. 🏃🏼‍♂️
       </p>
       <p class="text-base sm:text-lg leading-relaxed">
-        My broad research interest encompasses using self-supervised techniques
-        to learn accurate representations of the world, reconstructing 3D
-        structures, materials, and semantic meaning from visual input such as
-        videos. 🎥
+        Broadly, I'm interested in developing universal self-supervised learning
+        approaches that discover meaningful patterns across different visual
+        domains. 👁️
       </p>
       <p class="text-base sm:text-lg leading-relaxed">
         Previously, I interned as a SWE, MLE, and data scientist at Microsoft,

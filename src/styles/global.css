@@ -335,3 +335,39 @@ footer {
     --navbar-height: 5rem; /* 80px */
   }
 }
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: rgb(254 215 170 / 0.8);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom right, #fb923c, #f97316, #ea580c);
+    border-radius: 100vh;
+    border: 3.5px solid rgb(254 215 170 / 0.8);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #ea580c;
+  }
+
+  /* Dark mode styles */
+  .dark .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgb(49 50 68 / 1);
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-primary-main));
+    border: 3.5px solid rgb(49 50 68 / 1);
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgb(245 199 71);
+  }
+}
