@@ -202,9 +202,12 @@
     padding: 1.5rem 1rem 1rem 1rem !important;
     margin: 1rem 0 !important;
     border-radius: 0.5rem !important;
-    overflow: auto !important;
+    /* overflow: auto !important; */ /* Remove or comment out this line */
     background-color: theme("colors.bg.code");
     border: 1px solid theme("colors.border.code");
+    /* Add wrapping properties */
+    white-space: pre-wrap !important;       
+    overflow-wrap: break-word !important; 
   }
 
   /* Add inline code styling */
