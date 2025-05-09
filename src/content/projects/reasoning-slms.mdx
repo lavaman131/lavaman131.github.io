@@ -12,7 +12,7 @@ import check_answer from "../../assets/images/projects/reasoning-slms/report/che
 
 ## Introduction
 
-Over the past year, we’ve seen reinforcement-learning-based fine-tuning methods supercharge large language models (LLMs), giving them the ability to “think through” problems step by step. Proximal Policy Optimization (PPO) got us started, then DeepSeek’s Group Relative Policy Optimization (GRPO) showed how you can skip a heavyweight critic network by comparing groups of sampled outputs. Building on that, **Decoupled Clip and Dynamic Sampling Policy Optimization (DAPO)** took things further with:
+Over the past year, we've seen reinforcement-learning-based fine-tuning methods supercharge large language models (LLMs), giving them the ability to “think through” problems step by step. Proximal Policy Optimization (PPO) got us started, then DeepSeek's Group Relative Policy Optimization (GRPO) showed how you can skip a heavyweight critic network by comparing groups of sampled outputs. Building on that, **Decoupled Clip and Dynamic Sampling Policy Optimization (DAPO)** took things further with:
 
 * **Clip-Higher Strategy**: separate clipping thresholds for “too small” and “too large” policy updates
 * **Dynamic Sampling**: drop prompts that give no learning signal (all-correct or all-wrong)
@@ -302,12 +302,12 @@ We also observed that mixed-precision (bfloat16 vs. fp16) and attention implemen
 
 ## Conclusion & Future Work
 
-* **Small-scale DAPO** isn’t just a “big-model only” party. With the right subset of techniques (Dr. GRPO, overlong filtering, no KL/reg scaling), you can teach a 0.5B-parameter model to reason effectively.
+* **Small-scale DAPO** isn't just a "big-model only" party. With the right subset of techniques (Dr. GRPO, overlong filtering, no KL/reg scaling), you can teach a 0.5B-parameter model to reason effectively.
 * **Next steps**: compare against [Group Policy Gradient (GPG)](https://arxiv.org/abs/2504.02546), a minimal RL objective for LLMs, and explore curriculum scheduling on prompt difficulty.
 
 ---
 
-Feel free to clone, tinker, and let us know what works—or doesn’t—at small scale!
+Feel free to clone, tinker, and let us know what works—or doesn't—at small scale!
 
 
 ## 👥 Collaborators
