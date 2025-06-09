@@ -16,56 +16,75 @@ interface Props {
 const { href, title, image, githubUrl, paperUrl } = Astro.props;
 ---
 
-<li
-  class="group h-full flex flex-col overflow-hidden bg-[#eff1f5] dark:bg-[#1e1e2e] rounded-lg border border-[#ccd0da] dark:border-[#313244] hover:border-[#fe640b] dark:hover:border-[#f9e2af] transition-colors duration-200"
+<div
+  class="group h-full flex flex-col bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
 >
   <a
     href={href}
-    class="unset flex flex-col h-full text-[#4c4f69] dark:text-[#cdd6f4] p-2 2xl:p-3"
+    class="flex flex-col h-full text-gray-900 dark:text-white no-underline"
   >
-    <div class="w-full aspect-[16/9]">
+    <!-- Image Container -->
+    <div class="relative w-full aspect-[16/10] overflow-hidden">
+      <Image
+        src={image}
+        alt={title}
+        class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+      />
+      <!-- Gradient overlay for better text readability -->
       <div
-        class="relative w-full h-full bg-[#e6e9ef] dark:bg-[#181825] rounded-md overflow-hidden"
+        class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
       >
-        <Image
-          src={image}
-          alt={title}
-          class="absolute inset-0 w-full h-full object-cover object-top"
-        />
       </div>
     </div>
-    <div
-      class="p-2 2xl:p-3 flex flex-col flex-1 justify-center gap-1 2xl:gap-2"
-    >
-      <h2
-        class="text-center text-lg 2xl:text-xl font-bold leading-tight m-0 text-[#4c4f69] dark:text-[#cdd6f4]"
+
+    <!-- Content Container -->
+    <div class="flex flex-col flex-1 p-6 space-y-4">
+      <h3
+        class="text-sm lg:text-base font-semibold text-gray-900 dark:text-white leading-tight line-clamp-2"
       >
         {title}
-      </h2>
-      <div
-        class="flex items-center justify-end gap-2 text-xs 2xl:text-sm text-[#6c6f85] dark:text-[#a6adc8]"
-      >
-        <a
-          href={githubUrl}
-          class="inline-flex items-center unset hover:text-[#fe640b] dark:hover:text-[#f9e2af] transition-colors duration-200"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Icon name="fa-brands:github" class="w-4 h-4" />
-        </a>
+      </h3>
+
+      <!-- Action Links -->
+      <div class="flex items-center justify-end gap-4 mt-auto pt-2">
+        {
+          githubUrl && (
+            <a
+              href={githubUrl}
+              class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200 no-underline"
+              target="_blank"
+              rel="noopener noreferrer"
+              onclick="event.stopPropagation()"
+            >
+              <Icon name="fa-brands:github" class="w-5 h-5" />
+              <span class="text-sm font-medium">Code</span>
+            </a>
+          )
+        }
         {
           paperUrl && (
             <a
               href={paperUrl}
-              class="inline-flex items-center unset hover:text-[#fe640b] dark:hover:text-[#f9e2af] transition-colors duration-200"
+              class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200 no-underline"
               target="_blank"
               rel="noopener noreferrer"
+              onclick="event.stopPropagation()"
             >
-              <Icon name="fa-solid:file-pdf" class="w-4 h-4" />
+              <Icon name="fa-solid:file-pdf" class="w-5 h-5" />
+              <span class="text-sm font-medium">Paper</span>
             </a>
           )
         }
       </div>
     </div>
   </a>
-</li>
+</div>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

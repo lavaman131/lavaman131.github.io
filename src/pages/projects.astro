@@ -10,27 +10,45 @@ allProjects.sort((a, b) => a.data.title.localeCompare(b.data.title));
 
 <Layout title={`Projects | ${SITE_TITLE}`}>
   <Fragment slot="main">
-    <div
-      class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full flex flex-col"
-    >
-      <ul
-        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-6 max-w-[2000px] mx-auto"
-      >
-        {
-          allProjects.map((project) => (
-            <ProjectCard
-              href={`/projects/${project.slug}`}
-              title={project.data.title}
-              image={project.data.cover}
-              date={project.data.date}
-              authors={project.data.authors}
-              source={project.data.source}
-              githubUrl={project.data.githubUrl}
-              paperUrl={project.data.paperUrl}
-            />
-          ))
-        }
-      </ul>
+    <div class="w-full">
+      <!-- Header Section -->
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+        <div class="text-center space-y-6">
+          <h1
+            class="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white"
+          >
+            Projects & Explorations
+          </h1>
+          <p
+            class="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed"
+          >
+            Technical blogs and deep dives into my AI/ML projects, research
+            explorations, and engineering experiments
+          </p>
+        </div>
+      </div>
+
+      <!-- Projects Grid -->
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"
+        >
+          {
+            allProjects.map((project) => (
+              <ProjectCard
+                href={`/projects/${project.slug}`}
+                title={project.data.title}
+                image={project.data.cover}
+                date={project.data.date}
+                authors={project.data.authors}
+                source={project.data.source}
+                githubUrl={project.data.githubUrl}
+                paperUrl={project.data.paperUrl}
+              />
+            ))
+          }
+        </div>
+      </div>
     </div>
   </Fragment>
 </Layout>

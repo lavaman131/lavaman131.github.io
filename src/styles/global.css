@@ -11,19 +11,19 @@
 @layer base {
   /* light theme */
   .theme-sleek {
-    /* Catppuccin Latte Peach #fe640b */
-    --color-primary-main: 254 100 11;
+    /* Blue 600 #2563eb - More subtle primary color */
+    --color-primary-main: 37 99 235;
 
     /* Catppuccin Latte Text #4c4f69 */
     --color-text-body: 76 79 105;
     /* Catppuccin Latte Text #4c4f69 */
     --color-text-heading: 76 79 105;
-    /* Catppuccin Latte Text #4c4f69 */
-    --color-text-bold: 76 79 105;
+    /* Gray 800 #1f2937 - Darker for better emphasis */
+    --color-text-bold: 31 41 55;
     /* Catppuccin Latte Subtext0 #6c6f85 */
     --color-text-muted: 108 111 133;
-    /* Catppuccin Latte Peach #fe640b */
-    --color-text-link: 254 100 11;
+    /* Blue 600 #2563eb - Professional blue for links */
+    --color-text-link: 37 99 235;
     /* Catppuccin Latte Text #4c4f69 */
     --color-text-code: 76 79 105;
     /* Catppuccin Latte Text #4c4f69 */
@@ -33,27 +33,27 @@
     --color-bg-body: 239 241 245;
     /* Catppuccin Latte Mantle #e6e9ef */
     --color-bg-code: 230 233 239;
-    /* Catppuccin Latte Peach #fe640b with reduced opacity */
-    --color-bg-selection: 254 100 11;
+    /* Blue 600 #2563eb with reduced opacity */
+    --color-bg-selection: 37 99 235;
 
     /* Catppuccin Latte Surface0 #ccd0da */
     --color-border-code: 204 208 218;
   }
   /* dark theme */
   .theme-sleek.dark {
-    /* Catppuccin Mocha Yellow #f9e2af */
-    --color-primary-main: 249 226 175;
+    /* Blue 400 #60a5fa - Subtle blue for dark mode */
+    --color-primary-main: 96 165 250;
 
     /* Catppuccin Mocha Text #cdd6f4 */
     --color-text-body: 205 214 244;
     /* Catppuccin Mocha Text #cdd6f4 */
     --color-text-heading: 205 214 244;
-    /* Catppuccin Mocha Text #cdd6f4 */
-    --color-text-bold: 205 214 244;
+    /* Gray 200 #e5e7eb - Lighter for better emphasis in dark mode */
+    --color-text-bold: 229 231 235;
     /* Catppuccin Mocha Subtext0 #a6adc8 */
     --color-text-muted: 166 173 200;
-    /* Catppuccin Mocha Yellow #f9e2af */
-    --color-text-link: 249 226 175;
+    /* Blue 400 #60a5fa - Professional blue for dark mode links */
+    --color-text-link: 96 165 250;
     /* Catppuccin Mocha Text #cdd6f4 */
     --color-text-code: 205 214 244;
     /* Catppuccin Mocha Text #cdd6f4 */
@@ -63,8 +63,8 @@
     --color-bg-body: 30 30 46;
     /* Catppuccin Mocha Mantle #181825 */
     --color-bg-code: 24 24 37;
-    /* Catppuccin Mocha Yellow #f9e2af with reduced opacity */
-    --color-bg-selection: 249 226 175;
+    /* Blue 400 #60a5fa with reduced opacity */
+    --color-bg-selection: 96 165 250;
 
     /* Catppuccin Mocha Surface0 #313244 */
     --color-border-code: 49 50 68;
@@ -109,11 +109,15 @@
   a:not(.unset) {
     text-decoration: underline;
     color: rgb(var(--color-text-link));
-    transition: opacity 0.2s ease;
+    transition: color 0.2s ease;
   }
 
   a:not(.unset):hover {
-    opacity: 0.6;
+    color: rgb(29 78 216); /* Blue 700 for light mode hover */
+  }
+
+  .dark a:not(.unset):hover {
+    color: rgb(147 197 253); /* Blue 300 for dark mode hover */
   }
 
   /* Links without href maintain body color by default */
