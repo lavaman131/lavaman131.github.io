@@ -3,121 +3,269 @@
 @tailwind utilities;
 
 /* 
-    Tailwind colors listed here: https://tailwindcss.com/docs/customizing-colors
-    
-    Why colors are written in rgb format (255 255 255) instead of hex (#ffffff)
-    https://tailwindcss.com/docs/customizing-colors#using-css-variables 
+    Sophisticated Green & Brown Theme
+    Inspired by Apple's design philosophy and Fortune 500 standards
+    Light, airy, earthy aesthetic with perfect consistency
 */
 @layer base {
-  /* light theme */
+  /* Dark theme - Deep forest with warm browns */
   .theme-sleek {
-    /* Blue 600 #2563eb - More subtle primary color */
-    --color-primary-main: 37 99 235;
+    /* Deep Forest Green #1a4d3a - Primary accent */
+    --color-primary-main: 26 77 58;
 
-    /* Catppuccin Latte Text #4c4f69 */
-    --color-text-body: 76 79 105;
-    /* Catppuccin Latte Text #4c4f69 */
-    --color-text-heading: 76 79 105;
-    /* Gray 800 #1f2937 - Darker for better emphasis */
-    --color-text-bold: 31 41 55;
-    /* Catppuccin Latte Subtext0 #6c6f85 */
-    --color-text-muted: 108 111 133;
-    /* Blue 600 #2563eb - Professional blue for links */
-    --color-text-link: 37 99 235;
-    /* Catppuccin Latte Text #4c4f69 */
-    --color-text-code: 76 79 105;
-    /* Catppuccin Latte Text #4c4f69 */
-    --color-text-selection: 76 79 105;
+    /* Warm Cream #f5f2ed - Main readable text */
+    --color-text-body: 245 242 237;
+    /* Soft Sage Green #8db3a0 - Headings */
+    --color-text-heading: 141 179 160;
+    /* Pure Cream #faf8f5 - Bold/important text */
+    --color-text-bold: 250 248 245;
+    /* Muted Sage #a3c4b0 - Muted text */
+    --color-text-muted: 163 196 176;
+    /* Warm Terracotta #c4845e - Links */
+    --color-text-link: 196 132 94;
+    /* Fresh Mint Green #7db89a - Code text */
+    --color-text-code: 125 184 154;
+    /* Warm Terracotta #c4845e - Selection text */
+    --color-text-selection: 196 132 94;
 
-    /* Catppuccin Latte Base #eff1f5 */
-    --color-bg-body: 239 241 245;
-    /* Catppuccin Latte Mantle #e6e9ef */
-    --color-bg-code: 230 233 239;
-    /* Blue 600 #2563eb with reduced opacity */
-    --color-bg-selection: 37 99 235;
+    /* Deep Forest #0f2419 - Body background */
+    --color-bg-body: 15 36 25;
+    /* Forest Green #1a3d2e - Code/card background */
+    --color-bg-code: 26 61 46;
+    /* Terracotta with opacity - Selection background */
+    --color-bg-selection: 196 132 94;
 
-    /* Catppuccin Latte Surface0 #ccd0da */
-    --color-border-code: 204 208 218;
+    /* Medium Forest #2d5a47 - Borders */
+    --color-border-code: 45 90 71;
   }
-  /* dark theme */
+  
+  /* Light theme - Soft sage with light green text */
   .theme-sleek.dark {
-    /* Blue 400 #60a5fa - Subtle blue for dark mode */
-    --color-primary-main: 96 165 250;
+    /* Rich Forest Green #2d5a47 - Primary accent */
+    --color-primary-main: 45 90 71;
 
-    /* Catppuccin Mocha Text #cdd6f4 */
-    --color-text-body: 205 214 244;
-    /* Catppuccin Mocha Text #cdd6f4 */
-    --color-text-heading: 205 214 244;
-    /* Gray 200 #e5e7eb - Lighter for better emphasis in dark mode */
-    --color-text-bold: 229 231 235;
-    /* Catppuccin Mocha Subtext0 #a6adc8 */
-    --color-text-muted: 166 173 200;
-    /* Blue 400 #60a5fa - Professional blue for dark mode links */
-    --color-text-link: 96 165 250;
-    /* Catppuccin Mocha Text #cdd6f4 */
-    --color-text-code: 205 214 244;
-    /* Catppuccin Mocha Text #cdd6f4 */
-    --color-text-selection: 205 214 244;
+    /* Deep Forest Green #1a4d3a - Body text (light green instead of brown) */
+    --color-text-body: 26 77 58;
+    /* Darker Forest Green #0f3d2a - Headings */
+    --color-text-heading: 15 61 42;
+    /* Very Dark Forest #0a2d1f - Bold text */
+    --color-text-bold: 10 45 31;
+    /* Medium Forest Green #2d5a47 - Muted text */
+    --color-text-muted: 45 90 71;
+    /* Burnt Sienna #a0522d - Links (keeping warm accent) */
+    --color-text-link: 160 82 45;
+    /* Deep Sage #1a4d3a - Code */
+    --color-text-code: 26 77 58;
+    /* Burnt Sienna #a0522d - Selection text */
+    --color-text-selection: 160 82 45;
 
-    /* Catppuccin Mocha Base #1e1e2e */
-    --color-bg-body: 30 30 46;
-    /* Catppuccin Mocha Mantle #181825 */
-    --color-bg-code: 24 24 37;
-    /* Blue 400 #60a5fa with reduced opacity */
-    --color-bg-selection: 96 165 250;
+    /* Soft Sage #f0f5f2 - Body background */
+    --color-bg-body: 240 245 242;
+    /* Pale Sage #e8f0eb - Code background */
+    --color-bg-code: 232 240 235;
+    /* Burnt sienna with opacity - Selection background */
+    --color-bg-selection: 160 82 45;
 
-    /* Catppuccin Mocha Surface0 #313244 */
-    --color-border-code: 49 50 68;
+    /* Soft Forest Green #7db89a - Borders */
+    --color-border-code: 125 184 154;
   }
 
   :root {
     font-family: theme("fontFamily.body");
-    background-color: theme("colors.bg.body");
-    color: theme("colors.text.body");
-    /* base font-size 1px larger for better visibility */
-    font-size: 1.0625em;
-    line-height: 1.75;
+    background-color: rgb(var(--color-bg-body));
+    color: rgb(var(--color-text-body));
+    /* Apple-inspired typography scale */
+    font-size: 1rem;
+    line-height: 1.6;
     scroll-behavior: smooth;
+    /* Premium font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-family: theme("fontFamily.heading");
+    color: rgb(var(--color-text-heading));
+    /* Apple-style typography hierarchy */
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  /* Apple-inspired text size hierarchy */
+  h1 { 
+    font-size: 2.5rem; 
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  h2 { 
+    font-size: 2rem; 
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  h3 { 
+    font-size: 1.5rem; 
+    font-weight: 600;
+  }
+  h4 { 
+    font-size: 1.25rem; 
+    font-weight: 600;
+  }
+  h5 { 
+    font-size: 1.125rem; 
+    font-weight: 500;
+  }
+  h6 { 
+    font-size: 1rem; 
+    font-weight: 500;
+  }
+
+  /* Override Tailwind text colors to use our sophisticated theme */
+  .text-gray-900 {
+    color: rgb(var(--color-text-body)) !important;
+  }
+  
+  .dark\\:text-white {
+    color: rgb(var(--color-text-body)) !important;
+  }
+  
+  .text-white {
+    color: rgb(var(--color-text-bold)) !important;
+  }
+  
+  .text-gray-600,
+  .text-gray-700 {
+    color: rgb(var(--color-text-muted)) !important;
+  }
+  
+  .dark\\:text-gray-300,
+  .dark\\:text-gray-400 {
+    color: rgb(var(--color-text-muted)) !important;
+  }
+
+  .text-gray-800 {
+    color: rgb(var(--color-text-body)) !important;
+  }
+
+  .dark\\:text-gray-200 {
+    color: rgb(var(--color-text-body)) !important;
+  }
+
+  .text-gray-500 {
+    color: rgb(var(--color-text-muted)) !important;
+  }
+
+  .dark\\:text-gray-500 {
+    color: rgb(var(--color-text-muted)) !important;
+  }
+
+  .text-gray-400 {
+    color: rgb(var(--color-text-muted)) !important;
+  }
+
+  /* Background overrides */
+  .bg-white {
+    background-color: rgb(var(--color-bg-body)) !important;
+  }
+  
+  .dark\\:bg-gray-900 {
+    background-color: rgb(var(--color-bg-code)) !important;
+  }
+  
+  .bg-gray-100 {
+    background-color: rgb(var(--color-bg-code)) !important;
+  }
+  
+  .dark\\:bg-gray-800 {
+    background-color: rgb(var(--color-bg-code)) !important;
+  }
+
+  .hover\\:bg-gray-200:hover {
+    background-color: rgb(var(--color-bg-code)) !important;
+  }
+
+  .dark\\:hover\\:bg-gray-700:hover {
+    background-color: rgb(var(--color-border-code)) !important;
+  }
+
+  /* Border overrides */
+  .border-gray-200 {
+    border-color: rgb(var(--color-border-code) / 0.25) !important;
+  }
+  
+  .dark\\:border-gray-800 {
+    border-color: rgb(var(--color-border-code) / 0.3) !important;
+  }
+
+  .border-gray-100 {
+    border-color: rgb(var(--color-border-code) / 0.15) !important;
+  }
+
+  /* Hover overrides for text */
+  .hover\\:text-blue-700:hover {
+    color: rgb(var(--color-text-link)) !important;
+  }
+  
+  .dark\\:hover\\:text-blue-300:hover {
+    color: rgb(var(--color-text-link)) !important;
+  }
+
+  .hover\\:text-gray-900:hover {
+    color: rgb(var(--color-text-bold)) !important;
+  }
+
+  .dark\\:hover\\:text-white:hover {
+    color: rgb(var(--color-text-bold)) !important;
+  }
+
+  .hover\\:text-blue-600:hover {
+    color: rgb(var(--color-text-link)) !important;
+  }
+
+  .dark\\:hover\\:text-blue-400:hover {
+    color: rgb(var(--color-text-link)) !important;
+  }
+
+  /* Text link colors */
+  .text-blue-600 {
+    color: rgb(var(--color-text-link)) !important;
+  }
+
+  .dark\\:text-blue-400 {
+    color: rgb(var(--color-text-link)) !important;
   }
 }
 
 @layer components {
-  /* ------ GLOBAL STYLES - START ------ */
+  /* ------ APPLE-INSPIRED GLOBAL STYLES - START ------ */
   strong {
     font-weight: 600;
-    color: theme("colors.text.bold");
+    color: rgb(var(--color-text-bold));
   }
 
   mark {
-    background-color: theme("colors.bg.selection");
-    color: theme("colors.text.selection");
+    background-color: rgb(var(--color-bg-selection) / 0.15);
+    color: rgb(var(--color-text-selection));
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
   }
 
-  /* 
-        if you want an anchor tag to not have this style, 
-        just add a class `unset` to it. 
-    */
+  /* Apple-style link design */
   a:not(.unset) {
-    text-decoration: underline;
+    text-decoration: none;
     color: rgb(var(--color-text-link));
-    transition: color 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid transparent;
   }
 
   a:not(.unset):hover {
-    color: rgb(29 78 216); /* Blue 700 for light mode hover */
+    color: rgb(var(--color-text-bold));
+    border-bottom-color: rgb(var(--color-text-link) / 0.3);
   }
 
   .dark a:not(.unset):hover {
-    color: rgb(147 197 253); /* Blue 300 for dark mode hover */
+    color: rgb(var(--color-text-bold));
   }
 
   /* Links without href maintain body color by default */
@@ -136,13 +284,13 @@
   }
 
   ::selection {
-    background: theme("colors.bg.selection");
-    color: theme("colors.text.selection");
+    background: rgb(var(--color-bg-selection) / 0.15);
+    color: rgb(var(--color-text-selection));
   }
 
-  /* ------ GLOBAL STYLES - END ------ */
+  /* ------ APPLE-INSPIRED GLOBAL STYLES - END ------ */
 
-  /* ------ REUSABLE UTILS - START ------ */
+  /* ------ PREMIUM COMPONENTS - START ------ */
   .animated-link {
     position: relative;
     box-decoration-break: clone;
@@ -156,18 +304,14 @@
   .animated-link:after {
     left: 0;
     right: 0;
-    bottom: -3px;
+    bottom: -2px;
     content: "";
-    height: 2px;
+    height: 1px;
     position: absolute;
     transform: translateZ(0) scaleX(0);
     transform-origin: left center;
-    transition: all 0.15s ease-in-out;
-    background-image: linear-gradient(
-      to right,
-      theme("colors.text.link"),
-      theme("colors.text.link")
-    );
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgb(var(--color-text-link));
   }
 
   .animated-link.show:after {
@@ -200,73 +344,163 @@
     border-width: 0;
   }
 
-  /* Code block base styling */
+  /* Apple-style code block design */
   pre {
     position: relative !important;
-    padding: 1.5rem 1rem 1rem 1rem !important;
-    margin: 1rem 0 !important;
-    border-radius: 0.5rem !important;
-    /* overflow: auto !important; */ /* Remove or comment out this line */
-    background-color: theme("colors.bg.code");
-    border: 1px solid theme("colors.border.code");
-    /* Add wrapping properties */
+    padding: 1.5rem !important;
+    margin: 1.5rem 0 !important;
+    border-radius: 0.75rem !important;
+    background-color: rgb(var(--color-bg-code)) !important;
+    border: 1px solid rgb(var(--color-border-code) / 0.2);
+    box-shadow: 
+      0 1px 3px rgb(var(--color-border-code) / 0.1),
+      0 1px 2px rgb(var(--color-border-code) / 0.06);
     white-space: pre-wrap !important;       
-    overflow-wrap: break-word !important; 
+    overflow-wrap: break-word !important;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    backdrop-filter: blur(10px);
   }
 
-  /* Add inline code styling */
+  /* Ensure code text is visible in both themes */
+  pre code {
+    color: inherit !important;
+    background: transparent !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    box-shadow: none !important;
+  }
+
+  /* Apple-style inline code */
   code:not(pre code) {
-    background-color: theme("colors.bg.code");
+    background-color: rgb(var(--color-bg-code));
     color: rgb(var(--color-text-code)) !important;
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.25rem;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.375rem;
     font-size: 0.875em;
-    font-weight: 400 !important;
-    border: 1px solid theme("colors.border.code");
+    font-weight: 500 !important;
+    border: 1px solid rgb(var(--color-border-code) / 0.2);
+    box-shadow: 0 1px 2px rgb(var(--color-border-code) / 0.05);
   }
 
   .copy-code {
     position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.25rem 0.5rem;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.375rem 0.75rem;
     font-size: 0.75rem;
     line-height: 1rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: rgb(var(--color-text-muted));
+    background: rgb(var(--color-bg-body) / 0.9);
+    border-radius: 0.375rem;
+    border: 1px solid rgb(var(--color-border-code) / 0.2);
+    backdrop-filter: blur(10px);
+    font-weight: 500;
   }
 
   .copy-code:hover {
-    color: theme("colors.text.link");
+    color: rgb(var(--color-text-link));
+    background: rgb(var(--color-bg-body));
+    border-color: rgb(var(--color-border-code) / 0.3);
   }
 
-  /* Add table hover styling */
+  /* Apple-style table design */
   tr:hover {
-    background-color: rgb(var(--color-bg-selection) / 0.1);
-    transition: background-color 0.2s ease;
+    background-color: rgb(var(--color-bg-selection) / 0.03);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Optional: Add some basic table styling if needed */
   table {
     width: 100%;
     border-collapse: collapse;
+    margin: 1.5rem 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgb(var(--color-border-code) / 0.1);
   }
 
-  td,
+  td, th {
+    padding: 0.875rem 1rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid rgb(var(--color-border-code) / 0.15);
+  }
+
   th {
-    padding: 0.75rem;
+    font-weight: 600;
+    color: rgb(var(--color-text-heading));
+    background: rgb(var(--color-bg-code) / 0.3);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
+  /* Apple-inspired animations */
   @keyframes slideAnimation {
-    0%,
-    100% {
-      transform: translateX(-10px);
+    0%, 100% {
+      transform: translateX(-3px);
     }
     50% {
-      transform: translateX(10px);
+      transform: translateX(3px);
     }
   }
 
   .slide-animation {
-    animation: slideAnimation 1.5s ease-in-out;
+    animation: slideAnimation 3s ease-in-out;
+  }
+
+  /* Subtle breathing animation */
+  @keyframes gentleGlow {
+    0%, 100% {
+      opacity: 0.95;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .gentle-glow {
+    animation: gentleGlow 5s ease-in-out infinite;
+  }
+
+  /* Apple-style card design */
+  .nature-card {
+    background: rgb(var(--color-bg-code));
+    border: 1px solid rgb(var(--color-border-code) / 0.2);
+    box-shadow: 
+      0 1px 3px rgb(var(--color-primary-main) / 0.05),
+      0 1px 2px rgb(var(--color-primary-main) / 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px);
+  }
+
+  .nature-card:hover {
+    border-color: rgb(var(--color-primary-main) / 0.3);
+    box-shadow: 
+      0 4px 12px rgb(var(--color-primary-main) / 0.08),
+      0 2px 4px rgb(var(--color-primary-main) / 0.05);
+    transform: translateY(-2px);
+  }
+
+  /* Premium text effects */
+  .soft-text {
+    color: rgb(var(--color-text-heading));
+  }
+
+  .natural-gradient {
+    background: linear-gradient(
+      135deg,
+      rgb(var(--color-text-link)),
+      rgb(var(--color-primary-main)),
+      rgb(var(--color-text-heading))
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 }
 
@@ -278,14 +512,17 @@
   touch-action: none;
 }
 
+/* Apple-style footer */
 footer {
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-top: 1px solid rgba(128, 128, 128, 0.1);
+  border-top: 1px solid rgb(var(--color-border-code) / 0.15);
   width: 100%;
   min-height: 60px;
+  backdrop-filter: blur(20px);
+  background: rgb(var(--color-bg-body) / 0.9);
 }
 
 .gradient-link {
@@ -301,21 +538,28 @@ footer {
 .gradient-link:after {
   left: 0;
   right: 0;
-  bottom: -2px;
+  bottom: -1px;
   content: "";
-  height: 2px;
+  height: 1px;
   position: absolute;
   transform: translateZ(0) scaleX(0);
   transform-origin: left center;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgb(var(--color-text-link));
 }
 
+/* Apple-style theme toggle */
 .theme-toggle-btn {
-  opacity: 1;
+  opacity: 0.8;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
 }
 
 .theme-toggle-btn:hover {
   opacity: 1;
+  background: rgb(var(--color-bg-code) / 0.4);
+  transform: scale(1.05);
 }
 
 @keyframes switch-animation {
@@ -323,7 +567,7 @@ footer {
     transform: scale(1) rotate(0);
   }
   50% {
-    transform: scale(0.8) rotate(180deg);
+    transform: scale(0.95) rotate(180deg);
   }
   100% {
     transform: scale(1) rotate(360deg);
@@ -331,7 +575,7 @@ footer {
 }
 
 .switch-animation {
-  animation: switch-animation 0.5s ease-in-out;
+  animation: switch-animation 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 :root {
@@ -344,37 +588,38 @@ footer {
 }
 
 @layer utilities {
+  /* Apple-style scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
-    width: 14px;
-    height: 14px;
+    width: 6px;
+    height: 6px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    border-radius: 100vh;
-    background: rgb(254 215 170 / 0.8);
+    border-radius: 3px;
+    background: rgb(var(--color-bg-code) / 0.2);
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom right, #fb923c, #f97316, #ea580c);
-    border-radius: 100vh;
-    border: 3.5px solid rgb(254 215 170 / 0.8);
+    background: rgb(var(--color-primary-main) / 0.5);
+    border-radius: 3px;
+    border: 1px solid rgb(var(--color-bg-body));
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #ea580c;
+    background: rgb(var(--color-primary-main) / 0.7);
   }
 
-  /* Dark mode styles */
+  /* Light mode scrollbar */
   .dark .custom-scrollbar::-webkit-scrollbar-track {
-    background: rgb(49 50 68 / 1);
+    background: rgb(var(--color-bg-code) / 0.2);
   }
 
   .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgb(var(--color-primary-main));
-    border: 3.5px solid rgb(49 50 68 / 1);
+    background: rgb(var(--color-primary-main) / 0.5);
+    border: 1px solid rgb(var(--color-bg-body));
   }
 
   .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgb(245 199 71);
+    background: rgb(var(--color-primary-main) / 0.7);
   }
 }

@@ -6,12 +6,21 @@ const projectsCollection = defineCollection({
       cover: image(),
       date: z.string().optional(),
       authors: z.string().optional(),
-      source: z.string().optional(),
       githubUrl: z.string().optional(),
       paperUrl: z.string().optional(),
   }),
 });
 
+const blogCollection = defineCollection({
+  schema: () => z.object({
+    title: z.string(),
+    date: z.string(),
+    authors: z.string(),
+    description: z.string().optional(),
+  }),
+});
+
 export const collections = {
   projects: projectsCollection,
+  blog: blogCollection,
 };

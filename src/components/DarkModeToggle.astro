@@ -2,23 +2,13 @@
 // Astro frontmatter goes here
 ---
 
-<link
-  href="/prism/mocha.css"
-  rel="stylesheet"
-  id="prism-dark"
-  media="not all"
-/>
-<link
-  href="/prism/latte.css"
-  rel="stylesheet"
-  id="prism-light"
-  media="not all"
-/>
+<link href="/prism/dark.css" rel="stylesheet" id="prism-dark" media="not all" />
+<link href="/prism/light.css" rel="stylesheet" id="prism-light" media="" />
 
 <mode-toggle class="flex">
   <button
     id="light-mode-button"
-    class="hidden theme-toggle-btn text-xl hover:text-text-link"
+    class="hidden theme-toggle-btn text-xl hover:text-text-link transition-all duration-200"
     aria-label="Enable light mode"
   >
     <svg
@@ -35,7 +25,7 @@
   </button>
   <button
     id="dark-mode-button"
-    class="hidden theme-toggle-btn rounded-full transition-all duration-300 ease-in-out hover:text-text-link"
+    class="hidden theme-toggle-btn text-xl hover:text-text-link transition-all duration-200"
     aria-label="Enable dark mode"
   >
     <svg
@@ -54,7 +44,8 @@
 
 <script>
   function updateHTMLTheme(mode: "light" | "dark") {
-    const themeColorMetaTag = document.head.querySelector(
+    const html = document.documentElement;
+    const themeColorMeta = document.head.querySelector(
       'meta[name="theme-color"]'
     );
     const darkSyntaxTheme = document.querySelector(
@@ -65,11 +56,14 @@
     ) as HTMLLinkElement;
 
     if (mode === "dark") {
-      document.documentElement.classList.remove("light");
-      document.documentElement.classList.add("dark");
-      if (themeColorMetaTag) {
-        // @ts-ignore
-        themeColorMetaTag.content = "#0e141b";
+      // Dark mode: theme-sleek only (no .dark class)
+      html.classList.remove("dark", "light");
+      // Ensure theme-sleek class is present
+      if (!html.classList.contains("theme-sleek")) {
+        html.classList.add("theme-sleek");
+      }
+      if (themeColorMeta) {
+        themeColorMeta.setAttribute("content", "#0f2419");
       }
       // Toggle syntax highlighting themes
       if (darkSyntaxTheme && lightSyntaxTheme) {
@@ -77,11 +71,15 @@
         lightSyntaxTheme.media = "not all";
       }
     } else {
-      document.documentElement.classList.remove("dark");
-      document.documentElement.classList.add("light");
-      if (themeColorMetaTag) {
-        // @ts-ignore
-        themeColorMetaTag.content = "#ffffff";
+      // Light mode: theme-sleek AND dark classes (.theme-sleek.dark)
+      html.classList.remove("light");
+      html.classList.add("dark");
+      // Ensure theme-sleek class is present
+      if (!html.classList.contains("theme-sleek")) {
+        html.classList.add("theme-sleek");
+      }
+      if (themeColorMeta) {
+        themeColorMeta.setAttribute("content", "#f0f5f2");
       }
       // Toggle syntax highlighting themes
       if (darkSyntaxTheme && lightSyntaxTheme) {
@@ -92,14 +90,21 @@
   }
 
   function updateStorageTheme(mode: "light" | "dark") {
-    localStorage.setItem("theme", mode);
+    try {
+      localStorage.setItem("theme", mode);
+    } catch (e) {
+      // localStorage might not be available
+    }
   }
 
-  // Add this function to get the current theme
   function getStoredTheme(): "light" | "dark" {
-    const storedTheme = localStorage.getItem("theme");
-    if (storedTheme === "light" || storedTheme === "dark") {
-      return storedTheme;
+    try {
+      const storedTheme = localStorage.getItem("theme");
+      if (storedTheme === "light" || storedTheme === "dark") {
+        return storedTheme;
+      }
+    } catch (e) {
+      // localStorage might not be available
     }
     // Check user preference if no theme is stored
     return window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -111,10 +116,6 @@
     constructor() {
       super();
 
-      // Apply stored theme on page load
-      const storedTheme = getStoredTheme();
-      updateHTMLTheme(storedTheme);
-
       const lightButton = this.querySelector("#light-mode-button");
       const darkButton = this.querySelector("#dark-mode-button");
 
@@ -125,8 +126,9 @@
         }
       };
 
-      // Set initial button visibility
-      setButtonVisibility(document.documentElement.classList.contains("dark"));
+      // Set initial button visibility based on current theme
+      const currentTheme = getStoredTheme();
+      setButtonVisibility(currentTheme === "dark");
 
       lightButton?.addEventListener("click", () => {
         updateHTMLTheme("light");
@@ -141,12 +143,6 @@
       });
     }
   }
-
-  // Add this to ensure theme is applied before component initialization
-  document.addEventListener("DOMContentLoaded", () => {
-    const storedTheme = getStoredTheme();
-    updateHTMLTheme(storedTheme);
-  });
 
   customElements.define("mode-toggle", ModeToggle);
 </script>

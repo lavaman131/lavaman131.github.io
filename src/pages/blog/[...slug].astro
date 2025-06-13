@@ -1,12 +1,12 @@
 ---
-import ProjectLayout from "../../layouts/ProjectLayout.astro";
+import BlogLayout from "../../layouts/BlogLayout.astro";
 import { SITE_TITLE } from "../../config";
 import { getCollection } from "astro:content";
 
 // Add getStaticPaths for dynamic routing
 export async function getStaticPaths() {
-  const allProjects = await getCollection("projects");
-  return allProjects.map((entry) => ({
+  const allBlogs = await getCollection("blog");
+  return allBlogs.map((entry) => ({
     params: { slug: entry.slug },
     props: { entry },
   }));
@@ -17,6 +17,6 @@ const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
 
-<ProjectLayout frontmatter={entry.data}>
+<BlogLayout frontmatter={entry.data}>
   <Content />
-</ProjectLayout>
+</BlogLayout>

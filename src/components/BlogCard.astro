@@ -1,0 +1,80 @@
+---
+interface Props {
+  title: string;
+  href: string;
+  date: string;
+  authors: string;
+  description?: string;
+}
+
+const { href, title, date, authors, description } = Astro.props;
+
+// Format date for display
+const formatDate = (dateString: string) => {
+  // Parse the date string manually to avoid timezone issues
+  const [year, month, day] = dateString.split("-").map(Number);
+  const date = new Date(year, month - 1, day); // month is 0-indexed in JS
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+---
+
+<div
+  class="group h-full flex flex-col bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+>
+  <a
+    href={href}
+    class="unset flex flex-col h-full text-gray-900 dark:text-white no-underline"
+  >
+    <!-- Content Container -->
+    <div class="flex flex-col flex-1 p-6 space-y-4">
+      <!-- Title -->
+      <h3
+        class="text-lg font-semibold text-gray-900 dark:text-white leading-tight line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200"
+      >
+        {title}
+      </h3>
+
+      <!-- Description -->
+      <div class="flex-1">
+        <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+          {
+            description ||
+              "Discover insights and perspectives on the latest developments in technology, research, and innovation."
+          }
+        </p>
+      </div>
+
+      <!-- Author and Date -->
+      <div
+        class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-800"
+      >
+        <div class="flex items-center space-x-2">
+          {authors && <span>Authors: {authors}</span>}
+        </div>
+        <div class="flex items-center space-x-2">
+          <span>Date: {formatDate(date)}</span>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

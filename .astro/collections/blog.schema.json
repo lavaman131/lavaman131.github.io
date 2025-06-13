@@ -1,13 +1,10 @@
 {
-  "$ref": "#/definitions/projects",
+  "$ref": "#/definitions/blog",
   "definitions": {
-    "projects": {
+    "blog": {
       "type": "object",
       "properties": {
         "title": {
-          "type": "string"
-        },
-        "cover": {
           "type": "string"
         },
         "date": {
@@ -16,10 +13,7 @@
         "authors": {
           "type": "string"
         },
-        "githubUrl": {
-          "type": "string"
-        },
-        "paperUrl": {
+        "description": {
           "type": "string"
         },
         "$schema": {
@@ -28,7 +22,8 @@
       },
       "required": [
         "title",
-        "cover"
+        "date",
+        "authors"
       ],
       "additionalProperties": false
     }

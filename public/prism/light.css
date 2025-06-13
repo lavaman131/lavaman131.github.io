@@ -1,126 +1,134 @@
 code[class*="language-"],
 pre[class*="language-"] {
-	color: #4c4f69;
+	color: #3d2f1f;
 }
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-	background: #e6e9ef;
+	background: #f0f4f0;
 }
 
 /* https://prismjs.com/tokens.html */
 
 .token.keyword {
-	color: #8839ef;
+	color: #2c5aa0;
+	font-weight: 500;
 }
 
 .token.builtin {
-	color: #d20f39;
+	color: #c4622d;
 }
 
 .token.class-name {
-	color: #df8e1d;
+	color: #2c5aa0;
+	font-weight: 500;
 }
 
 .token.function {
-	color: #1e66f5;
+	color: #3d5a45;
 }
 
 .token.boolean,
 .token.number {
-	color: #fe640b;
+	color: #b5651d;
 }
 
 .token.string,
 .token.char {
-	color: #40a02b;
+	color: #3d5a45;
 }
 
 .token.symbol {
-	color: #df8e1d;
+	color: #2c5aa0;
 }
 
 .token.regex {
-	color: #ea76cb;
+	color: #c4622d;
 }
 
 .token.url {
-	color: #40a02b;
+	color: #3d5a45;
 }
 
 .token.operator {
-	color: #04a5e5;
+	color: #3d2f1f;
 }
 
 .token.variable {
-	color: #4c4f69;
+	color: #6b5b4f;
 }
 
 .token.constant {
-	color: #fe640b;
+	color: #b5651d;
+	font-weight: 500;
 }
 
 .token.property {
-	color: #1e66f5;
+	color: #3d5a45;
 }
 
 .token.punctuation {
-	color: #7c7f93;
+	color: #6b5b4f;
 }
 
 .token.important {
-	color: #8839ef;
+	color: #c4622d;
+	font-weight: 600;
 }
 
 .token.comment {
-	color: #7c7f93;
+	color: #8f9779;
+	font-style: italic;
 }
 
 .token.tag {
-	color: #1e66f5;
+	color: #2c5aa0;
 }
 
 .token.attr-name {
-	color: #df8e1d;
+	color: #c4622d;
 }
 
 .token.attr-value {
-	color: #40a02b;
+	color: #3d5a45;
 }
 
 .token.namespace {
-	color: #df8e1d;
+	color: #2c5aa0;
 }
 
 .token.prolog,
 .token.doctype {
-	color: #8839ef;
+	color: #8f9779;
+	font-style: italic;
 }
 
 .token.cdata {
-	color: #179299;
+	color: #6b5b4f;
 }
 
 .token.entity {
-	color: #d20f39;
+	color: #b5651d;
 }
 
 .token.atrule {
-	color: #8839ef;
+	color: #c4622d;
 }
 
 .token.selector {
-	color: #1e66f5;
+	color: #2c5aa0;
 }
 
 /* Diff */
 
 .token.deleted {
-	color: #d20f39;
+	color: #d84315;
+	background-color: rgba(216, 67, 21, 0.1);
 }
 
 .token.inserted {
-	color: #40a02b
+	color: #2e7d32;
+	background-color: rgba(46, 125, 50, 0.1);
 }
 
 /* Other */

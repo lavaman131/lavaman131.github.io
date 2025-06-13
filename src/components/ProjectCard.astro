@@ -8,7 +8,6 @@ interface Props {
   image: ImageMetadata;
   date?: string;
   authors?: string;
-  source?: string;
   githubUrl?: string;
   paperUrl?: string;
 }
@@ -21,7 +20,7 @@ const { href, title, image, githubUrl, paperUrl } = Astro.props;
 >
   <a
     href={href}
-    class="flex flex-col h-full text-gray-900 dark:text-white no-underline"
+    class="unset flex flex-col h-full text-gray-900 dark:text-white no-underline"
   >
     <!-- Image Container -->
     <div class="relative w-full aspect-[16/10] overflow-hidden">
@@ -30,9 +29,9 @@ const { href, title, image, githubUrl, paperUrl } = Astro.props;
         alt={title}
         class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
       />
-      <!-- Gradient overlay for better text readability -->
+      <!-- Natural overlay for better text readability -->
       <div
-        class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        class="absolute inset-0 bg-bg-body/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
       >
       </div>
     </div>
@@ -40,7 +39,7 @@ const { href, title, image, githubUrl, paperUrl } = Astro.props;
     <!-- Content Container -->
     <div class="flex flex-col flex-1 p-6 space-y-4">
       <h3
-        class="text-sm lg:text-base font-semibold text-gray-900 dark:text-white leading-tight line-clamp-2"
+        class="text-lg font-semibold text-gray-900 dark:text-white leading-tight line-clamp-2"
       >
         {title}
       </h3>
