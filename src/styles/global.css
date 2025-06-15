@@ -1,12 +1,10 @@
 @import "tailwindcss";
 @import "@catppuccin/tailwindcss/mocha.css";
 
-/* Catppuccin theme transition utility */
 .transition-catppuccin {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Custom typography styles for blog and project content */
 .content-typography {
   color: var(--ctp-text);
   line-height: 1.75;
@@ -153,7 +151,6 @@
   height: auto;
 }
 
-/* CRITICAL: Table with MAXIMUM VISIBLE BORDERS */
 .content-typography table {
   width: 100%;
   border-collapse: collapse;
@@ -196,7 +193,6 @@
   vertical-align: top;
 }
 
-/* Alternating row colors for better readability */
 .content-typography tbody tr:nth-child(even) {
   background-color: var(--ctp-base);
 }
@@ -205,13 +201,11 @@
   background-color: var(--ctp-surface0);
 }
 
-/* EMERGENCY FALLBACK: Force borders with high contrast colors */
 .content-typography th,
 .content-typography td {
   border: 1px solid #6c7086 !important; /* Catppuccin overlay0 fallback */
 }
 
-/* Dark mode emergency borders */
 @media (prefers-color-scheme: dark) {
   .content-typography th,
   .content-typography td {
@@ -219,7 +213,6 @@
   }
 }
 
-/* Light mode emergency borders */
 @media (prefers-color-scheme: light) {
   .content-typography th,
   .content-typography td {
@@ -227,12 +220,10 @@
   }
 }
 
-/* First column emphasis */
 .content-typography td:first-child {
   font-weight: 500;
 }
 
-/* Responsive behavior */
 @media (max-width: 768px) {
   .content-typography table {
     font-size: 0.8rem;
