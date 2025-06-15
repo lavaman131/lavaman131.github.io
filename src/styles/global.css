@@ -153,16 +153,15 @@
   height: auto;
 }
 
-/* Clean Table styling with Catppuccin theme and VISIBLE borders */
+/* CRITICAL: Table with MAXIMUM VISIBLE BORDERS */
 .content-typography table {
   width: 100%;
   border-collapse: collapse;
   margin: 2rem 0;
-  background-color: var(--ctp-base);
-  border-radius: 0.75rem;
-  overflow: hidden;
-  /* Use rgba for semi-transparent borders that will be visible on any background */
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  background-color: var(--ctp-mantle);
+  border: 2px solid var(--ctp-overlay0);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
 }
 
 .content-typography thead {
@@ -170,144 +169,61 @@
 }
 
 .content-typography th {
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1rem;
   text-align: left;
   font-weight: 600;
   color: var(--ctp-text);
-  /* High contrast border using overlay color */
-  border-bottom: 2px solid var(--ctp-overlay0);
-  border-right: 1px solid var(--ctp-overlay0);
+  border: 1px solid var(--ctp-overlay0);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-}
-
-.content-typography th:last-child {
-  border-right: none;
-}
-
-.content-typography td {
-  padding: 1rem 1.5rem;
-  color: var(--ctp-text);
-  /* Visible borders using overlay color */
-  border-bottom: 1px solid var(--ctp-overlay0);
-  border-right: 1px solid var(--ctp-overlay0);
-  vertical-align: top;
-}
-
-.content-typography td:last-child {
-  border-right: none;
+  background-color: var(--ctp-surface0);
 }
 
 .content-typography tbody tr {
-  background-color: var(--ctp-base);
+  background-color: var(--ctp-mantle);
   transition: background-color 0.15s ease;
 }
 
 .content-typography tbody tr:hover {
-  background-color: var(--ctp-mantle);
-}
-
-.content-typography tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* Alternating row colors - subtle but visible */
-.content-typography tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.02);
-}
-
-.content-typography tbody tr:nth-child(even):hover {
-  background-color: var(--ctp-mantle);
-}
-
-/* Light mode adjustments with HIGH CONTRAST borders */
-@media (prefers-color-scheme: light) {
-  .content-typography table {
-    background-color: white;
-    /* Darker border for light mode */
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
-  }
-  
-  .content-typography thead {
-    background-color: var(--ctp-mantle);
-  }
-  
-  .content-typography th {
-    color: var(--ctp-text);
-    /* Use darker borders in light mode */
-    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  .content-typography td {
-    color: var(--ctp-text);
-    /* Visible borders in light mode */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-  }
-  
-  .content-typography tbody tr {
-    background-color: white;
-  }
-  
-  .content-typography tbody tr:hover {
-    background-color: var(--ctp-surface0);
-  }
-  
-  .content-typography tbody tr:nth-child(even) {
-    background-color: rgba(0, 0, 0, 0.02);
-  }
-  
-  .content-typography tbody tr:nth-child(even):hover {
-    background-color: var(--ctp-surface0);
-  }
-}
-
-/* Alternative: If rgba borders don't work well, use explicit Catppuccin overlay colors */
-.content-typography.high-contrast table {
-  box-shadow: 0 0 0 1px var(--ctp-overlay1);
-}
-
-.content-typography.high-contrast th {
-  border-bottom: 2px solid var(--ctp-overlay1);
-  border-right: 1px solid var(--ctp-overlay0);
-}
-
-.content-typography.high-contrast td {
-  border-bottom: 1px solid var(--ctp-overlay0);
-  border-right: 1px solid var(--ctp-overlay0);
-}
-
-/* Fallback with standard colors if Catppuccin vars not working */
-.content-typography table {
-  border: 1px solid #e5e7eb; /* gray-200 equivalent */
-}
-
-.content-typography th {
-  border-bottom: 2px solid #d1d5db; /* gray-300 equivalent */
-  border-right: 1px solid #e5e7eb;
+  background-color: var(--ctp-base);
 }
 
 .content-typography td {
-  border-bottom: 1px solid #e5e7eb;
-  border-right: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  color: var(--ctp-text);
+  border: 1px solid var(--ctp-overlay0);
+  vertical-align: top;
 }
 
-/* Dark mode fallback */
+/* Alternating row colors for better readability */
+.content-typography tbody tr:nth-child(even) {
+  background-color: var(--ctp-base);
+}
+
+.content-typography tbody tr:nth-child(even):hover {
+  background-color: var(--ctp-surface0);
+}
+
+/* EMERGENCY FALLBACK: Force borders with high contrast colors */
+.content-typography th,
+.content-typography td {
+  border: 1px solid #6c7086 !important; /* Catppuccin overlay0 fallback */
+}
+
+/* Dark mode emergency borders */
 @media (prefers-color-scheme: dark) {
-  .content-typography table {
-    border: 1px solid #374151; /* gray-700 equivalent */
-  }
-  
-  .content-typography th {
-    border-bottom: 2px solid #4b5563; /* gray-600 equivalent */
-    border-right: 1px solid #374151;
-  }
-  
+  .content-typography th,
   .content-typography td {
-    border-bottom: 1px solid #374151;
-    border-right: 1px solid #374151;
+    border: 1px solid #6c7086 !important;
+  }
+}
+
+/* Light mode emergency borders */
+@media (prefers-color-scheme: light) {
+  .content-typography th,
+  .content-typography td {
+    border: 1px solid #9ca0b0 !important;
   }
 }
 
@@ -319,12 +235,12 @@
 /* Responsive behavior */
 @media (max-width: 768px) {
   .content-typography table {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
   }
   
   .content-typography th,
   .content-typography td {
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
   }
   
   .content-typography th {
