@@ -20,24 +20,24 @@ import { LINKEDIN_HANDLE } from "../config";
             <h1
               class="font-extrabold text-5xl sm:text-6xl lg:text-7xl tracking-tight leading-tight"
             >
-              <span class="text-gray-900 dark:text-white">Hi, my</span><br />
-              <span class="text-gray-900 dark:text-white">name is </span>
-              <span class="text-text-link font-bold"> Alex </span>
+              <span class="text-ctp-text">Hi, my</span><br />
+              <span class="text-ctp-text">name is </span>
+              <span class="text-ctp-mauve font-bold"> Alex </span>
             </h1>
 
             <div class="space-y-4">
-              <p class="text-xl lg:text-2xl text-gray-600 dark:text-gray-300">
-                I'm an <span class="font-semibold text-gray-900 dark:text-white"
+              <p class="text-xl lg:text-2xl text-ctp-subtext1">
+                I'm an <span class="font-semibold text-ctp-text"
                   >incoming software engineer</span
                 > at
               </p>
-              <p class="text-xl lg:text-2xl text-gray-600 dark:text-gray-300">
+              <p class="text-xl lg:text-2xl text-ctp-subtext1">
                 Microsoft, working on AI/ML.
               </p>
             </div>
 
             <p
-              class="text-lg lg:text-xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-2xl mx-auto lg:mx-0"
+              class="text-lg lg:text-xl text-ctp-subtext1 leading-relaxed max-w-2xl mx-auto lg:mx-0"
             >
               I'm passionate about solving complex problems in AI/ML
               infrastructure, scientific discovery, and robotics. I've gained
@@ -61,7 +61,7 @@ import { LINKEDIN_HANDLE } from "../config";
       <div class="flex justify-center mt-20 lg:mt-24">
         <div class="animate-bounce">
           <svg
-            class="w-8 h-8 text-gray-400 dark:text-gray-500"
+            class="w-8 h-8 text-ctp-overlay0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -85,21 +85,18 @@ import { LINKEDIN_HANDLE } from "../config";
         <!-- Academic Journey -->
         <div class="space-y-6">
           <h3
-            class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-4"
+            class="text-3xl lg:text-4xl font-bold text-ctp-text flex items-center gap-4"
           >
             🎓 Academic Journey
           </h3>
-          <div
-            class="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed text-lg"
-          >
+          <div class="space-y-6 text-ctp-subtext1 leading-relaxed text-lg">
             <p>
               Completed my data science undergrad @ <span
-                class="font-semibold text-gray-800 dark:text-gray-200"
-                >Boston University</span
+                class="font-semibold text-ctp-text">Boston University</span
               >, working with Prof
               <a
                 href="https://www.bu.edu/cs/profiles/betke/"
-                class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors underline decoration-2 underline-offset-2"
+                class="text-ctp-teal hover:text-ctp-sapphire font-medium transition-catppuccin underline decoration-2 underline-offset-2"
               >
                 Margrit Betke
               </a>
@@ -110,11 +107,11 @@ import { LINKEDIN_HANDLE } from "../config";
               Collaborated with Prof
               <a
                 href="https://cellbio.hms.harvard.edu/faculty-staff/tomas-kirchhausen"
-                class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors underline decoration-2 underline-offset-2"
+                class="text-ctp-teal hover:text-ctp-sapphire font-medium transition-catppuccin underline decoration-2 underline-offset-2"
               >
                 Tomas Kirchhausen
               </a>
-              @ <span class="font-semibold text-gray-800 dark:text-gray-200"
+              @ <span class="font-semibold text-ctp-text"
                 >Harvard Medical School</span
               >, developing DINO3D for molecular and cellular world
               understanding. 🧬
@@ -125,96 +122,81 @@ import { LINKEDIN_HANDLE } from "../config";
         <!-- Industry Experience -->
         <div class="space-y-6">
           <h3
-            class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white flex items-center gap-4"
+            class="text-3xl lg:text-4xl font-bold text-ctp-text flex items-center gap-4"
           >
             💼 Industry Experience
           </h3>
-          <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+          <p class="text-ctp-subtext1 leading-relaxed text-lg">
             Gained hands-on experience as SWE, MLE, and data scientist at <span
-              class="font-semibold text-gray-800 dark:text-gray-200"
-              >Microsoft</span
+              class="font-semibold text-ctp-text">Microsoft</span
             >,
-            <span class="font-semibold text-gray-800 dark:text-gray-200"
-              >Boeing</span
-            >, <span class="font-semibold text-gray-800 dark:text-gray-200"
-              >Edwards Lifesciences</span
+            <span class="font-semibold text-ctp-text">Boeing</span>, <span
+              class="font-semibold text-ctp-text">Edwards Lifesciences</span
             >
             (FDA processing model for aortic stenosis detection), and AI startups
             including
-            <span class="font-semibold text-gray-800 dark:text-gray-200"
-              >Themis AI</span
-            > (MIT CSAIL spinoff).
+            <span class="font-semibold text-ctp-text">Themis AI</span> (MIT CSAIL
+            spinoff).
           </p>
         </div>
       </div>
 
       <!-- Tech Stack -->
       <div class="space-y-12">
-        <h3
-          class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white text-center"
-        >
+        <h3 class="text-3xl lg:text-4xl font-bold text-ctp-text text-center">
           What I Work On
         </h3>
         <div
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
         >
+          <!-- AI/ML Card - Purple Theme -->
           <div
-            class="nature-card text-center p-8 lg:p-10 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+            class="bg-gradient-to-br from-ctp-mauve/10 to-ctp-lavender/10 border-2 border-ctp-mauve/30 text-center p-8 lg:p-10 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 hover:border-ctp-mauve hover:bg-gradient-to-br hover:from-ctp-mauve/20 hover:to-ctp-lavender/20"
           >
             <div class="text-5xl lg:text-6xl mb-6">🤖</div>
-            <h4
-              class="font-semibold text-gray-900 dark:text-white mb-3 text-xl lg:text-2xl"
-            >
+            <h4 class="font-bold text-ctp-mauve mb-3 text-xl lg:text-2xl">
               AI/ML
             </h4>
-            <p
-              class="text-base text-gray-600 dark:text-gray-300 leading-relaxed"
-            >
+            <p class="text-base text-ctp-subtext1 leading-relaxed">
               Deep Learning & Computer Vision
             </p>
           </div>
+
+          <!-- Systems Card - Green Theme -->
           <div
-            class="nature-card text-center p-8 lg:p-10 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+            class="bg-gradient-to-br from-ctp-green/10 to-ctp-teal/10 border-2 border-ctp-green/30 text-center p-8 lg:p-10 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 hover:border-ctp-green hover:bg-gradient-to-br hover:from-ctp-green/20 hover:to-ctp-teal/20"
           >
             <div class="text-5xl lg:text-6xl mb-6">⚡</div>
-            <h4
-              class="font-semibold text-gray-900 dark:text-white mb-3 text-xl lg:text-2xl"
-            >
+            <h4 class="font-bold text-ctp-green mb-3 text-xl lg:text-2xl">
               Systems
             </h4>
-            <p
-              class="text-base text-gray-600 dark:text-gray-300 leading-relaxed"
-            >
+            <p class="text-base text-ctp-subtext1 leading-relaxed">
               Distributed & ML Optimization
             </p>
           </div>
+
+          <!-- AI4Science Card - Rose Theme -->
           <div
-            class="nature-card text-center p-8 lg:p-10 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+            class="bg-gradient-to-br from-ctp-rosewater/10 to-ctp-flamingo/10 border-2 border-ctp-rosewater/30 text-center p-8 lg:p-10 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 hover:border-ctp-rosewater hover:bg-gradient-to-br hover:from-ctp-rosewater/20 hover:to-ctp-flamingo/20"
           >
             <div class="text-5xl lg:text-6xl mb-6">🧬</div>
-            <h4
-              class="font-semibold text-gray-900 dark:text-white mb-3 text-xl lg:text-2xl"
-            >
+            <h4 class="font-bold text-ctp-rosewater mb-3 text-xl lg:text-2xl">
               AI4Science
             </h4>
-            <p
-              class="text-base text-gray-600 dark:text-gray-300 leading-relaxed"
-            >
+            <p class="text-base text-ctp-subtext1 leading-relaxed">
               Scientific Discovery
             </p>
           </div>
+
+          <!-- Robotics Card - Blue Theme -->
           <div
-            class="nature-card text-center p-8 lg:p-10 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+            class="bg-gradient-to-br from-ctp-sapphire/10 to-ctp-sky/10 border-2 border-ctp-sapphire/30 text-center p-8 lg:p-10 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 hover:border-ctp-sapphire hover:bg-gradient-to-br hover:from-ctp-sapphire/20 hover:to-ctp-sky/20"
           >
             <div class="text-5xl lg:text-6xl mb-6">🤖</div>
-            <h4
-              class="font-semibold text-gray-900 dark:text-white mb-3 text-xl lg:text-2xl"
-            >
+            <h4 class="font-bold text-ctp-sapphire mb-3 text-xl lg:text-2xl">
               Robotics
             </h4>
-            <p
-              class="text-base text-gray-600 dark:text-gray-300 leading-relaxed"
-            >
+            <p class="text-base text-ctp-subtext1 leading-relaxed">
               Perception & World Models
             </p>
           </div>
@@ -224,12 +206,12 @@ import { LINKEDIN_HANDLE } from "../config";
       <!-- Connect Section -->
       <div class="text-center py-12 lg:py-16 space-y-10">
         <h3
-          class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white flex items-center justify-center gap-4"
+          class="text-3xl lg:text-4xl font-bold text-ctp-text flex items-center justify-center gap-4"
         >
           🚀 Let's Connect!
         </h3>
         <p
-          class="text-xl lg:text-2xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto"
+          class="text-xl lg:text-2xl text-ctp-subtext1 leading-relaxed max-w-3xl mx-auto"
         >
           Feel free to reach out and connect! I'm always excited to collaborate
           and share ideas about the future of AI and technology.
@@ -237,21 +219,25 @@ import { LINKEDIN_HANDLE } from "../config";
         <div class="flex flex-wrap justify-center gap-8">
           <a
             href={`https://linkedin.com/in/${LINKEDIN_HANDLE}`}
-            class="inline-flex items-center gap-4 px-10 py-5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-2xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg"
+            class="inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-ctp-blue/10 to-ctp-sapphire/10 hover:from-ctp-blue/20 hover:to-ctp-sapphire/20 text-ctp-text rounded-2xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg border-2 border-ctp-blue/30 hover:border-ctp-blue"
           >
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <svg
+              class="w-6 h-6 text-ctp-blue"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
               ></path>
             </svg>
-            LinkedIn
+            <span class="text-ctp-blue font-semibold">LinkedIn</span>
           </a>
           <a
             href="/projects"
-            class="inline-flex items-center gap-4 px-10 py-5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-2xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg"
+            class="inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-ctp-pink/10 to-ctp-mauve/10 hover:from-ctp-pink/20 hover:to-ctp-mauve/20 text-ctp-text rounded-2xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg border-2 border-ctp-pink/30 hover:border-ctp-pink"
           >
             <svg
-              class="w-6 h-6"
+              class="w-6 h-6 text-ctp-pink"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -263,14 +249,14 @@ import { LINKEDIN_HANDLE } from "../config";
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012 2v2M7 7h10"
               ></path>
             </svg>
-            Projects
+            <span class="text-ctp-pink font-semibold">Projects</span>
           </a>
         </div>
         <div class="space-y-3 pt-6">
-          <p class="text-lg text-gray-500 dark:text-gray-400">
+          <p class="text-lg text-ctp-subtext0">
             Email: lavaalex3 [at] gmail [dot] com
           </p>
-          <p class="text-sm text-gray-400 dark:text-gray-500 font-mono">
+          <p class="text-sm text-ctp-overlay0 font-mono">
             <span class="font-bold">&lt|endoftext|&gt</span>
           </p>
         </div>
@@ -278,75 +264,3 @@ import { LINKEDIN_HANDLE } from "../config";
     </div>
   </div>
 </section>
-
-<style>
-  @keyframes gradient-x {
-    0%,
-    100% {
-      background-size: 200% 200%;
-      background-position: left center;
-    }
-    50% {
-      background-size: 200% 200%;
-      background-position: right center;
-    }
-  }
-
-  @keyframes typing {
-    from {
-      width: 0;
-    }
-    to {
-      width: 100%;
-    }
-  }
-
-  @keyframes blink {
-    from,
-    to {
-      border-color: transparent;
-    }
-    50% {
-      border-color: rgb(var(--color-primary-main));
-    }
-  }
-
-  .animate-gradient-x {
-    animation: gradient-x 3s ease infinite;
-  }
-
-  .typing-animation {
-    overflow: hidden;
-    border-right: 2px solid;
-    white-space: nowrap;
-    animation:
-      typing 3s steps(30, end),
-      blink 1s step-end infinite;
-    animation-delay: 1s;
-    width: 0;
-    animation-fill-mode: forwards;
-  }
-
-  /* Custom scrollbar for any remaining scrollable areas */
-  .custom-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: rgb(var(--color-primary-main)) transparent;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgb(var(--color-primary-main));
-    border-radius: 3px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(var(--color-primary-main) / 0.8);
-  }
-</style>

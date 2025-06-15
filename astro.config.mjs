@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
+import astroExpressiveCode from 'astro-expressive-code'
+import tailwindcss from "@tailwindcss/vite";
 import icon from "astro-icon";
 import mdx from "@astrojs/mdx";
 import remarkMath from "remark-math";
@@ -27,11 +28,39 @@ export default defineConfig({
   },
   site: BASE_URL,
   output: "static",
-  integrations: [tailwind({
-      applyBaseStyles: false,
-    }), icon(), mdx()],
+  integrations: [
+    icon(),
+    astroExpressiveCode({
+      themes: ["catppuccin-latte", "catppuccin-mocha"],
+      themeCssSelector: (theme) => {
+        const themeName = theme.name.split("-")[1];
+        const selector = `[data-theme='${themeName}']`;
+        return selector;
+      },
+      useDarkModeMediaQuery: true,
+      styleOverrides: {
+        codeBackground: ({ theme }) => {
+          if (theme.name.includes("mocha")) {
+            // A slightly lighter background for the dark theme
+            return "#24273a";
+          }
+          // A slightly darker background for the light theme
+          return "#e6e9ef";
+        },
+        borderColor: ({ theme }) => {
+          if (theme.name.includes("mocha")) {
+            // surface0
+            return "#313244";
+          }
+          // surface0
+          return "#ccd0da";
+        },
+      },
+    }),
+    mdx(),
+  ],
+  vite: { plugins: [tailwindcss()]  },
   markdown: {
-    syntaxHighlight: "prism",
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex],
     },

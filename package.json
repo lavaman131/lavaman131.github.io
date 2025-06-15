@@ -1,37 +1,24 @@
 {
-  "name": "alexlavaee",
+  "name": "lavaman131-github-io",
   "type": "module",
   "version": "0.0.1",
-  "private": true,
-  "homepage": "https://alexlavaee.me",
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
     "@astrojs/mdx": "^4.3.0",
-    "@astrojs/prism": "^3.3.0",
-    "@astrojs/react": "^4.3.0",
-    "@astrojs/tailwind": "^6.0.2",
-    "@iconify-json/fa-brands": "^1.2.0",
-    "@iconify-json/fa-solid": "^1.2.0",
-    "astro": "^5.8.1",
-    "astro-icon": "^1.1.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "@catppuccin/tailwindcss": "^1.0.0-beta.2",
+    "@iconify-json/fa-brands": "^1.2.1",
+    "@iconify-json/fa-solid": "^1.2.1",
+    "@tailwindcss/vite": "^4.1.10",
+    "astro": "^5.9.3",
+    "astro-expressive-code": "^0.41.2",
+    "astro-icon": "^1.1.5",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
-    "slugify": "^1.6.6",
-    "tailwindcss": "^3.4.14",
-    "typescript": "^5.6.3"
-  },
-  "devDependencies": {
-    "@catppuccin/tailwindcss": "^0.1.6",
-    "@tailwindcss/typography": "^0.5.15",
-    "tailwind-scrollbar": "^3.1.0"
+    "tailwindcss": "^4.1.10"
   }
 }

@@ -1,108 +1,29 @@
----
-/*
-  This is not a layout but just a component that's used in layouts.
-*/
----
-
 <script is:inline>
-  // Prevent theme flashing by applying theme immediately before any rendering
+  // Initialize theme immediately to prevent flash
   (function () {
-    function getStoredTheme() {
-      if (typeof window === "undefined") return null;
-
-      try {
-        const stored = localStorage.getItem("theme");
-        if (stored === "light" || stored === "dark") {
-          return stored;
+    const getInitialTheme = () => {
+      if (typeof localStorage !== "undefined") {
+        const localStorageTheme = localStorage.getItem("catppuccin-theme");
+        if (
+          localStorageTheme &&
+          ["latte", "mocha"].includes(localStorageTheme)
+        ) {
+          return localStorageTheme;
         }
-      } catch (e) {
-        // localStorage might not be available
       }
+      // Default to latte for light mode preference, mocha for dark mode preference
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        return "mocha";
+      }
+      return "latte";
+    };
 
-      // Fallback to system preference
-      return window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
+    const theme = getInitialTheme();
+    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.classList.add(theme);
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("catppuccin-theme", theme);
     }
-
-    function applyTheme(theme) {
-      const html = document.documentElement;
-      const themeColorMeta = document.head.querySelector(
-        'meta[name="theme-color"]'
-      );
-
-      // Always ensure theme-sleek class is present
-      if (!html.classList.contains("theme-sleek")) {
-        html.classList.add("theme-sleek");
-      }
-
-      if (theme === "dark") {
-        // Dark mode: theme-sleek only (no .dark class)
-        html.classList.remove("dark", "light");
-        if (themeColorMeta) {
-          themeColorMeta.setAttribute("content", "#0f2419");
-        }
-        // Apply Prism theme immediately and retry if needed
-        applyPrismTheme("dark");
-      } else {
-        // Light mode: theme-sleek AND dark classes (.theme-sleek.dark)
-        html.classList.remove("light");
-        html.classList.add("dark");
-        if (themeColorMeta) {
-          themeColorMeta.setAttribute("content", "#f0f5f2");
-        }
-        // Apply Prism theme immediately and retry if needed
-        applyPrismTheme("light");
-      }
-    }
-
-    function applyPrismTheme(mode) {
-      const darkSyntaxTheme = document.querySelector("#prism-dark");
-      const lightSyntaxTheme = document.querySelector("#prism-light");
-
-      if (darkSyntaxTheme && lightSyntaxTheme) {
-        if (mode === "dark") {
-          darkSyntaxTheme.media = "";
-          lightSyntaxTheme.media = "not all";
-        } else {
-          darkSyntaxTheme.media = "not all";
-          lightSyntaxTheme.media = "";
-        }
-      } else {
-        // If Prism CSS files aren't loaded yet, retry after DOM is ready
-        if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", function () {
-            applyPrismTheme(mode);
-          });
-        } else {
-          // Try again with a small delay
-          setTimeout(function () {
-            applyPrismTheme(mode);
-          }, 100);
-        }
-      }
-    }
-
-    // Apply theme immediately
-    const theme = getStoredTheme();
-    if (theme) {
-      applyTheme(theme);
-    }
-
-    // Ensure theme is properly applied once DOM is fully loaded
-    document.addEventListener("DOMContentLoaded", function () {
-      const currentTheme = getStoredTheme();
-      if (currentTheme) {
-        applyTheme(currentTheme);
-      }
-    });
-
-    // Additional fallback to ensure theme is applied after window load
-    window.addEventListener("load", function () {
-      const currentTheme = getStoredTheme();
-      if (currentTheme) {
-        applyTheme(currentTheme);
-      }
-    });
   })();
 </script>
+

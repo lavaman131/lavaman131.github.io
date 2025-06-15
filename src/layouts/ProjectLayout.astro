@@ -2,19 +2,18 @@
 // Import the global.css file here so that it is included on
 import "../styles/global.css";
 
-import GoogleFont from "./GoogleFont.astro";
-import ThemeScript from "./ThemeScript.astro";
 import Favicon from "./Favicon.astro";
 import Footer from "../components/Footer.astro";
 import Navigation from "../components/Navigation.astro";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
+import ThemeScript from "./ThemeScript.astro";
 
 const { frontmatter } = Astro.props;
 ---
 
 <!doctype html>
-<html class="theme-sleek" lang="en">
+<html lang="en">
   <head>
     <!-- Global Metadata -->
     <meta charset="utf-8" />
@@ -24,8 +23,6 @@ const { frontmatter } = Astro.props;
 
     <meta name="generator" content={Astro.generator} />
     <title>{`${frontmatter.title} | Projects`}</title>
-    <GoogleFont />
-    <ThemeScript />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
@@ -37,7 +34,7 @@ const { frontmatter } = Astro.props;
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
-      integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg"
+      integrity="sha384-7zkQWkzuo3B5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg"
       crossorigin="anonymous"></script>
 
     <!-- To automatically render math in text elements, include the auto-render extension: -->
@@ -47,101 +44,159 @@ const { frontmatter } = Astro.props;
       integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk"
       crossorigin="anonymous"
       onload="renderMathInElement(document.body);"></script>
-    <script>
-      const copyButtonLabel = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9 18q-.825 0-1.413-.588T7 16V4q0-.825.588-1.413T9 2h9q.825 0 1.413.588T20 4v12q0 .825-.588 1.413T18 18H9Zm0-2h9V4H9v12Zm-4 6q-.825 0-1.413-.588T3 20V7q0-.425.288-.713T4 6q.425 0 .713.288T5 7v13h10q.425 0 .713.288T16 21q0 .425-.288.713T15 22H5Zm4-6V4v12Z"/></svg>`;
-      const copyImg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m10.6 16.2l7.05-7.05l-1.4-1.4l-5.65 5.65l-2.85-2.85l-1.4 1.4l4.25 4.25ZM5 21q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.588 1.413T19 21H5Z"/></svg>`;
-      let codeBlocks = Array.from(document.querySelectorAll("pre"));
 
-      for (let codeBlock of codeBlocks) {
-        let wrapper = document.createElement("div");
-        wrapper.style.position = "relative";
-
-        let copyButton = document.createElement("button");
-        copyButton.className = "copy-code";
-        copyButton.innerHTML = copyButtonLabel;
-
-        codeBlock.setAttribute("tabindex", "0");
-        codeBlock.appendChild(copyButton);
-        // wrap codebock with relative parent element
-        if (codeBlock.parentNode) {
-          codeBlock.parentNode.insertBefore(wrapper, codeBlock);
-        }
-        wrapper.appendChild(codeBlock);
-
-        copyButton.addEventListener("click", async () => {
-          await copyCode(codeBlock, copyButton);
-        });
-      }
-
-      async function copyCode(block: HTMLElement, button: HTMLButtonElement) {
-        let code = block.querySelector("code");
-        let text = code?.innerText || "";
-
-        await navigator.clipboard.writeText(text);
-
-        // visual feedback that task is completed
-        button.innerHTML = copyImg;
-
-        setTimeout(() => {
-          button.innerHTML = copyButtonLabel;
-        }, 700);
-      }
-    </script>
+    <ThemeScript />
   </head>
-  <body class="min-h-screen max-w-[2000px] mx-auto flex flex-col">
+  <body
+    class="min-h-screen max-w-[2000px] mx-auto flex flex-col bg-ctp-base text-ctp-text transition-catppuccin antialiased"
+  >
     <Navigation />
-    <main id="main" class="flex-1 mt-16 sm:mt-20 flex flex-col">
-      <section
-        class="prose max-w-none prose-sleek mx-auto h-full flex flex-col"
-      >
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 class="font-bold mb-8">{frontmatter.title}</h1>
+
+    <main
+      class="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-ctp-base transition-catppuccin antialiased"
+    >
+      <div class="flex justify-between px-4 mx-auto max-w-screen-xl">
+        <article class="mx-auto w-full max-w-2xl">
+          <header class="mb-4 lg:mb-6">
+            <h1
+              class="mt-8 mb-4 text-3xl font-extrabold leading-tight text-ctp-text lg:mb-6 lg:text-4xl"
+            >
+              {frontmatter.title}
+            </h1>
+
+            <!-- Project Metadata -->
+            <div class="mb-6 space-y-4">
+              {
+                frontmatter.description && (
+                  <p class="text-lg text-ctp-subtext1 leading-relaxed">
+                    {frontmatter.description}
+                  </p>
+                )
+              }
+
+              {
+                frontmatter.technologies &&
+                  frontmatter.technologies.length > 0 && (
+                    <div>
+                      <h3 class="text-sm font-semibold text-ctp-text mb-2">
+                        Technologies Used
+                      </h3>
+                      <div class="flex flex-wrap gap-2">
+                        {frontmatter.technologies.map((tech: string) => (
+                          <span class="highlight-mauve text-xs font-medium px-2.5 py-0.5 rounded border">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )
+              }
+
+              {
+                (frontmatter.startDate || frontmatter.endDate) && (
+                  <div>
+                    <h3 class="text-sm font-semibold text-ctp-text mb-2">
+                      Project Timeline
+                    </h3>
+                    <p class="text-sm text-ctp-subtext1">
+                      {frontmatter.startDate &&
+                        new Date(frontmatter.startDate).toLocaleDateString(
+                          "en-US",
+                          { year: "numeric", month: "long" }
+                        )}
+                      {frontmatter.startDate && frontmatter.endDate && " - "}
+                      {frontmatter.endDate &&
+                        new Date(frontmatter.endDate).toLocaleDateString(
+                          "en-US",
+                          { year: "numeric", month: "long" }
+                        )}
+                      {frontmatter.startDate &&
+                        !frontmatter.endDate &&
+                        " - Present"}
+                    </p>
+                  </div>
+                )
+              }
+            </div>
+
+            <!-- Project Links -->
+            {
+              (frontmatter.githubUrl ||
+                frontmatter.paperUrl ||
+                frontmatter.demoUrl) && (
+                <div class="flex flex-wrap gap-3 mb-6 pb-6 border-b border-ctp-surface0">
+                  {frontmatter.githubUrl && (
+                    <a
+                      href={frontmatter.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-ctp-text bg-ctp-surface1 rounded-lg hover:bg-ctp-overlay0 focus:ring-4 focus:ring-ctp-surface2 transition-catppuccin"
+                    >
+                      <Icon name="fa-brands:github" class="w-4 h-4" />
+                      View Code
+                    </a>
+                  )}
+
+                  {frontmatter.demoUrl && (
+                    <a
+                      href={frontmatter.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-ctp-base bg-ctp-pink rounded-lg hover:bg-ctp-flamingo focus:ring-4 focus:ring-ctp-pink/30 transition-catppuccin"
+                    >
+                      <Icon name="fa-solid:external-link-alt" class="w-4 h-4" />
+                      Live Demo
+                    </a>
+                  )}
+
+                  {frontmatter.paperUrl && (
+                    <a
+                      href={frontmatter.paperUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-ctp-base bg-ctp-peach rounded-lg hover:bg-ctp-flamingo focus:ring-4 focus:ring-ctp-peach/30 transition-catppuccin"
+                    >
+                      <Icon name="fa-solid:file-pdf" class="w-4 h-4" />
+                      Read Paper
+                    </a>
+                  )}
+                </div>
+              )
+            }
+          </header>
+
+          <!-- Project Cover Image -->
           {
-            (
-              <Image
-                src={frontmatter.cover}
-                alt={frontmatter.title}
-                class="w-full"
-              />
+            frontmatter.cover && (
+              <div class="mb-8">
+                <Image
+                  src={frontmatter.cover}
+                  alt={frontmatter.title}
+                  class="w-full rounded-lg shadow-lg"
+                />
+              </div>
             )
           }
 
-          {
-            frontmatter.githubUrl && (
-              <div class="mt-8 mb-8">
-                <h2 class="mb-4">Code Availability</h2>
-                <a
-                  href={frontmatter.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="unset cursor-pointer inline-flex items-center gap-2 px-4 py-2 text-sm font-medium var(--theme-text) bg-[--theme-bg] border border-[--theme-divider] rounded-lg hover:bg-[--theme-bg-hover] hover:text-[--theme-text] focus:outline-none transition-all duration-300 transform hover:scale-105"
-                >
-                  <Icon name="fa-brands:github" class="w-5 h-5" />
-                  View on GitHub
-                </a>
-              </div>
-            )
-          }
-          {
-            frontmatter.paperUrl && (
-              <div class="mt-8 mb-8">
-                <h2 class="mb-4">Paper</h2>
-                <a
-                  href={frontmatter.paperUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="unset cursor-pointer inline-flex items-center gap-2 px-4 py-2 text-sm font-medium var(--theme-text) bg-[--theme-bg] border border-[--theme-divider] rounded-lg hover:bg-[--theme-bg-hover] hover:text-[--theme-text] focus:outline-none transition-all duration-300 transform hover:scale-105"
-                >
-                  <Icon name="fa-solid:file-pdf" class="w-5 h-5" />
-                  View Paper
-                </a>
-              </div>
-            )
-          }
-          <slot />
-        </div>
-      </section>
+          <!-- Project Content with Custom Typography -->
+          <div class="content-typography max-w-none">
+            <slot />
+          </div>
+
+          <!-- Back to Projects Navigation -->
+          <nav class="mt-8 pt-8 border-t border-ctp-surface0">
+            <a
+              href="/projects"
+              class="inline-flex items-center font-medium text-ctp-teal hover:text-ctp-sapphire transition-catppuccin hover:underline"
+            >
+              <Icon name="fa-solid:arrow-left" class="w-4 h-4 mr-2" />
+              Back to Projects
+            </a>
+          </nav>
+        </article>
+      </div>
     </main>
+
     <Footer />
   </body>
 </html>

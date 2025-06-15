@@ -1,13 +1,11 @@
 ---
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
-import { SITE_URL } from "../config";
+
 interface Props {
   title: string;
   href: string;
   image: ImageMetadata;
-  date?: string;
-  authors?: string;
   githubUrl?: string;
   paperUrl?: string;
 }
@@ -16,80 +14,65 @@ const { href, title, image, githubUrl, paperUrl } = Astro.props;
 ---
 
 <div
-  class="group h-full flex flex-col bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-xl hover:-translate-y-1 transition-[box-shadow,transform] duration-300 overflow-hidden relative"
+  class="group h-full flex flex-col bg-ctp-mantle/50 backdrop-blur-sm rounded-xl border border-ctp-surface0/50 hover:shadow-lg hover:shadow-ctp-surface0/20 hover:-translate-y-0.5 transition-all duration-500 hover:border-ctp-mauve/40 overflow-hidden hover:bg-ctp-mantle/80"
 >
-  <a
-    href={href}
-    class="unset flex flex-col h-full text-gray-900 dark:text-white no-underline"
-  >
+  <a href={href} class="unset flex flex-col h-full text-ctp-text no-underline">
     <!-- Image Container -->
     <div class="relative w-full aspect-[16/10] overflow-hidden">
       <Image
         src={image}
         alt={title}
-        class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+        class="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-500"
       />
-      <!-- Natural overlay for better text readability -->
+      <!-- Subtle overlay on hover -->
       <div
-        class="absolute inset-0 bg-bg-body/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        class="absolute inset-0 bg-gradient-to-t from-ctp-mantle/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
       >
       </div>
     </div>
 
     <!-- Content Container -->
-    <div class="flex flex-col flex-1 p-6 space-y-4">
+    <div class="flex flex-col flex-1 p-6 space-y-3">
       <h3
-        class="text-lg font-semibold text-gray-900 dark:text-white leading-tight line-clamp-2"
+        class="text-xl font-medium text-ctp-text leading-snug line-clamp-2 group-hover:text-ctp-mauve transition-all duration-300 tracking-tight"
       >
         {title}
       </h3>
 
-      <!-- Spacer for action links -->
-      <div class="flex items-center justify-end gap-4 mt-auto pt-2">
-        <div class="flex gap-4">
-          {githubUrl && <div class="w-16 h-6" />}
-          {paperUrl && <div class="w-16 h-6" />}
-        </div>
+      <!-- Spacer -->
+      <div class="flex-grow"></div>
+
+      <!-- Action Links -->
+      <div class="flex items-center justify-end gap-6 pt-2">
+        {
+          githubUrl && (
+            <a
+              href={githubUrl}
+              class="inline-flex items-center gap-2 text-ctp-subtext1 hover:text-ctp-mauve transition-all duration-300 no-underline font-medium tracking-wide"
+              target="_blank"
+              rel="noopener noreferrer"
+              onclick="(e) => e.stopPropagation()"
+            >
+              <Icon name="fa-brands:github" class="w-4 h-4" />
+              <span class="text-xs uppercase">Code</span>
+            </a>
+          )
+        }
+        {
+          paperUrl && (
+            <a
+              href={paperUrl}
+              class="inline-flex items-center gap-2 text-ctp-subtext1 hover:text-ctp-sapphire transition-all duration-300 no-underline font-medium tracking-wide"
+              target="_blank"
+              rel="noopener noreferrer"
+              onclick="(e) => e.stopPropagation()"
+            >
+              <Icon name="fa-solid:file-pdf" class="w-4 h-4" />
+              <span class="text-xs uppercase">Paper</span>
+            </a>
+          )
+        }
       </div>
     </div>
   </a>
-
-  <!-- Action Links positioned absolutely -->
-  <div class="absolute bottom-6 right-6 flex items-center gap-4 z-10">
-    {
-      githubUrl && (
-        <a
-          href={githubUrl}
-          class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200 no-underline"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Icon name="fa-brands:github" class="w-5 h-5" />
-          <span class="text-sm font-medium">Code</span>
-        </a>
-      )
-    }
-    {
-      paperUrl && (
-        <a
-          href={paperUrl}
-          class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors duration-200 no-underline"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Icon name="fa-solid:file-pdf" class="w-5 h-5" />
-          <span class="text-sm font-medium">Paper</span>
-        </a>
-      )
-    }
-  </div>
 </div>
-
-<style>
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-</style>

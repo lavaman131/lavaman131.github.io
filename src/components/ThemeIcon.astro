@@ -1,0 +1,75 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<button
+  id="themeToggle"
+  class="relative flex items-center justify-center w-10 h-10 rounded-lg group cursor-pointer theme-toggle-btn hover:bg-ctp-surface0 hover:text-ctp-mauve transition-catppuccin"
+  aria-label="Toggle theme"
+  onclick="toggleTheme()"
+>
+  <Icon
+    name="fa-solid:sun"
+    class="sun w-5 h-5 group-hover:scale-110 transition-transform duration-200"
+    aria-hidden="true"
+  />
+  <Icon
+    name="fa-solid:moon"
+    class="moon w-5 h-5 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform duration-200"
+    aria-hidden="true"
+  />
+</button>
+
+<style>
+  .theme-toggle-btn {
+  }
+
+  .sun {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .moon {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Show moon icon when in mocha theme */
+  :root[data-theme="mocha"] .sun {
+    opacity: 0;
+  }
+
+  :root[data-theme="mocha"] .moon {
+    opacity: 1;
+  }
+
+  /* Show sun icon when in latte theme (default) */
+  :root[data-theme="latte"] .sun {
+    opacity: 1;
+  }
+
+  :root[data-theme="latte"] .moon {
+    opacity: 0;
+  }
+</style>
+
+<script is:inline>
+  // Global theme toggle function
+  function toggleTheme() {
+    const html = document.documentElement;
+
+    const currentTheme =
+      html.getAttribute("data-theme") === "latte" ? "latte" : "mocha";
+    const newTheme = currentTheme === "latte" ? "mocha" : "latte";
+
+    // Set `data-theme` on `<html>` for icon visibility and theme state
+    html.setAttribute("data-theme", newTheme);
+
+    // Update the class on `<html>` to apply the site-wide theme
+    html.classList.remove(currentTheme);
+    html.classList.add(newTheme);
+
+    // Persist the new theme choice in localStorage
+    localStorage.setItem("catppuccin-theme", newTheme);
+  }
+</script>
