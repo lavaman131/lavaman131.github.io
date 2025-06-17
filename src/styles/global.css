@@ -5,236 +5,133 @@
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
+/* Content typography using minimal custom CSS - most styling will be in component classes */
 .content-typography {
-  color: var(--ctp-text);
-  line-height: 1.75;
+  @apply text-ctp-text leading-7;
 }
 
 .content-typography h1 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: var(--ctp-text);
-  margin-bottom: 1.5rem;
-  margin-top: 2rem;
-  line-height: 1.2;
+  @apply text-4xl font-bold text-ctp-text mb-6 mt-8 leading-tight;
 }
 
 .content-typography h2 {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--ctp-text);
-  margin-bottom: 1rem;
-  margin-top: 2rem;
-  line-height: 1.3;
+  @apply text-3xl font-bold text-ctp-text mb-4 mt-8 leading-snug;
 }
 
 .content-typography h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--ctp-text);
-  margin-bottom: 0.75rem;
-  margin-top: 1.5rem;
-  line-height: 1.4;
+  @apply text-2xl font-bold text-ctp-text mb-3 mt-6 leading-snug;
 }
 
 .content-typography h4 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--ctp-text);
-  margin-bottom: 0.5rem;
-  margin-top: 1rem;
-  line-height: 1.4;
+  @apply text-xl font-bold text-ctp-text mb-2 mt-4 leading-snug;
 }
 
 .content-typography h5 {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--ctp-text);
-  margin-bottom: 0.5rem;
-  margin-top: 1rem;
-  line-height: 1.4;
+  @apply text-lg font-bold text-ctp-text mb-2 mt-4 leading-snug;
 }
 
 .content-typography h6 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--ctp-text);
-  margin-bottom: 0.5rem;
-  margin-top: 1rem;
-  line-height: 1.4;
+  @apply text-base font-bold text-ctp-text mb-2 mt-4 leading-snug;
 }
 
 .content-typography p {
-  margin-bottom: 1.5rem;
-  line-height: 1.75;
-  color: var(--ctp-text);
+  @apply mb-6 leading-7 text-ctp-text;
 }
 
 .content-typography a {
-  color: var(--ctp-blue);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.content-typography a:hover {
-  color: var(--ctp-sky);
-  text-decoration: underline;
+  @apply text-ctp-blue no-underline transition-colors duration-200 hover:text-ctp-sky hover:underline;
 }
 
 .content-typography strong,
 .content-typography b {
-  font-weight: 600;
-  color: var(--ctp-text);
+  @apply font-semibold text-ctp-text;
 }
 
 .content-typography em,
 .content-typography i {
-  font-style: italic;
+  @apply italic;
 }
 
 .content-typography code {
-  background-color: var(--ctp-surface0);
-  color: var(--ctp-text);
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  @apply bg-ctp-surface0 text-ctp-text px-2 py-1 rounded-md text-sm font-mono;
 }
 
 .content-typography pre {
-  background-color: var(--ctp-mantle);
-  border: 1px solid var(--ctp-surface0);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  overflow-x: auto;
-  margin: 1.5rem 0;
+  @apply bg-ctp-mantle border border-ctp-surface0 rounded-lg p-4 overflow-x-auto my-6;
 }
 
 .content-typography pre code {
-  background-color: transparent;
-  padding: 0;
-  font-size: 0.875rem;
+  @apply bg-transparent p-0 text-sm;
 }
 
 .content-typography blockquote {
-  border-left: 4px solid var(--ctp-blue);
-  padding-left: 1.5rem;
-  font-style: italic;
-  color: var(--ctp-subtext0);
-  margin: 1.5rem 0;
+  @apply border-l-4 border-ctp-blue pl-6 italic text-ctp-subtext0 my-6;
 }
 
 .content-typography ul,
 .content-typography ol {
-  margin: 1.5rem 0;
-  padding-left: 1.5rem;
+  @apply my-6 pl-6;
 }
 
 .content-typography ul {
-  list-style-type: disc;
+  @apply list-disc;
 }
 
 .content-typography ol {
-  list-style-type: decimal;
+  @apply list-decimal;
 }
 
 .content-typography li {
-  margin-bottom: 0.5rem;
-  color: var(--ctp-text);
+  @apply mb-2 text-ctp-text;
 }
 
 .content-typography img {
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  margin: 2rem 0;
-  max-width: 100%;
-  height: auto;
+  @apply rounded-lg shadow-lg my-8 max-w-full h-auto;
 }
 
 .content-typography table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 2rem 0;
-  background-color: var(--ctp-mantle);
-  border: 2px solid var(--ctp-overlay0);
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
+  @apply w-full border-collapse my-8 bg-ctp-mantle border-2 border-ctp-overlay0 rounded-lg text-sm;
 }
 
 .content-typography thead {
-  background-color: var(--ctp-surface0);
+  @apply bg-ctp-surface0;
 }
 
 .content-typography th {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  font-weight: 600;
-  color: var(--ctp-text);
-  border: 1px solid var(--ctp-overlay0);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  background-color: var(--ctp-surface0);
+  @apply px-4 py-3 text-left font-semibold text-ctp-text border border-ctp-overlay0 text-xs uppercase tracking-wide bg-ctp-surface0;
 }
 
 .content-typography tbody tr {
-  background-color: var(--ctp-mantle);
-  transition: background-color 0.15s ease;
-}
-
-.content-typography tbody tr:hover {
-  background-color: var(--ctp-base);
+  @apply bg-ctp-mantle transition-colors duration-150 hover:bg-ctp-base;
 }
 
 .content-typography td {
-  padding: 0.75rem 1rem;
-  color: var(--ctp-text);
-  border: 1px solid var(--ctp-overlay0);
-  vertical-align: top;
+  @apply px-4 py-3 text-ctp-text border border-ctp-overlay0 align-top;
 }
 
 .content-typography tbody tr:nth-child(even) {
-  background-color: var(--ctp-base);
+  @apply bg-ctp-base;
 }
 
 .content-typography tbody tr:nth-child(even):hover {
-  background-color: var(--ctp-surface0);
-}
-
-.content-typography th,
-.content-typography td {
-  border: 1px solid #6c7086 !important; /* Catppuccin overlay0 fallback */
-}
-
-@media (prefers-color-scheme: dark) {
-  .content-typography th,
-  .content-typography td {
-    border: 1px solid #6c7086 !important;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  .content-typography th,
-  .content-typography td {
-    border: 1px solid #9ca0b0 !important;
-  }
+  @apply bg-ctp-surface0;
 }
 
 .content-typography td:first-child {
-  font-weight: 500;
+  @apply font-medium;
 }
 
 @media (max-width: 768px) {
   .content-typography table {
-    font-size: 0.8rem;
+    @apply text-xs;
   }
   
   .content-typography th,
   .content-typography td {
-    padding: 0.5rem 0.75rem;
+    @apply px-3 py-2;
   }
   
   .content-typography th {
-    font-size: 0.7rem;
+    @apply text-[0.7rem];
   }
 }

@@ -59,7 +59,11 @@ import { LINKEDIN_HANDLE } from "../config";
 
       <!-- Scroll indicator -->
       <div class="flex justify-center mt-20 lg:mt-24">
-        <div class="animate-bounce">
+        <button
+          onclick="document.getElementById('content-section').scrollIntoView({ behavior: 'smooth' })"
+          class="animate-bounce hover:text-ctp-mauve transition-colors duration-200 cursor-pointer focus:outline-none focus:text-ctp-mauve"
+          aria-label="Scroll to content"
+        >
           <svg
             class="w-8 h-8 text-ctp-overlay0"
             fill="none"
@@ -72,13 +76,16 @@ import { LINKEDIN_HANDLE } from "../config";
               stroke-width="2"
               d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
           </svg>
-        </div>
+        </button>
       </div>
     </div>
   </div>
 
   <!-- Content Sections -->
-  <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div
+    id="content-section"
+    class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+  >
     <div class="space-y-16 lg:space-y-20 py-16 lg:py-20">
       <!-- Experience Section -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
@@ -151,9 +158,9 @@ import { LINKEDIN_HANDLE } from "../config";
         >
           <!-- AI/ML Card - Purple Theme -->
           <div
-            class="bg-gradient-to-br from-ctp-mauve/10 to-ctp-lavender/10 border-2 border-ctp-mauve/30 text-center p-8 lg:p-10 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 hover:border-ctp-mauve hover:bg-gradient-to-br hover:from-ctp-mauve/20 hover:to-ctp-lavender/20"
+            class="bg-gradient-to-br from-ctp-mauve/10 to-ctp-lavender/10 border-2 border-ctp-mauve/30 text-center p-8 lg:p-10 rounded-3xl"
           >
-            <div class="text-5xl lg:text-6xl mb-6">🤖</div>
+            <div class="text-5xl lg:text-6xl mb-6">🧠</div>
             <h4 class="font-bold text-ctp-mauve mb-3 text-xl lg:text-2xl">
               AI/ML
             </h4>
@@ -164,7 +171,7 @@ import { LINKEDIN_HANDLE } from "../config";
 
           <!-- Systems Card - Green Theme -->
           <div
-            class="bg-gradient-to-br from-ctp-green/10 to-ctp-teal/10 border-2 border-ctp-green/30 text-center p-8 lg:p-10 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 hover:border-ctp-green hover:bg-gradient-to-br hover:from-ctp-green/20 hover:to-ctp-teal/20"
+            class="bg-gradient-to-br from-ctp-green/10 to-ctp-teal/10 border-2 border-ctp-green/30 text-center p-8 lg:p-10 rounded-3xl"
           >
             <div class="text-5xl lg:text-6xl mb-6">⚡</div>
             <h4 class="font-bold text-ctp-green mb-3 text-xl lg:text-2xl">
@@ -177,7 +184,7 @@ import { LINKEDIN_HANDLE } from "../config";
 
           <!-- AI4Science Card - Rose Theme -->
           <div
-            class="bg-gradient-to-br from-ctp-rosewater/10 to-ctp-flamingo/10 border-2 border-ctp-rosewater/30 text-center p-8 lg:p-10 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 hover:border-ctp-rosewater hover:bg-gradient-to-br hover:from-ctp-rosewater/20 hover:to-ctp-flamingo/20"
+            class="bg-gradient-to-br from-ctp-rosewater/10 to-ctp-flamingo/10 border-2 border-ctp-rosewater/30 text-center p-8 lg:p-10 rounded-3xl"
           >
             <div class="text-5xl lg:text-6xl mb-6">🧬</div>
             <h4 class="font-bold text-ctp-rosewater mb-3 text-xl lg:text-2xl">
@@ -190,7 +197,7 @@ import { LINKEDIN_HANDLE } from "../config";
 
           <!-- Robotics Card - Blue Theme -->
           <div
-            class="bg-gradient-to-br from-ctp-sapphire/10 to-ctp-sky/10 border-2 border-ctp-sapphire/30 text-center p-8 lg:p-10 rounded-3xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 hover:border-ctp-sapphire hover:bg-gradient-to-br hover:from-ctp-sapphire/20 hover:to-ctp-sky/20"
+            class="bg-gradient-to-br from-ctp-sapphire/10 to-ctp-sky/10 border-2 border-ctp-sapphire/30 text-center p-8 lg:p-10 rounded-3xl"
           >
             <div class="text-5xl lg:text-6xl mb-6">🤖</div>
             <h4 class="font-bold text-ctp-sapphire mb-3 text-xl lg:text-2xl">
@@ -219,7 +226,7 @@ import { LINKEDIN_HANDLE } from "../config";
         <div class="flex flex-wrap justify-center gap-8">
           <a
             href={`https://linkedin.com/in/${LINKEDIN_HANDLE}`}
-            class="inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-ctp-blue/10 to-ctp-sapphire/10 hover:from-ctp-blue/20 hover:to-ctp-sapphire/20 text-ctp-text rounded-2xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg border-2 border-ctp-blue/30 hover:border-ctp-blue"
+            class="inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-ctp-blue/10 to-ctp-sapphire/10 hover:from-ctp-blue/20 hover:to-ctp-sapphire/20 text-ctp-text rounded-2xl transition-all duration-300 font-medium hover:-translate-y-1 text-lg border-2 border-ctp-blue/30 hover:border-ctp-blue"
           >
             <svg
               class="w-6 h-6 text-ctp-blue"
@@ -234,7 +241,7 @@ import { LINKEDIN_HANDLE } from "../config";
           </a>
           <a
             href="/projects"
-            class="inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-ctp-pink/10 to-ctp-mauve/10 hover:from-ctp-pink/20 hover:to-ctp-mauve/20 text-ctp-text rounded-2xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg border-2 border-ctp-pink/30 hover:border-ctp-pink"
+            class="inline-flex items-center gap-4 px-10 py-5 bg-gradient-to-r from-ctp-pink/10 to-ctp-mauve/10 hover:from-ctp-pink/20 hover:to-ctp-mauve/20 text-ctp-text rounded-2xl transition-all duration-300 font-medium hover:-translate-y-1 text-lg border-2 border-ctp-pink/30 hover:border-ctp-pink"
           >
             <svg
               class="w-6 h-6 text-ctp-pink"
