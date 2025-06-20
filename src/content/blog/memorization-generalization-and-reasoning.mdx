@@ -457,7 +457,7 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
 
         .tower {
             display: flex;
-            flex-direction: column-reverse;
+            flex-direction: column;
             align-items: center;
             position: relative;
             width: 200px;
@@ -468,8 +468,10 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
             height: 20px;
             background: linear-gradient(45deg, #8B4513, #A0522D);
             border-radius: 10px;
-            margin-bottom: 10px;
+            margin-top: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
         }
 
         .tower-pole {
@@ -478,15 +480,23 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
             background: linear-gradient(to bottom, #654321, #8B4513);
             border-radius: 4px;
             position: absolute;
-            bottom: 30px;
+            top: 60px;
             box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
+            z-index: 2;
         }
 
         .tower-label {
             font-size: 1.5em;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .disk {
@@ -502,8 +512,17 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
             position: relative;
-            z-index: 10;
+            z-index: 20;
             font-size: 0.8em;
+        }
+
+        .tower-content {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            position: relative;
+            min-height: 220px;
+            justify-content: flex-end;
         }
 
         .stats {
@@ -697,18 +716,24 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
         <div class="game-area">
             <div class="tower" id="tower-A">
                 <div class="tower-label">Tower A (Source)</div>
-                <div class="tower-pole"></div>
-                <div class="tower-base"></div>
+                <div class="tower-content">
+                    <div class="tower-pole"></div>
+                    <div class="tower-base"></div>
+                </div>
             </div>
             <div class="tower" id="tower-B">
                 <div class="tower-label">Tower B (Auxiliary)</div>
-                <div class="tower-pole"></div>
-                <div class="tower-base"></div>
+                <div class="tower-content">
+                    <div class="tower-pole"></div>
+                    <div class="tower-base"></div>
+                </div>
             </div>
             <div class="tower" id="tower-C">
                 <div class="tower-label">Tower C (Destination)</div>
-                <div class="tower-pole"></div>
-                <div class="tower-base"></div>
+                <div class="tower-content">
+                    <div class="tower-pole"></div>
+                    <div class="tower-base"></div>
+                </div>
             </div>
         </div>
 
@@ -896,7 +921,8 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
 
             getDiskElement(tower, index) {
                 const towerElement = document.getElementById(\`tower-\${tower}\`);
-                const diskElements = towerElement.querySelectorAll('.disk');
+                const towerContent = towerElement.querySelector('.tower-content');
+                const diskElements = towerContent.querySelectorAll('.disk');
                 return diskElements[index];
             }
 
@@ -911,6 +937,7 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
                 // Render disks on each tower
                 ['A', 'B', 'C'].forEach(towerName => {
                     const tower = document.getElementById(\`tower-\${towerName}\`);
+                    const towerContent = tower.querySelector('.tower-content');
                     const towerDisks = this.towers[towerName];
                     
                     towerDisks.forEach((diskSize, index) => {
@@ -920,9 +947,9 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
                         disk.style.background = this.diskColors[diskSize - 1];
                         disk.textContent = diskSize;
                         
-                        // Insert disk above the base and pole
-                        const base = tower.querySelector('.tower-base');
-                        tower.insertBefore(disk, base);
+                        // Insert disk into tower content (before the base)
+                        const base = towerContent.querySelector('.tower-base');
+                        towerContent.insertBefore(disk, base);
                     });
                 });
             }
