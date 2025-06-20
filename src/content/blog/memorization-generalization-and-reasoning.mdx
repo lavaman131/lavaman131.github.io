@@ -559,6 +559,80 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
             transform: translateY(-50px);
             z-index: 100;
         }
+
+        .code-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .code-toggle {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .code-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .code-display {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #f8f8f2;
+            overflow-x: auto;
+            border: 1px solid #444;
+            display: none;
+        }
+
+        .code-display.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .code-comment {
+            color: #6a9955;
+        }
+
+        .code-keyword {
+            color: #569cd6;
+        }
+
+        .code-function {
+            color: #dcdcaa;
+        }
+
+        .code-string {
+            color: #ce9178;
+        }
+
+        .code-number {
+            color: #b5cea8;
+        }
     </style>
 </head>
 <body>
@@ -584,6 +658,40 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
             <button id="solveBtn">Solve Automatically</button>
             <button id="resetBtn">Reset</button>
             <button id="stepBtn" disabled>Next Step</button>
+            <button id="codeToggle" class="code-toggle">🔍 View Algorithm Code</button>
+        </div>
+
+        <div class="code-section">
+            <div class="code-display" id="codeDisplay">
+<pre><span class="code-comment">// This is the core recursive algorithm for solving Tower of Hanoi</span>
+<span class="code-function">solveTowerOfHanoi</span>(<span class="code-keyword">n</span>, <span class="code-keyword">source</span>, <span class="code-keyword">destination</span>, <span class="code-keyword">auxiliary</span>) {
+    <span class="code-comment">// BASE CASE: If there's only 1 disk, move it directly</span>
+    <span class="code-keyword">if</span> (<span class="code-keyword">n</span> === <span class="code-number">1</span>) {
+        <span class="code-keyword">this</span>.moves.<span class="code-function">push</span>({ 
+            <span class="code-keyword">from</span>: <span class="code-keyword">source</span>, 
+            <span class="code-keyword">to</span>: <span class="code-keyword">destination</span>, 
+            <span class="code-keyword">disk</span>: <span class="code-number">1</span> 
+        });
+    } <span class="code-keyword">else</span> {
+        <span class="code-comment">// RECURSIVE CASE: Break down the problem into 3 steps</span>
+        
+        <span class="code-comment">// Step 1: Move n-1 disks from source to auxiliary tower</span>
+        <span class="code-comment">// (using destination as temporary storage)</span>
+        <span class="code-keyword">this</span>.<span class="code-function">solveTowerOfHanoi</span>(<span class="code-keyword">n</span> - <span class="code-number">1</span>, <span class="code-keyword">source</span>, <span class="code-keyword">auxiliary</span>, <span class="code-keyword">destination</span>);
+        
+        <span class="code-comment">// Step 2: Move the largest disk from source to destination</span>
+        <span class="code-keyword">this</span>.moves.<span class="code-function">push</span>({ 
+            <span class="code-keyword">from</span>: <span class="code-keyword">source</span>, 
+            <span class="code-keyword">to</span>: <span class="code-keyword">destination</span>, 
+            <span class="code-keyword">disk</span>: <span class="code-keyword">n</span> 
+        });
+        
+        <span class="code-comment">// Step 3: Move n-1 disks from auxiliary to destination</span>
+        <span class="code-comment">// (using source as temporary storage)</span>
+        <span class="code-keyword">this</span>.<span class="code-function">solveTowerOfHanoi</span>(<span class="code-keyword">n</span> - <span class="code-number">1</span>, <span class="code-keyword">auxiliary</span>, <span class="code-keyword">destination</span>, <span class="code-keyword">source</span>);
+    }
+}</pre>
+            </div>
         </div>
 
         <div class="game-area">
@@ -662,6 +770,20 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
                 document.getElementById('resetBtn').addEventListener('click', () => this.reset());
                 document.getElementById('stepBtn').addEventListener('click', () => this.nextStep());
                 document.getElementById('diskCount').addEventListener('change', () => this.reset());
+                document.getElementById('codeToggle').addEventListener('click', () => this.toggleCode());
+            }
+
+            toggleCode() {
+                const codeDisplay = document.getElementById('codeDisplay');
+                const toggleButton = document.getElementById('codeToggle');
+                
+                if (codeDisplay.classList.contains('show')) {
+                    codeDisplay.classList.remove('show');
+                    toggleButton.textContent = '🔍 View Algorithm Code';
+                } else {
+                    codeDisplay.classList.add('show');
+                    toggleButton.textContent = '❌ Hide Algorithm Code';
+                }
             }
 
             reset() {
