@@ -1,0 +1,49 @@
+---
+title: "Memorization, Generalization, and Reasoning"
+date: "2024-07-26"
+authors: "Alex Lavaee"
+description: "A deep dive into the concepts of memorization, generalization, and reasoning in large language models."
+---
+
+Not understanding how AI models actually memorize, generalize, and reason is costing us. We're chasing the wrong problems instead of building real solutions.
+
+## How much do models actually memorize?
+
+Meta's research "How much do language models memorize?" provides crucial insights. They distinguished between **unintended memorization** (training set specifics) and **generalization** (true pattern recognition).
+
+**Key Finding**: GPT-family models (examining GPT-2 series) memorize ~3.6 bits per parameter. Researchers trained target models on uniformly random bit strings and used reference models trained on larger, diverse datasets. They leveraged Shannon Information Theory (less likely events carry more information) to approximate Kolmogorov Complexity (shortest description length needed to reproduce an object). Since compression rates are tied to likelihood in predictive models, they approximated Kolmogorov complexity using model likelihoods.
+
+**The Formula**: `compression_bits(reference_model) - compression_bits(trained_model) = unintended memorization` or the information from specific datasets stored in trained model weights. Higher probability means less surprise (information), resulting in fewer compression_bits based on the Shannon Entropy equation.
+
+**Critical Insight**: Once memorization capacity fills, training shifts to learning general patterns where 'grokking' begins. Models are forced to generalize. Scaling laws demonstrate that modern LLMs are trained on such vast datasets that membership reference (pulling out specifics) becomes extremely rare for average data points.
+
+## How does reasoning come into play?
+
+Apple's recent paper "The Illusion of Thinking" claimed models "collapse" on complex reasoning tasks, with non-reasoning models outperforming reasoning ones on simple tasks. However, "The Illusion of Illusion of Thinking" paper revealed critical experimental design flaws:
+
+### Prompt Design
+Apple's prompts asked models to enumerate every Tower of Hanoi move, causing output token limits where models explicitly stated "The pattern continues, but to avoid making this too long, I'll stop here." When prompted to generate functions instead ("Output a Lua function that prints the solution when called"), Claude Opus, Sonnet, and Gemini correctly produced recursive algorithms for 15-disk solutions.
+
+### Unsolvable Problems
+Apple marked models as failures for not solving mathematically impossible River Crossing puzzles (N ≥ 6 with boat capacity of 3).
+
+Both sides acknowledge that current models have real output limitations, but experimental design can make those limits appear more fundamental than they are.
+
+## Understanding the relationship
+
+Understanding the relationship between memorization, generalization and reasoning is critical for:
+
+### 1. Evaluation Design
+Tests that expect memorized responses miss models that have progressed to generalization and reasoning. When evaluations reward exhaustive approaches (like move lists), they penalize models that have learned to think abstractly and generate practical engineering solutions.
+
+### 2. Capability Unlocking
+Reasoning "failures" often stem from poor evaluation design. Tweaking task setup or prompts can reveal genuine capabilities valuable for workflow automation, coding, and information extraction. Additionally, understanding when models move from memorization to generalization can help us in areas of efficiency and intelligence.
+
+### 3. Tool Integration
+LLMs should be paired with tools to augment reasoning. In our experiments, Claude Opus solved Tower of Hanoi through recursive algorithms, not exhaustive move enumeration.
+
+## Conclusion
+
+Models are generalizing effectively and knowing at what points helps us iterate on intelligence. With proper prompts, tools, and evaluation frameworks, models demonstrate stronger reasoning than flawed tests suggest. While not yet human-level reasoners, the future isn't as bleak as some evaluations indicate. The "collapse" often reflects our testing limitations, not fundamental model constraints.
+
+Understanding these distinctions is crucial for determining where innovation is truly needed versus where better implementation can unlock existing capabilities.
