@@ -957,7 +957,15 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
                 const currentMove = document.getElementById(\`move-\${index}\`);
                 if (currentMove) {
                     currentMove.classList.add('current-move');
-                    currentMove.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    // Only auto-scroll if the solution display is currently visible
+                    // This allows users to scroll away without being forced back
+                    const solutionDisplay = document.getElementById('solutionDisplay');
+                    const rect = solutionDisplay.getBoundingClientRect();
+                    const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                    
+                    if (isVisible) {
+                        currentMove.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
                 }
             }
 
