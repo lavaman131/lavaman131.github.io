@@ -139,109 +139,14 @@ Meta's research "How much do language models memorize?" provides crucial insight
             padding: 15px;
             margin: 15px 0;
         }
-        .code-section {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 2px solid rgba(74, 144, 226, 0.3);
-        }
-        .code-toggle {
-            background: linear-gradient(45deg, #4a90e2, #5ba3f5);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            margin-bottom: 15px;
-        }
-        .code-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.3);
-        }
-        .code-display {
-            background: #1a1a1a;
-            border-radius: 10px;
-            padding: 20px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #f8f8f2;
-            overflow-x: auto;
-            border: 1px solid #444;
-            display: none;
-        }
-        .code-display.show {
-            display: block;
-            animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .code-comment {
-            color: #6a9955;
-        }
-        .code-keyword {
-            color: #569cd6;
-        }
-        .code-function {
-            color: #dcdcaa;
-        }
-        .code-string {
-            color: #ce9178;
-        }
-        .code-number {
-            color: #b5cea8;
-        }
+
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📊 How They Measure Language Model Memorization</h1>
         
-        <div class="code-section">
-            <button id="codeToggle" class="code-toggle">🔍 View Shannon Entropy Algorithm</button>
-            <div class="code-display" id="codeDisplay">
-<pre><span class="code-comment">// Shannon Information Theory - The Core Algorithm</span>
-<span class="code-comment">// This calculates how many bits are needed to compress information</span>
 
-<span class="code-function">updateCompression</span>() {
-    <span class="code-comment">// Get probability as percentage (1-100%)</span>
-    <span class="code-keyword">const</span> prob = <span class="code-function">parseInt</span>(probSlider.value);
-    
-    <span class="code-comment">// Convert to decimal probability (0.01-1.0)</span>
-    <span class="code-keyword">const</span> decimal = prob / <span class="code-number">100</span>;
-    
-    <span class="code-comment">// 🎯 SHANNON ENTROPY FORMULA: -log₂(probability)</span>
-    <span class="code-comment">// Lower probability = More surprise = More bits needed</span>
-    <span class="code-keyword">const</span> cost = -<span class="code-function">Math.log2</span>(decimal);
-    
-    <span class="code-comment">// The difference in compression costs between models</span>
-    <span class="code-comment">// reveals how much one model "memorized" vs the other</span>
-    <span class="code-keyword">const</span> memorization = referenceModelCost - targetModelCost;
-    
-    <span class="code-comment">// Visual representation for the progress bar</span>
-    <span class="code-keyword">const</span> width = <span class="code-function">Math.min</span>(cost * <span class="code-number">10</span>, <span class="code-number">100</span>);
-}
-
-<span class="code-comment">// Key Insight: If a model assigns high probability to text,</span>
-<span class="code-comment">// it needs fewer bits to compress it = more memorization!</span>
-
-<span class="code-comment">// Examples:</span>
-<span class="code-comment">// 100% probability → 0 bits (perfect memorization)</span>
-<span class="code-comment">// 50% probability → 1 bit (some memorization)</span>
-<span class="code-comment">// 1% probability → ~6.6 bits (little/no memorization)</span></pre>
-            </div>
-        </div>
         
         <div class="section">
             <h2>1. The Basic Setup</h2>
@@ -429,28 +334,52 @@ Meta's research "How much do language models memorize?" provides crucial insight
         probSlider.addEventListener('input', updateCompression);
         updateCompression(); // Initialize
         
-        // Code toggle functionality
-        const codeToggle = document.getElementById('codeToggle');
-        const codeDisplay = document.getElementById('codeDisplay');
-        
-        codeToggle.addEventListener('click', function() {
-            if (codeDisplay.classList.contains('show')) {
-                codeDisplay.classList.remove('show');
-                codeToggle.textContent = '🔍 View Shannon Entropy Algorithm';
-            } else {
-                codeDisplay.classList.add('show');
-                codeToggle.textContent = '❌ Hide Shannon Entropy Algorithm';
-            }
-        });
+
     </script>
 </body>
 </html>`}
     width="100%"
-    height="1200px"
+    height="3450px"
     style={{ border: 'none', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
     title="Shannon Information Theory Visualization"
   />
 </div>
+
+**Shannon Information Theory Algorithm:**
+
+```javascript
+// Shannon Information Theory - The Core Algorithm
+// This calculates how many bits are needed to compress information
+
+updateCompression() {
+    // Get probability as percentage (1-100%)
+    const prob = parseInt(probSlider.value);
+    
+    // Convert to decimal probability (0.01-1.0)
+    const decimal = prob / 100;
+    
+    // 🎯 SHANNON ENTROPY FORMULA: -log₂(probability)
+    // Lower probability = More surprise = More bits needed
+    const cost = -Math.log2(decimal);
+    
+    // The difference in compression costs between models
+    // reveals how much one model "memorized" vs the other
+    const memorization = referenceModelCost - targetModelCost;
+    
+    // Visual representation for the progress bar
+    const width = Math.min(cost * 10, 100);
+}
+
+// Key Insight: If a model assigns high probability to text,
+// it needs fewer bits to compress it = more memorization!
+
+// Examples:
+// 100% probability → 0 bits (perfect memorization)
+// 50% probability → 1 bit (some memorization)
+// 1% probability → ~6.6 bits (little/no memorization)
+```
+
+<br />
 
 **Critical Insight**: Once memorization capacity fills, training shifts to learning general patterns where 'grokking' begins. Models are forced to generalize. Scaling laws demonstrate that modern LLMs are trained on such vast datasets that membership reference (pulling out specifics) becomes extremely rare for average data points.
 
