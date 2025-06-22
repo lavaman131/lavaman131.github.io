@@ -491,7 +491,8 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
             display: flex;
             justify-content: space-around;
             align-items: flex-end;
-            height: 300px;
+            min-height: 300px;
+            height: auto;
             margin: 40px 0;
             background: rgba(0, 0, 0, 0.1);
             border-radius: 15px;
@@ -519,7 +520,8 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
 
         .tower-pole {
             width: 8px;
-            height: 250px;
+            min-height: 250px;
+            height: calc(100% - 80px);
             background: linear-gradient(to bottom, #654321, #8B4513);
             border-radius: 4px;
             position: absolute;
@@ -565,6 +567,7 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
             align-items: center;
             position: relative;
             min-height: 220px;
+            height: auto;
             justify-content: flex-end;
         }
 
