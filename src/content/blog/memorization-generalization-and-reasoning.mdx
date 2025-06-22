@@ -590,27 +590,7 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        .solution-display {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
 
-        .move {
-            padding: 8px 15px;
-            margin: 5px 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            border-left: 4px solid #ffd700;
-        }
-
-        .current-move {
-            background: rgba(255, 215, 0, 0.3);
-            animation: pulse 1s infinite;
-        }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -691,10 +671,7 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
             </div>
         </div>
 
-        <div class="solution-display" id="solutionDisplay">
-            <h3>Solution Steps:</h3>
-            <div id="movesList"></div>
-        </div>
+
     </div>
 
     <script>
@@ -769,7 +746,6 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
                 const diskCount = parseInt(document.getElementById('diskCount').value);
                 this.moves = [];
                 this.solveTowerOfHanoi(diskCount, 'A', 'C', 'B');
-                this.displaySolution();
                 
                 // Start automatic solving
                 document.getElementById('solveBtn').disabled = true;
@@ -811,9 +787,6 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
 
             async animateMove(move, moveIndex) {
                 const { from, to } = move;
-                
-                // Highlight current move in solution
-                this.highlightCurrentMove(moveIndex);
                 
                 // Get the disk to move
                 const disk = this.towers[from].pop();
@@ -888,45 +861,11 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
                 document.getElementById('minMoves').textContent = Math.pow(2, diskCount) - 1;
             }
 
-            displaySolution() {
-                const movesList = document.getElementById('movesList');
-                movesList.innerHTML = '';
-                
-                this.moves.forEach((move, index) => {
-                    const moveElement = document.createElement('div');
-                    moveElement.className = 'move';
-                    moveElement.id = \`move-\${index}\`;
-                    moveElement.textContent = \`\${index + 1}. Move disk from Tower \${move.from} to Tower \${move.to}\`;
-                    movesList.appendChild(moveElement);
-                });
-            }
 
-            highlightCurrentMove(index) {
-                // Remove previous highlight
-                const previousMove = document.querySelector('.current-move');
-                if (previousMove) {
-                    previousMove.classList.remove('current-move');
-                }
-                
-                // Highlight current move
-                const currentMove = document.getElementById(\`move-\${index}\`);
-                if (currentMove) {
-                    currentMove.classList.add('current-move');
-                    // Only auto-scroll if the solution display is currently visible
-                    // This allows users to scroll away without being forced back
-                    const solutionDisplay = document.getElementById('solutionDisplay');
-                    const rect = solutionDisplay.getBoundingClientRect();
-                    const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-                    
-                    if (isVisible) {
-                        currentMove.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                }
-            }
 
-            clearSolution() {
-                document.getElementById('movesList').innerHTML = '<p>Click "Solve Automatically" to see the solution steps.</p>';
-            }
+
+
+
 
             startTimer() {
                 this.startTime = Date.now();
@@ -956,7 +895,7 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
 </body>
 </html>`}
     width="100%"
-    height="1170px"
+    height="1000px"
     style={{ border: 'none', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
     title="Tower of Hanoi Algorithmic Solver"
   />
