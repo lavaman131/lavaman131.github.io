@@ -733,7 +733,6 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
                 
                 this.updateDisplay();
                 this.updateStats();
-                this.clearSolution();
                 
                 // Enable/disable buttons
                 document.getElementById('solveBtn').disabled = false;
@@ -771,18 +770,24 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
 
             async animateSolution() {
                 const speed = parseInt(document.getElementById('speed').value);
+                this.isAnimating = true;
                 
                 for (let i = 0; i < this.moves.length; i++) {
+                    // Check if animation was interrupted (e.g., by reset)
                     if (!this.isAnimating) {
-                        this.isAnimating = true;
+                        break;
                     }
                     
                     await this.animateMove(this.moves[i], i);
                     await this.delay(speed);
                 }
                 
-                this.isAnimating = false;
-                this.stopTimer();
+                // Only disable solve button if we completed the animation
+                if (this.isAnimating) {
+                    this.isAnimating = false;
+                    this.stopTimer();
+                    document.getElementById('solveBtn').disabled = false;
+                }
             }
 
             async animateMove(move, moveIndex) {
