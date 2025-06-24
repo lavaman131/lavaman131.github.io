@@ -9,11 +9,11 @@ Not understanding how AI models actually memorize, generalize, and reason is cos
 
 ## How much do models actually memorize?
 
-Meta's research "How much do language models memorize?" [3] provides crucial insights. They distinguished between **unintended memorization** (sample-specific storage) and **intended memorization** (generalization).
+Meta's research "How much do language models memorize?" <a href="#ref-3">[3]</a> provides crucial insights. They distinguished between **unintended memorization** (sample-specific storage) and **intended memorization** (generalization).
 
 ### Intuition
 
-Neural networks possess a fundamental information storage capacity that governs the trade-off between memorization (storing specific training examples) and generalization (learning compressible patterns). They found each parameter in a neural network can store approximately 3.6 bits of information [3], creating a hard constraint on what the network can remember versus what it must compress. This capacity limitation forces networks to choose between perfect recall of training data and the discovery of generalizable patterns--a trade-off that explains numerous phenomena in deep learning, from double descent to emergent abilities.
+Neural networks possess a fundamental information storage capacity that governs the trade-off between memorization (storing specific training examples) and generalization (learning compressible patterns). They found each parameter in a neural network can store approximately 3.6 bits of information <a href="#ref-3">[3]</a>, creating a hard constraint on what the network can remember versus what it must compress. This capacity limitation forces networks to choose between perfect recall of training data and the discovery of generalizable patterns--a trade-off that explains numerous phenomena in deep learning, from double descent to emergent abilities.
 
 ### Information Theory Foundations
 
@@ -488,7 +488,7 @@ This formulation captures the key intuition: if the target model assigns much hi
 
 ### The 3.6 Bits-Per-Parameter Hypothesis
 
-**Fundamental Capacity Theorem**: Extensive empirical analysis reveals that neural networks in the GPT family exhibit a remarkably consistent memorization capacity governed by a universal constant [3]:
+**Fundamental Capacity Theorem**: Extensive empirical analysis reveals that neural networks in the GPT family exhibit a remarkably consistent memorization capacity governed by a universal constant <a href="#ref-3">[3]</a>:
 
 $$
 \begin{align*}
@@ -508,7 +508,7 @@ $$
 
 **Mathematical Foundation**: The capacity constraint emerges from the fundamental trade-off between fitting the training distribution and maintaining generalization capability. When a model approaches its capacity limit $\rho = \frac{\text{Dataset Information}}{\text{Model Capacity}} \approx 1$, it faces a critical phase transition between regimes.
 
-**Universality Across Scales**: This 3.6 bits/parameter constant has been empirically validated across [3]:
+**Universality Across Scales**: This 3.6 bits/parameter constant has been empirically validated across <a href="#ref-3">[3]</a>:
 
 - **Model architectures**: GPT-2 family with standard transformer architectures
 - **Parameter counts**: From 80K to 1.5B parameters (spanning nearly 4 orders of magnitude)  
@@ -527,7 +527,7 @@ $$
 
 ### Predicting Double Descent and Phase Transitions
 
-The 3.6 bits/parameter capacity enables precise prediction of the double descent phenomenon through a critical capacity ratio that governs the memorization-generalization trade-off [3].
+The 3.6 bits/parameter capacity enables precise prediction of the double descent phenomenon through a critical capacity ratio that governs the memorization-generalization trade-off <a href="#ref-3">[3]</a>.
 
 **Critical Capacity Ratio**: Double descent occurs precisely when the ratio of dataset information content to model memorization capacity approaches unity:
 
@@ -599,7 +599,7 @@ Understanding memorization has profound implications for privacy and security in
 
 ### Scaling Law for Membership Inference Attacks
 
-Membership inference attacks attempt to determine whether a specific text was included in the training dataset. The success rate of such attacks follows a predictable scaling law based on the capacity ratio [3]:
+Membership inference attacks attempt to determine whether a specific text was included in the training dataset. The success rate of such attacks follows a predictable scaling law based on the capacity ratio <a href="#ref-3">[3]</a>:
 
 $$
 \begin{align*}
@@ -683,7 +683,7 @@ Neural networks don't memorize randomly - they exhibit systematic preferences fo
 
 ### TF-IDF and Rarity-Based Selection
 
-Documents with higher TF-IDF (Term Frequency-Inverse Document Frequency) scores are preferentially memorized due to their distinctiveness [3]:
+Documents with higher TF-IDF (Term Frequency-Inverse Document Frequency) scores are preferentially memorized due to their distinctiveness <a href="#ref-3">[3]</a>:
 
 $$
 \begin{align*}
@@ -697,7 +697,7 @@ where:
 - $|d|$: Length of document $d$
 - $|\mathcal{D}|$: Total number of documents
 
-**Empirical Correlation**: Strong positive correlation ($r = 0.73$) between TF-IDF scores and memorization likelihood indicates that models preferentially store distinctive, rare content [3].
+**Empirical Correlation**: Strong positive correlation ($r = 0.73$) between TF-IDF scores and memorization likelihood indicates that models preferentially store distinctive, rare content <a href="#ref-3">[3]</a>.
 
 **Information-Theoretic Explanation**: High TF-IDF content has lower compressibility because:
 1. **Rare terms** have high information content ($-\log p(\text{term})$)
@@ -1071,13 +1071,13 @@ $$
 
 ## How does reasoning come into play?
 
-Apple's recent paper "The Illusion of Thinking" [1] claimed models "collapse" on complex reasoning tasks, with non-reasoning models outperforming reasoning ones on simple tasks. However, "The Illusion of Illusion of Thinking" paper [2] revealed critical experimental design flaws:
+Apple's recent paper "The Illusion of Thinking" <a href="#ref-1">[1]</a> claimed models "collapse" on complex reasoning tasks, with non-reasoning models outperforming reasoning ones on simple tasks. However, "The Illusion of Illusion of Thinking" paper <a href="#ref-2">[2]</a> revealed critical experimental design flaws:
 
 ### Prompt Design
-Apple's prompts asked models to enumerate every Tower of Hanoi move, causing output token limits where models explicitly stated "The pattern continues, but to avoid making this too long, I'll stop here." [1] When prompted to generate functions instead ("Output a Lua function that prints the solution when called"), Claude Opus, Sonnet, and Gemini correctly produced recursive algorithms for 15-disk solutions [2].
+Apple's prompts asked models to enumerate every Tower of Hanoi move, causing output token limits where models explicitly stated "The pattern continues, but to avoid making this too long, I'll stop here." <a href="#ref-1">[1]</a> When prompted to generate functions instead ("Output a Lua function that prints the solution when called"), Claude Opus, Sonnet, and Gemini correctly produced recursive algorithms for 15-disk solutions <a href="#ref-2">[2]</a>.
 
 ### Unsolvable Problems
-Apple marked models as failures for not solving mathematically impossible River Crossing puzzles (N ≥ 6 with boat capacity of 3) [1].
+Apple marked models as failures for not solving mathematically impossible River Crossing puzzles (N ≥ 6 with boat capacity of 3) <a href="#ref-1">[1]</a>.
 
 Both sides acknowledge that current models have real output limitations, but experimental design can make those limits appear more fundamental than they are.
 
@@ -1682,10 +1682,10 @@ Models are generalizing effectively and knowing at what points helps us iterate 
 
 Understanding these distinctions is crucial for determining where innovation is truly needed versus where better implementation can unlock existing capabilities.
 
-## Citations
+## References
 
-[1] Shojaee, P., Mirzadeh, I., Alizadeh, K., Horton, M., Bengio, S., & Farajtabar, M. (2025). The Illusion of Thinking: Understanding the Strengths and Limitations of Reasoning Models via the Lens of Problem Complexity. Apple. Retrieved from https://ml-site.cdn-apple.com/papers/the-illusion-of-thinking.pdf
+<a id="ref-1"></a>[1] Shojaee, P., Mirzadeh, I., Alizadeh, K., Horton, M., Bengio, S., & Farajtabar, M. (2025). The Illusion of Thinking: Understanding the Strengths and Limitations of Reasoning Models via the Lens of Problem Complexity. Apple. Retrieved from https://ml-site.cdn-apple.com/papers/the-illusion-of-thinking.pdf
 
-[2] Opus, C., & Lawsen, A. (2025). The Illusion of the Illusion of Thinking: A Comment on Shojaee et al. (2025). arXiv preprint arXiv:2506.09250. Retrieved from https://arxiv.org/pdf/2506.09250
+<a id="ref-2"></a>[2] Opus, C., & Lawsen, A. (2025). The Illusion of the Illusion of Thinking: A Comment on Shojaee et al. (2025). arXiv preprint arXiv:2506.09250. Retrieved from https://arxiv.org/pdf/2506.09250
 
-[3] Morris, J. X., Sitawarin, C., Guo, C., Kokhlikyan, N., Suh, G. E., Rush, A. M., Chaudhuri, K., & Mahloujifar, S. (2025). How much do language models memorize? arXiv preprint arXiv:2505.24832. Retrieved from https://arxiv.org/pdf/2505.24832
+<a id="ref-3"></a>[3] Morris, J. X., Sitawarin, C., Guo, C., Kokhlikyan, N., Suh, G. E., Rush, A. M., Chaudhuri, K., & Mahloujifar, S. (2025). How much do language models memorize? arXiv preprint arXiv:2505.24832. Retrieved from https://arxiv.org/pdf/2505.24832
