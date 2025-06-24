@@ -872,7 +872,9 @@ This explains why architectural improvements can achieve better scaling than sim
 ### Capacity-Aware Model Design
 
 ```python
-def compute_model_size(dataset_bits, safety_factor=1.5, tokens_per_param=1000):
+from typing import Dict
+
+def compute_model_size(dataset_bits: int, safety_factor: float = 1.5, tokens_per_param: int = 1000) -> Dict[str, int]:
     """
     Compute required model size given dataset and safety requirements
 
@@ -905,7 +907,12 @@ def compute_model_size(dataset_bits, safety_factor=1.5, tokens_per_param=1000):
 ### Measuring Unintended Memorization
 
 ```python
-def measure_unintended_memorization(model, reference_model, dataset):
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
+from typing import List
+
+def measure_unintended_memorization(model: nn.Module, reference_model: nn.Module, dataset: DataLoader) -> float:
     """
     Quantify unintended memorization using reference model method
 
