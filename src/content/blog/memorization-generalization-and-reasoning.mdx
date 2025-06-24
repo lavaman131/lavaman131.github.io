@@ -1,0 +1,1681 @@
+---
+title: "Memorization, Generalization, and Reasoning"
+date: "2025-06-23"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "A deep dive into the concepts of memorization, generalization, and reasoning in large language models."
+---
+
+Not understanding how AI models actually memorize, generalize, and reason is costing us. We're chasing the wrong problems instead of building real solutions.
+
+## How much do models actually memorize?
+
+Meta's research "How much do language models memorize?" [3] provides crucial insights. They distinguished between **unintended memorization** (sample-specific storage) and **intended memorization** (generalization).
+
+### Intuition
+
+Neural networks possess a fundamental information storage capacity that governs the trade-off between memorization (storing specific training examples) and generalization (learning compressible patterns). They found each parameter in a neural network can store approximately 3.6 bits of information [3], creating a hard constraint on what the network can remember versus what it must compress. This capacity limitation forces networks to choose between perfect recall of training data and the discovery of generalizable patterns--a trade-off that explains numerous phenomena in deep learning, from double descent to emergent abilities.
+
+### Information Theory Foundations
+
+Neural network memorization is fundamentally grounded in information theory. Understanding memorization requires precise definitions of information, compression, and capacity:
+
+**Shannon Entropy** quantifies the average information content of a random variable. For a discrete random variable $X$ with possible values $\{x_1, x_2, \ldots, x_n\}$ and probability mass function $p(x)$:
+
+$$
+\begin{align*}
+H(X) = -\sum_{x \in \mathcal{X}} p(x) \log_2 p(x)
+\end{align*}
+$$
+
+This measures the expected number of bits needed to encode messages from the distribution. Higher entropy indicates more randomness and less predictability.
+
+**Conditional Entropy** measures the average information needed to describe $X$ given knowledge of $Y$:
+
+$$
+\begin{align*}
+H(X|Y) = -\sum_{x,y} p(x,y) \log_2 p(x|y)
+\end{align*}
+$$
+
+**Mutual Information** quantifies the reduction in uncertainty about one variable when observing another:
+
+$$
+\begin{align*}
+I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = \sum_{x,y} p(x,y) \log_2 \frac{p(x,y)}{p(x)p(y)}
+\end{align*}
+$$
+
+In the context of memorization, $I(X; \Theta)$ measures how much information the model parameters $\Theta$ contain about the training data $X$.
+
+**Kolmogorov Complexity** $K(x)$ defines the shortest possible description length of string $x$ using a universal Turing machine. While uncomputable in general, it provides the theoretical foundation for understanding compression limits:
+
+$$
+\begin{align*}
+K(x) = \min_p \{|p| : U(p) = x\}
+\end{align*}
+$$
+
+where $U$ is a universal Turing machine and $|p|$ is the length of program $p$.
+
+**Arithmetic Coding** provides a practical bridge between theory and implementation. Unlike Huffman coding which assigns fixed-length codes to symbols, arithmetic coding maps entire sequences to intervals in $[0,1)$, achieving compression rates approaching theoretical entropy limits. For a sequence $x_1, x_2, \ldots, x_n$:
+
+$$
+\begin{align*}
+\text{Code length} \approx -\log_2 \prod_{i=1}^n p(x_i | x_1, \ldots, x_{i-1}) = \sum_{i=1}^n -\log_2 p(x_i | \text{context})
+\end{align*}
+$$
+
+This connection allows us to estimate Kolmogorov complexity using language model probabilities, forming the basis for measuring memorization.
+
+### Formal Definition of Memorization
+
+The memorization capacity of neural networks can be formalized through information-theoretic principles. Total memorization represents the mutual information between the training dataset $X$ and the trained model parameters $\hat{\Theta}$:
+
+$$
+\begin{align*}
+\text{mem}(X, \hat{\Theta}) = I(X; \hat{\Theta}) = H(X) - H(X|\hat{\Theta})
+\end{align*}
+$$
+
+This total memorization decomposes into two fundamental and distinct components that capture different aspects of learning:
+
+**Unintended Memorization** (sample-specific storage): This represents information about individual training examples that cannot be inferred from the general data distribution. It measures how much the model has "overfit" to specific samples:
+
+$$
+\begin{align*}
+\text{mem}_U(X, \hat{\Theta}, \Theta) = H(X|\Theta) - H(X|(\Theta, \hat{\Theta}))
+\end{align*}
+$$
+
+This captures the reduction in uncertainty about specific training examples when given both the true distribution parameters $\Theta$ and the learned parameters $\hat{\Theta}$, compared to knowing only $\Theta$.
+
+**Intended Memorization** (generalization): This represents the portion of memorization that corresponds to learning the underlying data distribution - essentially "good" memorization that enables generalization:
+
+$$
+\begin{align*}
+\text{mem}_I(X, \hat{\Theta}, \Theta) = \text{mem}(X, \hat{\Theta}) - \text{mem}_U(X, \hat{\Theta}, \Theta)
+\end{align*}
+$$
+
+The key insight is that total memorization splits into:
+- **Useful patterns** that generalize to new data (intended memorization)  
+- **Spurious details** specific to training examples (unintended memorization)
+
+where:
+- $X$: Training dataset drawn from the true data distribution $p(x|\Theta)$
+- $\Theta$: Parameters of the true underlying data distribution  
+- $\hat{\Theta}$: Learned model parameters after training
+- $H(\cdot)$: Shannon entropy measuring uncertainty
+- $I(\cdot;\cdot)$: Mutual information measuring shared information
+
+This formulation provides theoretical clarity but requires practical estimation methods for real-world application.
+
+### Computing Memorization in Practice
+
+The theoretical formulation requires practical estimation methods since we observe single instances of models and datasets. We transition from Shannon entropy to Kolmogorov complexity for computational tractability.
+
+**Kolmogorov Complexity Approximation**: For unintended memorization of a specific text $x$:
+
+$$
+\begin{align*}
+\text{mem}_K^U(x, \theta, \hat{\theta}) = K(x|\theta) - K(x|(\theta, \hat{\theta}))
+\end{align*}
+$$
+
+where $K(x|y)$ represents the Kolmogorov complexity of $x$ given $y$ - the length of the shortest program that generates $x$ when given access to $y$.
+
+**Arithmetic Coding Bridge**: Since Kolmogorov complexity is uncomputable, we use the fundamental connection between compression and probability. For any computable probability distribution $p$, arithmetic coding achieves compression length approximately equal to the negative log-probability:
+
+$$
+\begin{align*}
+K(x) \approx -\log_2 p(x) + O(\log |x|)
+\end{align*}
+$$
+
+**Reference Model Method**: To estimate the true data distribution $\theta$, we use a larger reference model $\theta_{\text{ref}}$ trained on a superset of the data. This gives us practical estimators:
+
+- $K(x|\theta) \approx -\log_2 p(x|\theta_{\text{ref}})$: Compression cost using reference model
+- $K(x|(\theta, \hat{\theta})) \approx -\log_2 \max\{p(x|\theta_{\text{ref}}), p(x|\hat{\theta})\}$: Best compression using either model
+
+**Final Computable Measure**: Combining these approximations yields the practical unintended memorization measure:
+
+$$
+\begin{align*}
+\text{mem}_K^U(x, \theta_{\text{ref}}, \hat{\theta}) = \max\{0, -\log_2 p(x|\theta_{\text{ref}}) + \log_2 p(x|\hat{\theta})\}
+\end{align*}
+$$
+
+This formulation captures the key intuition: if the target model assigns much higher probability to a text than the reference model, it has memorized sample-specific information not present in the general distribution.
+
+**Interpretation**: 
+- When $\text{mem}_K^U = 0$: Target model shows no unintended memorization
+- When $\text{mem}_K^U > 0$: Target model has memorized $\text{mem}_K^U$ bits of sample-specific information
+- Larger values indicate stronger memorization of training-specific details
+
+**Validation Requirements**: The reference model must be trained on a proper superset of the target model's training data to ensure it captures the true underlying distribution without the specific memorization artifacts we wish to measure.
+
+
+<div style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+  <iframe
+    srcDoc={`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memorization Measurement Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .model-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            min-width: 200px;
+            display: inline-block;
+        }
+        .text-sample {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .compression-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            position: relative;
+            margin: 10px 0;
+        }
+        .compression-fill {
+            height: 100%;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            min-width: 140px;
+        }
+        .high-compression { background: linear-gradient(90deg, #ff6b6b, #ee5a52); }
+        .medium-compression { background: linear-gradient(90deg, #feca57, #ff9ff3); }
+        .low-compression { background: linear-gradient(90deg, #48dbfb, #0abde3); }
+        
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .arrow {
+            font-size: 24px;
+            color: #666;
+            margin: 0 10px;
+        }
+        .measurement-box {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+        }
+        .memorization-result {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .interactive-demo {
+            background: #e8f5e8;
+            border: 2px solid #4CAF50;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .slider-container {
+            margin: 15px 0;
+        }
+        .slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .probability-display {
+            font-family: monospace;
+            font-size: 16px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .concept-box {
+            background: #f0f8ff;
+            border-left: 4px solid #4a90e2;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 How They Measure Language Model Memorization</h1>
+        
+
+        
+        <div class="section">
+            <h2>1. The Basic Setup</h2>
+            <div class="concept-box">
+                <strong>Key Idea:</strong> Compare how well two different models can compress the same text. Better compression = more memorization.
+            </div>
+            
+            <div class="flow-diagram">
+                <div class="model-box">
+                    <h3>Reference Model</h3>
+                    <p>Trained on diverse, large dataset</p>
+                    <p><em>Represents "general knowledge"</em></p>
+                </div>
+                <div class="arrow">vs</div>
+                <div class="model-box">
+                    <h3>Target Model</h3>
+                    <p>Trained on specific dataset</p>
+                    <p><em>Has general knowledge + memorization</em></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>2. Step-by-Step Measurement Process</h2>
+            
+            <div class="text-sample">
+                <strong>Test Text:</strong> "The quick brown fox jumps over the lazy dog"
+            </div>
+            
+            <h3>Step 1: Test Reference Model</h3>
+            <div class="measurement-box">
+                <p><strong>Reference Model Probability:</strong> 0.01 (1%)</p>
+                <p><strong>Compression Cost:</strong> -log₂(0.01) = 6.64 bits</p>
+            </div>
+            
+            <div class="compression-bar">
+                <div class="compression-fill low-compression" style="width: 66%;">
+                    6.64 bits needed
+                </div>
+            </div>
+            
+            <h3>Step 2: Test Target Model</h3>
+            <div class="measurement-box">
+                <p><strong>Target Model Probability:</strong> 0.25 (25%)</p>
+                <p><strong>Compression Cost:</strong> -log₂(0.25) = 2.00 bits</p>
+            </div>
+            
+            <div class="compression-bar">
+                <div class="compression-fill high-compression" style="width: 20%;">
+                    2.00 bits needed
+                </div>
+            </div>
+            
+            <h3>Step 3: Calculate Memorization</h3>
+            <div class="memorization-result">
+                Memorization = 6.64 - 2.00 = 4.64 bits
+                <br><small>The target model "knows" 4.64 bits more about this text!</small>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>3. Interactive Demo: See How Probability Affects Compression</h2>
+            <div class="interactive-demo">
+                <p>Adjust the model's probability for a text sequence and see how it affects compression:</p>
+                
+                <div class="slider-container">
+                    <label>Model's Probability for the text: <span id="prob-value">10%</span></label>
+                    <input type="range" id="prob-slider" class="slider" min="1" max="100" value="10">
+                </div>
+                
+                <div class="probability-display">
+                    <div>Probability: <span id="prob-decimal">0.10</span></div>
+                    <div>Compression Cost: <span id="compression-cost">3.32</span> bits</div>
+                    <div>Interpretation: <span id="interpretation">Moderate compression</span></div>
+                </div>
+                
+                <div class="compression-bar">
+                    <div id="compression-visual" class="compression-fill medium-compression" style="width: 33%;">
+                        <span id="compression-text">3.32 bits</span>
+                    </div>
+                </div>
+                
+                <p><small><strong>Remember:</strong> Higher probability → Better compression → More memorization</small></p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>4. Real Results from the Paper</h2>
+            
+            <h3>Different Types of Memorization:</h3>
+            
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                <div class="measurement-box" style="background: #ffebee;">
+                    <h4>🔴 High Memorization</h4>
+                    <p><strong>Example:</strong> Rare sequences, foreign text</p>
+                    <div class="compression-bar">
+                        <div class="compression-fill high-compression" style="width: 15%;">
+                            1-2 bits
+                        </div>
+                    </div>
+                    <p><small>Model assigns very high probability</small></p>
+                </div>
+                
+                <div class="measurement-box" style="background: #fff3e0;">
+                    <h4>🟡 Medium Memorization</h4>
+                    <p><strong>Example:</strong> Common phrases, typical sentences</p>
+                    <div class="compression-bar">
+                        <div class="compression-fill medium-compression" style="width: 40%;">
+                            3-4 bits
+                        </div>
+                    </div>
+                    <p><small>Model has some specific knowledge</small></p>
+                </div>
+                
+                <div class="measurement-box" style="background: #e8f5e8;">
+                    <h4>🟢 Low/No Memorization</h4>
+                    <p><strong>Example:</strong> Truly random sequences</p>
+                    <div class="compression-bar">
+                        <div class="compression-fill low-compression" style="width: 70%;">
+                            6+ bits
+                        </div>
+                    </div>
+                    <p><small>Model treats it like any other text</small></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>5. Why This Method Works</h2>
+            <div class="concept-box">
+                <h3>🎯 The Intuition:</h3>
+                <ul>
+                    <li><strong>If a model can compress text really well</strong> → it has "seen" or "learned" something specific about that text</li>
+                    <li><strong>If two models compress differently</strong> → the difference shows what one model memorized that the other didn't</li>
+                    <li><strong>Better compression = higher probability = more memorization</strong></li>
+                </ul>
+            </div>
+            
+            <div class="concept-box">
+                <h3>📏 What the Numbers Mean:</h3>
+                <ul>
+                    <li><strong>0-1 bits difference:</strong> Minimal memorization (normal generalization)</li>
+                    <li><strong>2-4 bits difference:</strong> Moderate memorization (model has some specific knowledge)</li>
+                    <li><strong>5+ bits difference:</strong> High memorization (model has strong specific knowledge)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const probSlider = document.getElementById('prob-slider');
+        const probValue = document.getElementById('prob-value');
+        const probDecimal = document.getElementById('prob-decimal');
+        const compressionCost = document.getElementById('compression-cost');
+        const interpretation = document.getElementById('interpretation');
+        const compressionVisual = document.getElementById('compression-visual');
+        const compressionText = document.getElementById('compression-text');
+
+        function updateCompression() {
+            const prob = parseInt(probSlider.value);
+            const decimal = prob / 100;
+            const cost = -Math.log2(decimal);
+            const width = Math.min(cost * 10, 100);
+            
+            probValue.textContent = prob + '%';
+            probDecimal.textContent = decimal.toFixed(2);
+            compressionCost.textContent = cost.toFixed(2);
+            compressionText.textContent = cost.toFixed(2) + ' bits';
+            
+            // Update interpretation
+            if (cost < 2) {
+                interpretation.textContent = 'Excellent compression (high memorization!)';
+                compressionVisual.className = 'compression-fill high-compression';
+            } else if (cost < 4) {
+                interpretation.textContent = 'Good compression (moderate memorization)';
+                compressionVisual.className = 'compression-fill medium-compression';
+            } else {
+                interpretation.textContent = 'Poor compression (little memorization)';
+                compressionVisual.className = 'compression-fill low-compression';
+            }
+            
+            compressionVisual.style.width = width + '%';
+        }
+
+        probSlider.addEventListener('input', updateCompression);
+        updateCompression(); // Initialize
+        
+
+    </script>
+</body>
+</html>`}
+    width="100%"
+    height="3450px"
+    style={{ border: 'none', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
+    title="Shannon Information Theory Visualization"
+  />
+</div>
+
+### The 3.6 Bits-Per-Parameter Hypothesis
+
+**Fundamental Capacity Theorem**: Extensive empirical analysis reveals that neural networks in the GPT family exhibit a remarkably consistent memorization capacity governed by a universal constant [3]:
+
+$$
+\begin{align*}
+\text{Capacity}(\theta) = \alpha \cdot |\theta| \text{ where } \alpha = 3.6 \text{ bits/parameter}
+\end{align*}
+$$
+
+This represents a fundamental constraint on the maximum mutual information between training data and model parameters:
+
+$$
+\begin{align*}
+I(X; \hat{\Theta}) \leq 3.6 \cdot |\hat{\Theta}|
+\end{align*}
+$$
+
+**Physical Interpretation**: Each parameter can store approximately 3.6 bits of information about the training data. This is significantly less than the theoretical maximum for floating-point parameters (which could theoretically store unlimited information), indicating that practical training dynamics impose strict limits.
+
+**Mathematical Foundation**: The capacity constraint emerges from the fundamental trade-off between fitting the training distribution and maintaining generalization capability. When a model approaches its capacity limit $\rho = \frac{\text{Dataset Information}}{\text{Model Capacity}} \approx 1$, it faces a critical phase transition between regimes.
+
+**Universality Across Scales**: This 3.6 bits/parameter constant has been empirically validated across [3]:
+
+- **Model architectures**: GPT-2 family with standard transformer architectures
+- **Parameter counts**: From 80K to 1.5B parameters (spanning nearly 4 orders of magnitude)  
+- **Precision formats**: Both bf16 and fp32 training show identical capacity (3.64 bits/param)
+- **Training procedures**: Standard gradient descent with various optimizers
+- **Dataset types**: Multiple natural language corpora with different characteristics
+
+**Lower Bound Nature**: This measurement represents a practical lower bound on theoretical information storage capacity, not an upper limit. Several factors contribute to this gap:
+
+1. **Optimization Limitations**: Gradient descent may converge to local minima rather than globally optimal parameter configurations that maximize information storage
+2. **Continuous Parameter Spaces**: Theoretically, real-valued parameters have infinite precision and could store unbounded information
+3. **Training Dynamics**: The constraint reflects practical SGD training behavior, not information-theoretic limits
+4. **Regularization Effects**: Implicit regularization from finite precision arithmetic and finite training time
+
+**Connection to Parameter Efficiency**: The 3.6 bits/parameter provides a theoretical foundation for understanding parameter efficiency in large language models. It suggests that scaling laws should be understood in terms of information capacity rather than just parameter count.
+
+### Predicting Double Descent and Phase Transitions
+
+The 3.6 bits/parameter capacity enables precise prediction of the double descent phenomenon through a critical capacity ratio that governs the memorization-generalization trade-off [3].
+
+**Critical Capacity Ratio**: Double descent occurs precisely when the ratio of dataset information content to model memorization capacity approaches unity:
+
+$$
+\begin{align*}
+\rho = \frac{H(X)}{\text{Capacity}(\theta)} = \frac{|X| \cdot \log_2(V^S)}{3.6 \cdot |\theta|}
+\end{align*}
+$$
+
+where:
+- $|X|$: Number of training sequences  
+- $V$: Vocabulary size
+- $S$: Sequence length
+- $|\theta|$: Number of model parameters
+
+**Information Content Estimation**: The dataset entropy $H(X) = |X| \cdot \log_2(V^S)$ assumes uniform distribution over token sequences. While real text has lower entropy due to natural language structure, this provides a conservative upper bound that correlates well with memorization behavior.
+
+**Three Distinct Learning Regimes**:
+
+**1. Under-parameterized Regime** ($\rho < 1$):
+- **Characteristics**: Model capacity exceeds dataset information content
+- **Memorization Behavior**: Can memorize entire dataset with capacity to spare
+- **Training Dynamics**: Zero training loss achievable through perfect memorization
+- **Generalization**: Poor due to lack of compression pressure
+- **Mathematical Description**: $\text{Capacity} > H(\text{Data}) \Rightarrow$ Pure memorization is optimal
+
+**2. Critical Regime** ($\rho \approx 1$):
+- **Characteristics**: Capacity exactly matches dataset information content  
+- **Memorization Behavior**: Forced to choose between different training examples
+- **Training Dynamics**: High variance, sensitivity to initialization
+- **Generalization**: Worst performance due to instability at phase boundary
+- **Mathematical Description**: Competition between memorization and compression
+
+**3. Over-parameterized Regime** ($\rho > 1$):
+- **Characteristics**: Dataset information exceeds model capacity
+- **Memorization Behavior**: Must compress data to fit within capacity constraints
+- **Training Dynamics**: Forced compression leads to pattern discovery
+- **Generalization**: Improved through implicit regularization
+- **Mathematical Description**: $H(\text{Data}) > \text{Capacity} \Rightarrow$ Compression necessary
+
+**Mathematical Characterization of Test Loss**: The test loss exhibits the characteristic double descent curve:
+
+$$
+\begin{align*}
+\mathcal{L}_{\text{test}}(\rho) = \begin{cases}
+\mathcal{L}_{\text{interpolation}}(\rho) & \text{if } \rho < 1 \\
+\mathcal{L}_{\text{critical}} + \epsilon(\rho) & \text{if } \rho \approx 1 \\
+\mathcal{L}_{\text{generalization}}(\rho) & \text{if } \rho > 1
+\end{cases}
+\end{align*}
+$$
+
+where:
+- $\mathcal{L}_{\text{interpolation}}(\rho)$: Decreasing loss in memorization regime
+- $\mathcal{L}_{\text{critical}}$: Peak loss at the critical transition point
+- $\epsilon(\rho)$: Sharp divergence term near $\rho = 1$
+- $\mathcal{L}_{\text{generalization}}(\rho)$: Decreasing loss in compression regime
+
+**Practical Implications**:
+
+1. **Model Sizing**: Target $\rho > 1.5$ to avoid critical regime instabilities
+2. **Training Stability**: Expect higher variance when $\rho \approx 1$  
+3. **Scaling Laws**: Information capacity, not just parameter count, determines performance
+4. **Architecture Design**: Optimize for bits-per-parameter efficiency rather than raw size
+
+## Memorization, Privacy, and Security Implications
+
+Understanding memorization has profound implications for privacy and security in language model deployment. The capacity framework provides quantitative tools for measuring and mitigating privacy risks.
+
+### Scaling Law for Membership Inference Attacks
+
+Membership inference attacks attempt to determine whether a specific text was included in the training dataset. The success rate of such attacks follows a predictable scaling law based on the capacity ratio [3]:
+
+$$
+\begin{align*}
+\text{F1}_{\text{MI}}(\theta, \mathcal{D}) = \frac{1}{2}\left(1 + 1.34\sigma\left(-0.034\left(\frac{\text{Capacity}(\theta)}{|\mathcal{D}|} - 33.14\right)\right)\right)
+\end{align*}
+$$
+
+where:
+- $\sigma(x) = \frac{1}{1 + e^{-x}}$ is the sigmoid function
+- $\text{Capacity}(\theta) = 3.6 \cdot |\theta|$ is the model's information capacity
+- $|\mathcal{D}|$ represents the total information content of the dataset
+
+**Mathematical Interpretation**: This function exhibits a sharp transition around the critical point where $\frac{\text{Capacity}(\theta)}{|\mathcal{D}|} \approx 33.14$, indicating a phase transition in attack vulnerability.
+
+**Attack Success Regimes**:
+- **High Capacity**: When models have excess capacity relative to data, they memorize verbatim, making membership inference easy
+- **Critical Point**: Sharp transition region with maximum attack vulnerability
+- **Low Capacity**: Over-parameterized models compress data, reducing attack success
+
+### Privacy Threshold and Safe Operating Regions
+
+Models achieve practical privacy protection when the capacity-to-data ratio falls below a critical threshold:
+
+$$
+\begin{align*}
+\frac{3.6 \cdot |\theta|}{|\mathcal{D}|} < 0.001
+\end{align*}
+$$
+
+This constraint translates to requiring more than 1000 bits of training data per model parameter, or equivalently:
+
+$$
+\begin{align*}
+\frac{\text{Training tokens}}{|\theta|} > \frac{1000}{\log_2(\text{vocab size}) \cdot \text{sequence length}}
+\end{align*}
+$$
+
+For typical language models with vocabulary size $V = 50,000$ and sequence length $S = 2048$:
+
+$$
+\begin{align*}
+\frac{\text{Training tokens}}{|\theta|} > \frac{1000}{15.6 \cdot 2048} \approx 0.031 \text{ tokens/parameter}
+\end{align*}
+$$
+
+**Practical Guidelines**:
+- **Minimum Data Requirement**: >100 tokens per parameter for membership inference resistance
+- **Safe Operating Zone**: >1000 tokens per parameter for strong privacy guarantees
+- **Critical Monitoring**: Track capacity utilization during training to avoid privacy-vulnerable regimes
+
+### The Extraction vs Memorization Paradox
+
+A counterintuitive finding emerges when examining extractable memorized content:
+
+**Key Observation**: When the probability of extracting training examples equals the probability of extracting test examples:
+$$
+\begin{align*}
+p_{\text{extract}}(x \in \mathcal{D}_{\text{train}}) \approx p_{\text{extract}}(x \in \mathcal{D}_{\text{test}})
+\end{align*}
+$$
+
+then all successful extraction can be attributed to generalization capabilities rather than memorization.
+
+**Implications**:
+1. **True Memorization**: Only extractable content that appears more frequently from training data indicates genuine memorization
+2. **Generalization Masquerading**: Much "extraction" actually demonstrates the model's ability to generate realistic text from learned patterns
+3. **Privacy Assessment**: Simple extraction tests may overestimate privacy risks by conflating generation with memorization
+
+**Quantitative Measurement**: The memorization-specific extraction rate:
+$$
+\begin{align*}
+\text{True Memorization} = \max\{0, p_{\text{extract}}(\text{train}) - p_{\text{extract}}(\text{test})\}
+\end{align*}
+$$
+
+This provides a more accurate measure of privacy-relevant memorization than raw extraction rates.
+
+## Memorization Patterns and Selective Learning
+
+Neural networks don't memorize randomly - they exhibit systematic preferences for certain types of content based on information-theoretic properties.
+
+### TF-IDF and Rarity-Based Selection
+
+Documents with higher TF-IDF (Term Frequency-Inverse Document Frequency) scores are preferentially memorized due to their distinctiveness [3]:
+
+$$
+\begin{align*}
+\text{TF-IDF}(d, \mathcal{D}) = \frac{1}{|d|} \sum_{w \in d} \text{tf}(w,d) \cdot \log \frac{|\mathcal{D}|}{\text{df}(w)}
+\end{align*}
+$$
+
+where:
+- $\text{tf}(w,d)$: Term frequency of word $w$ in document $d$
+- $\text{df}(w)$: Document frequency of word $w$ across corpus $\mathcal{D}$
+- $|d|$: Length of document $d$
+- $|\mathcal{D}|$: Total number of documents
+
+**Empirical Correlation**: Strong positive correlation ($r = 0.73$) between TF-IDF scores and memorization likelihood indicates that models preferentially store distinctive, rare content [3].
+
+**Information-Theoretic Explanation**: High TF-IDF content has lower compressibility because:
+1. **Rare terms** have high information content ($-\log p(\text{term})$)
+2. **Unique combinations** resist compression through pattern matching
+3. **Low redundancy** prevents amortization across multiple examples
+
+### Memorization Priority Function
+
+The probability that a model memorizes document $d$ follows a competitive allocation process:
+
+$$
+\begin{align*}
+P(\text{memorize}|d) \propto \exp\left(\beta \cdot \text{TF-IDF}(d) - \gamma \cdot \text{compressibility}(d) + \delta \cdot \text{frequency}(d)\right)
+\end{align*}
+$$
+
+**Parameter Interpretation**:
+- $\beta > 0$: Rarity weight - higher values prioritize unique content
+- $\gamma > 0$: Compressibility penalty - resist memorizing incompressible noise
+- $\delta > 0$: Frequency boost - common patterns receive priority
+
+**Compressibility Estimation**: Using lossless compression ratio as a proxy:
+$$
+\begin{align*}
+\text{compressibility}(d) = 1 - \frac{\text{compressed\_size}(d)}{\text{original\_size}(d)}
+\end{align*}
+$$
+
+**Frequency-Based Competition**: When capacity is limited, documents compete for memorization slots:
+$$
+\begin{align*}
+\text{frequency}(d) = \log\left(1 + \text{count}(d)\right)
+\end{align*}
+$$
+
+### Strategic Memorization Behavior
+
+Models exhibit intelligent allocation strategies that maximize information efficiency:
+
+**1. Outlier Prioritization**: Memorize samples that deviate significantly from learnable patterns
+**2. Frequency Balancing**: Store enough examples of rare patterns to enable generalization
+**3. Compression Optimization**: Prefer content that can be stored efficiently within parameter constraints
+
+**Mathematical Framework**: The optimal memorization strategy solves:
+$$
+\begin{align*}
+\max_{\text{mem\_set}} \sum_{d \in \text{mem\_set}} \text{value}(d) \text{ subject to } \sum_{d \in \text{mem\_set}} \text{cost}(d) \leq \text{Capacity}
+\end{align*}
+$$
+
+where:
+- $\text{value}(d)$: Information value of memorizing document $d$
+- $\text{cost}(d)$: Parameter capacity required to store $d$
+
+This resembles a knapsack optimization problem, explaining the observed systematic memorization patterns.
+
+## Connections to Broader Deep Learning Phenomena
+
+The memorization framework provides unified explanations for several mysterious phenomena in deep learning, revealing common underlying mechanisms.
+
+### Grokking: Sudden Generalization Through Capacity Reallocation
+
+Grokking - the phenomenon where models suddenly transition from memorization to generalization after extended training - can be understood as a dynamic capacity reallocation process.
+
+**Phase 1: Memorization Dominance** ($t < t_{\text{grok}}$):
+- **Capacity Allocation**: $C_{\text{mem}}(t) \approx \text{Capacity}(\theta)$, $C_{\text{gen}}(t) \approx 0$
+- **Learning Strategy**: Direct memorization of input-output pairs
+- **Loss Behavior**: Low training loss, high test loss (overfitting)
+- **Parameter Usage**: Most parameters encode specific training examples
+
+**Phase 2: Critical Transition** ($t = t_{\text{grok}}$):
+- **Discovery Event**: Model discovers compressible algorithmic structure
+- **Capacity Reallocation**: Rapid shift from memorization to pattern encoding
+- **Mathematical Signature**: $\frac{dC_{\text{gen}}}{dt} \gg 0$, $\frac{dC_{\text{mem}}}{dt} \ll 0$
+- **Loss Dynamics**: Sharp improvement in test performance
+
+**Phase 3: Generalization Dominance** ($t > t_{\text{grok}}$):
+- **Stable Allocation**: $C_{\text{gen}} > C_{\text{mem}}$, efficient pattern representation
+- **Algorithmic Behavior**: Model executes learned algorithms rather than table lookup
+- **Performance**: Both training and test loss remain low
+
+**Mathematical Model of Grokking**:
+$$
+\begin{align*}
+C_{\text{gen}}(t) = C_{\text{total}} \cdot \sigma\left(\frac{t - t_{\text{grok}}}{\tau}\right)
+\end{align*}
+$$
+$$
+\begin{align*}
+C_{\text{mem}}(t) = C_{\text{total}} - C_{\text{gen}}(t)
+\end{align*}
+$$
+
+where $\tau$ controls the transition sharpness and $t_{\text{grok}}$ is the critical time point.
+
+### Lottery Ticket Hypothesis: Optimal Capacity Utilization
+
+The lottery ticket hypothesis states that dense networks contain sparse subnetworks that achieve comparable performance when trained in isolation. This connects directly to capacity efficiency.
+
+**Winning Ticket Characterization**: A winning lottery ticket is a subnetwork that achieves optimal capacity allocation:
+
+$$
+\begin{align*}
+\text{Score}(\theta_{\text{sub}}) = \frac{\text{Generalization Performance}(\theta_{\text{sub}})}{\text{Capacity Used}} \cdot \text{Sparsity Bonus}
+\end{align*}
+$$
+
+More precisely:
+$$
+\begin{align*}
+\text{Score}(\theta_{\text{sub}}) = \frac{\mathcal{L}_{\text{test}}^{-1}(\theta_{\text{sub}})}{3.6 \cdot |\theta_{\text{sub}}|} \cdot \frac{|\theta_{\text{full}}|}{|\theta_{\text{sub}}|}
+\end{align*}
+$$
+
+**Capacity Efficiency Interpretation**:
+- **Bad tickets**: Waste capacity on irrelevant memorization
+- **Good tickets**: Efficiently allocate capacity to generalizable patterns  
+- **Winning tickets**: Optimal balance of capacity utilization and performance
+
+**Connection to Memorization**: Pruning removes parameters that store unimportant memorized content, leaving those that encode useful patterns.
+
+### Emergent Abilities: Capacity Threshold Effects
+
+Emergent abilities appear suddenly when models exceed critical size thresholds. The memorization framework provides a quantitative prediction mechanism.
+
+**Emergence Threshold**: New capabilities emerge when model capacity exceeds task complexity:
+
+$$
+\begin{align*}
+|\theta|_{\text{emergence}} = \frac{H(\text{Task})}{3.6} + \epsilon_{\text{compression}}
+\end{align*}
+$$
+
+where:
+- $H(\text{Task})$: Information content required for task competence
+- $\epsilon_{\text{compression}}$: Additional capacity needed for pattern discovery
+
+**Task Complexity Estimation**: For reasoning tasks requiring $n$ sequential steps with branching factor $b$:
+$$
+\begin{align*}
+H(\text{Task}) \approx n \cdot \log_2(b) + \log_2(\text{solution space})
+\end{align*}
+$$
+
+**Phase Transition Dynamics**: Emergence occurs when:
+1. **Insufficient Capacity**: Model can only memorize specific examples
+2. **Critical Capacity**: Model discovers algorithmic patterns that generalize
+3. **Abundant Capacity**: Reliable execution of learned algorithms
+
+**Examples**:
+- **Arithmetic**: Emerges when capacity exceeds the information needed to encode calculation procedures
+- **Chain-of-thought**: Appears when models can allocate capacity to intermediate reasoning steps
+- **In-context learning**: Develops when models can store pattern matching algorithms
+
+### Scaling Laws: Information-Theoretic Foundations
+
+Traditional scaling laws focus on parameter count, but the memorization framework suggests information capacity as the fundamental quantity.
+
+**Revised Scaling Law**:
+$$
+\begin{align*}
+\text{Performance} \propto \left(\frac{\text{Effective Capacity}}{\text{Task Complexity}}\right)^{\alpha}
+\end{align*}
+$$
+
+where $\text{Effective Capacity} = 3.6 \cdot |\theta| \cdot \text{efficiency}(\text{architecture})$
+
+This explains why architectural improvements can achieve better scaling than simple parameter increases.
+
+## Practical Implementation
+
+### Capacity-Aware Model Design
+
+```python
+def compute_model_size(dataset_bits, safety_factor=1.5, tokens_per_param=1000):
+    """
+    Compute required model size given dataset and safety requirements
+
+    Args:
+        dataset_bits: Total information in dataset
+        safety_factor: Multiplicative safety margin
+        tokens_per_param: Target ratio for good generalization
+
+    Returns:
+        Dictionary with model specifications
+    """
+    bits_per_param = 3.6
+
+    # Memorization-based lower bound
+    min_params_memorization = dataset_bits / bits_per_param
+
+    # Generalization-based sizing
+    min_params_generalization = dataset_bits / (tokens_per_param * np.log2(vocab_size))
+
+    # Take maximum and apply safety factor
+    recommended_params = max(min_params_memorization, min_params_generalization) * safety_factor
+
+    return {
+        'parameters': int(recommended_params),
+        'capacity_bits': recommended_params * bits_per_param,
+        'memorization_ratio': dataset_bits / (recommended_params * bits_per_param)
+    }
+```
+
+### Measuring Unintended Memorization
+
+```python
+def measure_unintended_memorization(model, reference_model, dataset):
+    """
+    Quantify unintended memorization using reference model method
+
+    Args:
+        model: Target model being evaluated
+        reference_model: Larger model trained on superset
+        dataset: Evaluation dataset
+
+    Returns:
+        Unintended memorization in bits
+    """
+    mem_U_total = 0
+
+    for x in dataset:
+        # Compute negative log-likelihoods
+        nll_target = -torch.log(model.forward(x))
+        nll_reference = -torch.log(reference_model.forward(x))
+
+        # Kolmogorov complexity approximation
+        H_K_given_reference = nll_reference
+        H_K_given_both = torch.min(nll_target, nll_reference)
+
+        # Unintended memorization for this sample
+        mem_U = torch.clamp(H_K_given_reference - H_K_given_both, min=0)
+        mem_U_total += mem_U.item()
+
+    return mem_U_total
+```
+
+## Theoretical Foundations and Future Directions
+
+### Statistical Learning Theory Connections
+
+The memorization framework bridges empirical observations with established theoretical foundations in statistical learning theory.
+
+**PAC-Bayes Bounds**: The generalization gap can be bounded using the memorization capacity:
+$$
+\begin{align*}
+\mathbb{E}[\mathcal{L}_{\text{test}} - \mathcal{L}_{\text{train}}] \leq \sqrt{\frac{\text{mem}(X, \hat{\Theta}) + \log(1/\delta)}{2m}}
+\end{align*}
+$$
+
+where $m$ is the training set size and $\delta$ is the confidence parameter.
+
+**Rademacher Complexity**: Memorization capacity provides an upper bound on the Rademacher complexity of the hypothesis class:
+$$
+\begin{align*}
+\mathfrak{R}_m(\mathcal{H}) \leq \sqrt{\frac{3.6 \cdot |\theta|}{m}}
+\end{align*}
+$$
+
+**Minimum Description Length (MDL)**: The optimal model balances fit quality with description length:
+$$
+\begin{align*}
+\text{Score}(\theta) = \mathcal{L}_{\text{train}}(\theta) + \frac{3.6 \cdot |\theta|}{m}
+\end{align*}
+$$
+
+### Multi-Modal and Cross-Domain Extensions
+
+The capacity framework extends beyond language models to other domains and modalities.
+
+**Multi-Modal Capacity Sharing**: For models processing multiple modalities (vision, language, audio):
+$$
+\begin{align*}
+\text{Capacity}_{\text{total}} = \sum_{m \in \text{modalities}} \alpha_m \cdot |\theta_m| + \alpha_{\text{shared}} \cdot |\theta_{\text{shared}}|
+\end{align*}
+$$
+
+where:
+- $\alpha_m$: Modality-specific capacity coefficient (may differ from 3.6)
+- $|\theta_m|$: Parameters dedicated to modality $m$
+- $\alpha_{\text{shared}}$: Capacity coefficient for shared representations
+
+**Cross-Domain Transfer**: When fine-tuning across domains:
+$$
+\begin{align*}
+\text{Transfer Efficiency} = \frac{\Delta \text{Performance}}{\Delta \text{Capacity Used}}
+\end{align*}
+$$
+
+**Continual Learning Dynamics**: Capacity allocation evolves over sequential tasks:
+$$
+\begin{align*}
+C_{\text{task}_i}(t) = C_{\text{total}} \cdot \exp\left(-\lambda(t - t_i)\right) \cdot \frac{I(\text{task}_i)}{\sum_j I(\text{task}_j)}
+\end{align*}
+$$
+
+where $\lambda$ represents the forgetting rate and $I(\text{task}_i)$ is task information content.
+
+### Quantum and Neuromorphic Extensions
+
+**Quantum Neural Networks**: Theoretical capacity for quantum parameters exploiting superposition:
+$$
+\begin{align*}
+\text{Capacity}_{\text{quantum}} = \alpha_{\text{classical}} \cdot \log_2(d) \cdot |\theta_{\text{quantum}}|
+\end{align*}
+$$
+
+where $d$ is the Hilbert space dimension, potentially providing exponential capacity advantages.
+
+**Neuromorphic Computing**: Spike-based neural networks may exhibit different capacity constraints:
+$$
+\begin{align*}
+\text{Capacity}_{\text{spike}} = \beta \cdot |\text{synapses}| \cdot \log_2(\text{spike rates})
+\end{align*}
+$$
+
+### Open Research Questions and Future Work
+
+**1. Architecture Universality**: 
+- Does $\alpha = 3.6$ hold for Transformers beyond GPT-2?
+- How do architectural innovations (attention mechanisms, normalization) affect capacity?
+- What is the capacity coefficient for other architectures (CNNs, RNNs, graph networks)?
+
+**2. Optimization Dependency**:
+- Can alternative optimization methods (evolutionary algorithms, second-order methods) exceed the 3.6 bits/parameter bound?
+- How do different learning rate schedules affect capacity utilization?
+- What role does the optimization landscape geometry play?
+
+**3. Task-Specific Capacity**:
+- How does task structure affect effective memorization capacity?
+- Can we predict task-specific capacity requirements?
+- How do compositional tasks scale with capacity?
+
+**4. Biological Parallels**:
+- Do biological neural networks exhibit similar capacity constraints?
+- How does synaptic plasticity relate to artificial parameter updates?
+- Can neuroscience inform better capacity utilization strategies?
+
+**5. Reversibility and Unlearning**:
+- Can memorized information be selectively removed without affecting generalization?
+- How can we design "forgettable" training procedures?
+- What are the fundamental limits of machine unlearning?
+
+**6. Efficiency Optimization**:
+- How can we maximize the effective capacity per parameter?
+- What architectural modifications improve capacity efficiency?
+- Can we predict optimal model sizes for given datasets?
+
+### Practical Implementation Framework
+
+**Capacity-Aware Training Pipeline**:
+1. **Pre-training Analysis**: Estimate dataset information content
+2. **Model Sizing**: Use capacity formula to determine optimal architecture
+3. **Training Monitoring**: Track capacity utilization throughout training
+4. **Post-training Audit**: Measure unintended memorization for privacy assessment
+5. **Deployment Optimization**: Prune parameters storing irrelevant memorized content
+
+**Capacity Optimization Strategies**:
+- **Dynamic Capacity Allocation**: Adjust parameter allocation during training based on task requirements
+- **Hierarchical Memorization**: Structure models to separate general patterns from specific memorization
+- **Federated Capacity**: Distribute memorization across multiple model instances to enhance privacy
+
+
+
+## How does reasoning come into play?
+
+Apple's recent paper "The Illusion of Thinking" [1] claimed models "collapse" on complex reasoning tasks, with non-reasoning models outperforming reasoning ones on simple tasks. However, "The Illusion of Illusion of Thinking" paper [2] revealed critical experimental design flaws:
+
+### Prompt Design
+Apple's prompts asked models to enumerate every Tower of Hanoi move, causing output token limits where models explicitly stated "The pattern continues, but to avoid making this too long, I'll stop here." [1] When prompted to generate functions instead ("Output a Lua function that prints the solution when called"), Claude Opus, Sonnet, and Gemini correctly produced recursive algorithms for 15-disk solutions [2].
+
+### Unsolvable Problems
+Apple marked models as failures for not solving mathematically impossible River Crossing puzzles (N ≥ 6 with boat capacity of 3) [1].
+
+Both sides acknowledge that current models have real output limitations, but experimental design can make those limits appear more fundamental than they are.
+
+Here's an example of successfully solving the Tower of Hanoi algorithmically using AI:
+
+<div style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+  <iframe
+    srcDoc={`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower of Hanoi Solver</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        input, button, select {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        input, select {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            width: 35px;
+        }
+
+        select {
+            width: 132px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .game-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 400px;
+            margin: 40px 0;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .tower {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 200px;
+        }
+
+        .tower-base {
+            width: 180px;
+            height: 20px;
+            background: linear-gradient(45deg, #8B4513, #A0522D);
+            border-radius: 10px;
+            margin-top: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .tower-pole {
+            width: 8px;
+            min-height: 250px;
+            height: calc(100% - 80px);
+            background: linear-gradient(to bottom, #654321, #8B4513);
+            border-radius: 4px;
+            position: absolute;
+            top: 60px;
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .tower-label {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .disk {
+            height: 20px;
+            border-radius: 10px;
+            margin: 1px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 20;
+            font-size: 0.8em;
+        }
+
+        .tower-content {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            position: relative;
+            height: 300px;
+            justify-content: flex-end;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .moving {
+            transform: translateY(-50px);
+            z-index: 100;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗼 Tower of Hanoi Solver</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="diskCount">Number of Disks:</label>
+                <input type="number" id="diskCount" min="1" max="15" value="3">
+            </div>
+            <div class="control-group">
+                <label for="speed">Animation Speed:</label>
+                <select id="speed">
+                    <option value="2000">Slow</option>
+                    <option value="1000">Medium</option>
+                    <option value="500">Fast</option>
+                    <option value="100">Very Fast</option>
+                    <option value="10" selected>Ultra Fast</option>
+                    <option value="1">Lightning</option>
+                </select>
+            </div>
+            <button id="solveBtn">Solve Automatically</button>
+            <button id="resetBtn">Reset</button>
+            <button id="stepBtn" disabled>Next Step</button>
+        </div>
+
+
+
+        <div class="game-area">
+            <div class="tower" id="tower-A">
+                <div class="tower-label">Tower A (Source)</div>
+                <div class="tower-content">
+                    <div class="tower-pole"></div>
+                    <div class="tower-base"></div>
+                </div>
+            </div>
+            <div class="tower" id="tower-B">
+                <div class="tower-label">Tower B (Auxiliary)</div>
+                <div class="tower-content">
+                    <div class="tower-pole"></div>
+                    <div class="tower-base"></div>
+                </div>
+            </div>
+            <div class="tower" id="tower-C">
+                <div class="tower-label">Tower C (Destination)</div>
+                <div class="tower-content">
+                    <div class="tower-pole"></div>
+                    <div class="tower-base"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="moveCount">0</div>
+                <div>Moves Made</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="minMoves">7</div>
+                <div>Minimum Moves</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalTime">0</div>
+                <div>Time (seconds)</div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script>
+        class TowerOfHanoi {
+            constructor() {
+                this.towers = { A: [], B: [], C: [] };
+                this.moves = [];
+                this.currentMoveIndex = 0;
+                this.moveCount = 0;
+                this.isAnimating = false;
+                this.startTime = null;
+                this.timerInterval = null;
+                this.diskColors = [
+                    'linear-gradient(45deg, #FF6B6B, #FF8E8E)',
+                    'linear-gradient(45deg, #4ECDC4, #7FDBDA)',
+                    'linear-gradient(45deg, #45B7D1, #96CEB4)',
+                    'linear-gradient(45deg, #FFA07A, #FFB347)',
+                    'linear-gradient(45deg, #98D8C8, #F7DC6F)',
+                    'linear-gradient(45deg, #BB8FCE, #D7BDE2)',
+                    'linear-gradient(45deg, #F8C471, #F9E79F)',
+                    'linear-gradient(45deg, #85C1E9, #AED6F1)',
+                    'linear-gradient(45deg, #F1948A, #F8BBD9)',
+                    'linear-gradient(45deg, #82E0AA, #A9DFBF)',
+                    'linear-gradient(45deg, #F7DC6F, #F4D03F)',
+                    'linear-gradient(45deg, #AED6F1, #85C1E9)',
+                    'linear-gradient(45deg, #D7BDE2, #BB8FCE)',
+                    'linear-gradient(45deg, #F9E79F, #F8C471)',
+                    'linear-gradient(45deg, #7FDBDA, #4ECDC4)'
+                ];
+                
+                this.initializeEventListeners();
+                this.reset();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('solveBtn').addEventListener('click', () => this.solve());
+                document.getElementById('resetBtn').addEventListener('click', () => this.reset());
+                document.getElementById('stepBtn').addEventListener('click', () => this.nextStep());
+                document.getElementById('diskCount').addEventListener('change', () => this.reset());
+
+            }
+
+
+
+            reset() {
+                this.stopTimer();
+                this.towers = { A: [], B: [], C: [] };
+                this.moves = [];
+                this.currentMoveIndex = 0;
+                this.moveCount = 0;
+                this.isAnimating = false;
+                
+                const diskCount = parseInt(document.getElementById('diskCount').value);
+                
+                // Initialize tower A with disks (largest to smallest from bottom to top)
+                for (let i = diskCount; i >= 1; i--) {
+                    this.towers.A.push(i);
+                }
+                
+                this.updateDisplay();
+                this.updateStats();
+                
+                // Enable/disable buttons
+                document.getElementById('solveBtn').disabled = false;
+                document.getElementById('stepBtn').disabled = true;
+            }
+
+            solve() {
+                if (this.isAnimating) return;
+                
+                const diskCount = parseInt(document.getElementById('diskCount').value);
+                this.moves = [];
+                this.solveTowerOfHanoi(diskCount, 'A', 'C', 'B');
+                
+                // Start automatic solving
+                document.getElementById('solveBtn').disabled = true;
+                document.getElementById('stepBtn').disabled = false;
+                this.startTimer();
+                this.animateSolution();
+            }
+
+            solveTowerOfHanoi(n, source, destination, auxiliary) {
+                if (n === 1) {
+                    this.moves.push({ from: source, to: destination, disk: 1 });
+                } else {
+                    // Move n-1 disks from source to auxiliary
+                    this.solveTowerOfHanoi(n - 1, source, auxiliary, destination);
+                    
+                    // Move the largest disk from source to destination
+                    this.moves.push({ from: source, to: destination, disk: n });
+                    
+                    // Move n-1 disks from auxiliary to destination
+                    this.solveTowerOfHanoi(n - 1, auxiliary, destination, source);
+                }
+            }
+
+            async animateSolution() {
+                const speed = parseInt(document.getElementById('speed').value);
+                this.isAnimating = true;
+                
+                for (let i = 0; i < this.moves.length; i++) {
+                    // Check if animation was interrupted (e.g., by reset)
+                    if (!this.isAnimating) {
+                        break;
+                    }
+                    
+                    await this.animateMove(this.moves[i], i);
+                    await this.delay(speed);
+                }
+                
+                // Only disable solve button if we completed the animation
+                if (this.isAnimating) {
+                    this.isAnimating = false;
+                    this.stopTimer();
+                    document.getElementById('solveBtn').disabled = false;
+                }
+            }
+
+            async animateMove(move, moveIndex) {
+                const { from, to } = move;
+                
+                // Get the disk to move
+                const disk = this.towers[from].pop();
+                const diskElement = this.getDiskElement(from, this.towers[from].length);
+                
+                // Animate the move
+                if (diskElement) {
+                    diskElement.classList.add('moving');
+                    await this.delay(250);
+                    diskElement.classList.remove('moving');
+                }
+                
+                // Move the disk to destination
+                this.towers[to].push(disk);
+                this.moveCount++;
+                
+                this.updateDisplay();
+                this.updateStats();
+            }
+
+            nextStep() {
+                if (this.currentMoveIndex < this.moves.length) {
+                    const move = this.moves[this.currentMoveIndex];
+                    this.animateMove(move, this.currentMoveIndex);
+                    this.currentMoveIndex++;
+                    
+                    if (this.currentMoveIndex >= this.moves.length) {
+                        document.getElementById('stepBtn').disabled = true;
+                        this.stopTimer();
+                    }
+                }
+            }
+
+            getDiskElement(tower, index) {
+                const towerElement = document.getElementById(\`tower-\${tower}\`);
+                const towerContent = towerElement.querySelector('.tower-content');
+                const diskElements = towerContent.querySelectorAll('.disk');
+                return diskElements[index];
+            }
+
+            updateDisplay() {
+                // Clear all towers
+                ['A', 'B', 'C'].forEach(towerName => {
+                    const tower = document.getElementById(\`tower-\${towerName}\`);
+                    const existingDisks = tower.querySelectorAll('.disk');
+                    existingDisks.forEach(disk => disk.remove());
+                });
+
+                // Render disks on each tower
+                ['A', 'B', 'C'].forEach(towerName => {
+                    const tower = document.getElementById(\`tower-\${towerName}\`);
+                    const towerContent = tower.querySelector('.tower-content');
+                    const towerDisks = this.towers[towerName];
+                    
+                    towerDisks.forEach((diskSize, index) => {
+                        const disk = document.createElement('div');
+                        disk.className = 'disk';
+                        disk.style.width = \`\${40 + diskSize * 10}px\`;
+                        disk.style.background = this.diskColors[diskSize - 1];
+                        disk.textContent = diskSize;
+                        
+                        // Insert disk into tower content (before the base)
+                        const base = towerContent.querySelector('.tower-base');
+                        towerContent.insertBefore(disk, base);
+                    });
+                });
+            }
+
+            updateStats() {
+                document.getElementById('moveCount').textContent = this.moveCount;
+                const diskCount = parseInt(document.getElementById('diskCount').value);
+                document.getElementById('minMoves').textContent = Math.pow(2, diskCount) - 1;
+            }
+
+
+
+
+
+
+
+            startTimer() {
+                this.startTime = Date.now();
+                this.timerInterval = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                    document.getElementById('totalTime').textContent = elapsed;
+                }, 1000);
+            }
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Initialize the game when the page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            new TowerOfHanoi();
+        });
+    </script>
+</body>
+</html>`}
+    width="100%"
+    height="1075px"
+    style={{ border: 'none', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
+    title="Tower of Hanoi Algorithmic Solver"
+  />
+</div>
+
+**Tower of Hanoi Recursive Algorithm:**
+
+```python
+from typing import List, Tuple, Optional
+
+def solve_tower_of_hanoi(
+    n: int,
+    source: str = "A",
+    destination: str = "C",
+    auxiliary: str = "B",
+    moves: Optional[List[Tuple[int, str, str]]] = None,
+) -> Optional[List[Tuple[int, str, str]]]:
+    """
+    Solve the Towers of Hanoi problem recursively.
+
+    Parameters
+    ----------
+    n : int
+        Number of disks to move
+    source : str, optional
+        Name of the source peg (default is 'A')
+    destination : str, optional
+        Name of the destination peg (default is 'C')
+    auxiliary : str, optional
+        Name of the auxiliary peg (default is 'B')
+    moves : list, optional
+        List to store the sequence of moves (default is None)
+
+    Returns
+    -------
+    list
+        A list of tuples representing the moves, where each tuple is
+        (disk_number, source_peg, destination_peg)
+
+    Notes
+    -----
+    The algorithm follows the recursive pattern:
+    1. Move n-1 disks from source to auxiliary (using destination as temporary)
+    2. Move the largest disk from source to destination
+    3. Move n-1 disks from auxiliary to destination (using source as temporary)
+
+    Examples
+    --------
+    >>> solve_tower_of_hanoi(3)
+    [(1, 'A', 'C'), (2, 'A', 'B'), (1, 'C', 'B'), (3, 'A', 'C'),
+     (1, 'B', 'A'), (2, 'B', 'C'), (1, 'A', 'C')]
+    """
+    # Initialize moves list on first call
+    if moves is None:
+        moves = []
+
+    # Base case: no disks to move
+    if n == 0:
+        return moves
+
+    # Recursive case: move n disks
+    # Step 1: Move n-1 disks from source to auxiliary (using destination as temporary)
+    solve_tower_of_hanoi(n - 1, source, auxiliary, destination, moves)
+
+    # Step 2: Move the largest disk from source to destination
+    moves.append((n, source, destination))
+
+    # Step 3: Move n-1 disks from auxiliary to destination (using source as temporary)
+    solve_tower_of_hanoi(n - 1, auxiliary, destination, source, moves)
+
+    return moves
+```
+
+## Understanding the relationship
+
+Understanding the relationship between memorization, generalization and reasoning is critical for:
+
+### 1. Evaluation Design
+Tests that expect memorized responses miss models that have progressed to generalization and reasoning. When evaluations reward exhaustive approaches (like move lists), they penalize models that have learned to think abstractly and generate practical engineering solutions.
+
+### 2. Capability Unlocking
+Reasoning "failures" often stem from poor evaluation design. Tweaking task setup or prompts can reveal genuine capabilities valuable for workflow automation, coding, and information extraction. Additionally, understanding when models move from memorization to generalization can help us in areas of efficiency and intelligence.
+
+### 3. Tool Integration
+LLMs should be paired with tools to augment reasoning. In our experiments, Claude Opus solved Tower of Hanoi through recursive algorithms, not exhaustive move enumeration.
+
+## Conclusion
+
+Models are generalizing effectively and knowing at what points helps us iterate on intelligence. With proper prompts, tools, and evaluation frameworks, models demonstrate stronger reasoning than flawed tests suggest. While not yet human-level reasoners, the future isn't as bleak as some evaluations indicate. The "collapse" often reflects our testing limitations, not fundamental model constraints.
+
+Understanding these distinctions is crucial for determining where innovation is truly needed versus where better implementation can unlock existing capabilities.
+
+## Citations
+
+[1] Shojaee, P., Mirzadeh, I., Alizadeh, K., Horton, M., Bengio, S., & Farajtabar, M. (2025). The Illusion of Thinking: Understanding the Strengths and Limitations of Reasoning Models via the Lens of Problem Complexity. Apple. Retrieved from https://ml-site.cdn-apple.com/papers/the-illusion-of-thinking.pdf
+
+[2] Opus, C., & Lawsen, A. (2025). The Illusion of the Illusion of Thinking: A Comment on Shojaee et al. (2025). arXiv preprint arXiv:2506.09250. Retrieved from https://arxiv.org/pdf/2506.09250
+
+[3] Morris, J. X., Sitawarin, C., Guo, C., Kokhlikyan, N., Suh, G. E., Rush, A. M., Chaudhuri, K., & Mahloujifar, S. (2025). How much do language models memorize? arXiv preprint arXiv:2505.24832. Retrieved from https://arxiv.org/pdf/2505.24832
