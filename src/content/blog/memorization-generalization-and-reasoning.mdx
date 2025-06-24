@@ -9,11 +9,151 @@ Not understanding how AI models actually memorize, generalize, and reason is cos
 
 ## How much do models actually memorize?
 
-Meta's research "How much do language models memorize?" provides crucial insights. They distinguished between **unintended memorization** (training set specifics) and **generalization** (true pattern recognition).
+Meta's research "How much do language models memorize?" provides crucial insights. They distinguished between **unintended memorization** (sample-specific storage) and **intended memorization** (generalization).
 
-**Key Finding**: GPT-family models (examining GPT-2 series) memorize ~3.6 bits per parameter. Researchers trained target models on uniformly random bit strings and used reference models trained on larger, diverse datasets. They leveraged Shannon Information Theory (less likely events carry more information) to approximate Kolmogorov Complexity (shortest description length needed to reproduce an object). Since compression rates are tied to likelihood in predictive models, they approximated Kolmogorov complexity using model likelihoods.
+### Intuition
 
-**The Formula**: `compression_bits(reference_model) - compression_bits(trained_model) = unintended memorization` or the information from specific datasets stored in trained model weights. Higher probability means less surprise (information), resulting in fewer compression_bits based on the Shannon Entropy equation.
+Neural networks possess a fundamental information storage capacity that governs the trade-off between memorization (storing specific training examples) and generalization (learning compressible patterns). They found each parameter in a neural network can store approximately 3.6 bits of information, creating a hard constraint on what the network can remember versus what it must compress. This capacity limitation forces networks to choose between perfect recall of training data and the discovery of generalizable patterns--a trade-off that explains numerous phenomena in deep learning, from double descent to emergent abilities.
+
+### Information Theory Foundations
+
+Neural network memorization is fundamentally grounded in information theory. Understanding memorization requires precise definitions of information, compression, and capacity:
+
+**Shannon Entropy** quantifies the average information content of a random variable. For a discrete random variable $X$ with possible values $\{x_1, x_2, \ldots, x_n\}$ and probability mass function $p(x)$:
+
+$$
+\begin{align*}
+H(X) = -\sum_{x \in \mathcal{X}} p(x) \log_2 p(x)
+\end{align*}
+$$
+
+This measures the expected number of bits needed to encode messages from the distribution. Higher entropy indicates more randomness and less predictability.
+
+**Conditional Entropy** measures the average information needed to describe $X$ given knowledge of $Y$:
+
+$$
+\begin{align*}
+H(X|Y) = -\sum_{x,y} p(x,y) \log_2 p(x|y)
+\end{align*}
+$$
+
+**Mutual Information** quantifies the reduction in uncertainty about one variable when observing another:
+
+$$
+\begin{align*}
+I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = \sum_{x,y} p(x,y) \log_2 \frac{p(x,y)}{p(x)p(y)}
+\end{align*}
+$$
+
+In the context of memorization, $I(X; \Theta)$ measures how much information the model parameters $\Theta$ contain about the training data $X$.
+
+**Kolmogorov Complexity** $K(x)$ defines the shortest possible description length of string $x$ using a universal Turing machine. While uncomputable in general, it provides the theoretical foundation for understanding compression limits:
+
+$$
+\begin{align*}
+K(x) = \min_p \{|p| : U(p) = x\}
+\end{align*}
+$$
+
+where $U$ is a universal Turing machine and $|p|$ is the length of program $p$.
+
+**Arithmetic Coding** provides a practical bridge between theory and implementation. Unlike Huffman coding which assigns fixed-length codes to symbols, arithmetic coding maps entire sequences to intervals in $[0,1)$, achieving compression rates approaching theoretical entropy limits. For a sequence $x_1, x_2, \ldots, x_n$:
+
+$$
+\begin{align*}
+\text{Code length} \approx -\log_2 \prod_{i=1}^n p(x_i | x_1, \ldots, x_{i-1}) = \sum_{i=1}^n -\log_2 p(x_i | \text{context})
+\end{align*}
+$$
+
+This connection allows us to estimate Kolmogorov complexity using language model probabilities, forming the basis for measuring memorization.
+
+### Formal Definition of Memorization
+
+The memorization capacity of neural networks can be formalized through information-theoretic principles. Total memorization represents the mutual information between the training dataset $X$ and the trained model parameters $\hat{\Theta}$:
+
+$$
+\begin{align*}
+\text{mem}(X, \hat{\Theta}) = I(X; \hat{\Theta}) = H(X) - H(X|\hat{\Theta})
+\end{align*}
+$$
+
+This total memorization decomposes into two fundamental and distinct components that capture different aspects of learning:
+
+**Unintended Memorization** (sample-specific storage): This represents information about individual training examples that cannot be inferred from the general data distribution. It measures how much the model has "overfit" to specific samples:
+
+$$
+\begin{align*}
+\text{mem}_U(X, \hat{\Theta}, \Theta) = H(X|\Theta) - H(X|(\Theta, \hat{\Theta}))
+\end{align*}
+$$
+
+This captures the reduction in uncertainty about specific training examples when given both the true distribution parameters $\Theta$ and the learned parameters $\hat{\Theta}$, compared to knowing only $\Theta$.
+
+**Intended Memorization** (generalization): This represents the portion of memorization that corresponds to learning the underlying data distribution - essentially "good" memorization that enables generalization:
+
+$$
+\begin{align*}
+\text{mem}_I(X, \hat{\Theta}, \Theta) = \text{mem}(X, \hat{\Theta}) - \text{mem}_U(X, \hat{\Theta}, \Theta)
+\end{align*}
+$$
+
+The key insight is that total memorization splits into:
+- **Useful patterns** that generalize to new data (intended memorization)  
+- **Spurious details** specific to training examples (unintended memorization)
+
+where:
+- $X$: Training dataset drawn from the true data distribution $p(x|\Theta)$
+- $\Theta$: Parameters of the true underlying data distribution  
+- $\hat{\Theta}$: Learned model parameters after training
+- $H(\cdot)$: Shannon entropy measuring uncertainty
+- $I(\cdot;\cdot)$: Mutual information measuring shared information
+
+This formulation provides theoretical clarity but requires practical estimation methods for real-world application.
+
+### Computing Memorization in Practice
+
+The theoretical formulation requires practical estimation methods since we observe single instances of models and datasets. We transition from Shannon entropy to Kolmogorov complexity for computational tractability.
+
+**Kolmogorov Complexity Approximation**: For unintended memorization of a specific text $x$:
+
+$$
+\begin{align*}
+\text{mem}_K^U(x, \theta, \hat{\theta}) = K(x|\theta) - K(x|(\theta, \hat{\theta}))
+\end{align*}
+$$
+
+where $K(x|y)$ represents the Kolmogorov complexity of $x$ given $y$ - the length of the shortest program that generates $x$ when given access to $y$.
+
+**Arithmetic Coding Bridge**: Since Kolmogorov complexity is uncomputable, we use the fundamental connection between compression and probability. For any computable probability distribution $p$, arithmetic coding achieves compression length approximately equal to the negative log-probability:
+
+$$
+\begin{align*}
+K(x) \approx -\log_2 p(x) + O(\log |x|)
+\end{align*}
+$$
+
+**Reference Model Method**: To estimate the true data distribution $\theta$, we use a larger reference model $\theta_{\text{ref}}$ trained on a superset of the data. This gives us practical estimators:
+
+- $K(x|\theta) \approx -\log_2 p(x|\theta_{\text{ref}})$: Compression cost using reference model
+- $K(x|(\theta, \hat{\theta})) \approx -\log_2 \max\{p(x|\theta_{\text{ref}}), p(x|\hat{\theta})\}$: Best compression using either model
+
+**Final Computable Measure**: Combining these approximations yields the practical unintended memorization measure:
+
+$$
+\begin{align*}
+\text{mem}_K^U(x, \theta_{\text{ref}}, \hat{\theta}) = \max\{0, -\log_2 p(x|\theta_{\text{ref}}) + \log_2 p(x|\hat{\theta})\}
+\end{align*}
+$$
+
+This formulation captures the key intuition: if the target model assigns much higher probability to a text than the reference model, it has memorized sample-specific information not present in the general distribution.
+
+**Interpretation**: 
+- When $\text{mem}_K^U = 0$: Target model shows no unintended memorization
+- When $\text{mem}_K^U > 0$: Target model has memorized $\text{mem}_K^U$ bits of sample-specific information
+- Larger values indicate stronger memorization of training-specific details
+
+**Validation Requirements**: The reference model must be trained on a proper superset of the target model's training data to ensure it captures the true underlying distribution without the specific memorization artifacts we wish to measure.
+
 
 <div style={{ marginTop: '2rem', marginBottom: '2rem' }}>
   <iframe
@@ -346,43 +486,581 @@ Meta's research "How much do language models memorize?" provides crucial insight
   />
 </div>
 
-**Shannon Information Theory Algorithm:**
+### The 3.6 Bits-Per-Parameter Hypothesis
 
-```javascript
-// Shannon Information Theory - The Core Algorithm
-// This calculates how many bits are needed to compress information
+**Fundamental Capacity Theorem**: Extensive empirical analysis reveals that neural networks in the GPT family exhibit a remarkably consistent memorization capacity governed by a universal constant:
 
-updateCompression() {
-    // Get probability as percentage (1-100%)
-    const prob = parseInt(probSlider.value);
-    
-    // Convert to decimal probability (0.01-1.0)
-    const decimal = prob / 100;
-    
-    // 🎯 SHANNON ENTROPY FORMULA: -log₂(probability)
-    // Lower probability = More surprise = More bits needed
-    const cost = -Math.log2(decimal);
-    
-    // The difference in compression costs between models
-    // reveals how much one model "memorized" vs the other
-    const memorization = referenceModelCost - targetModelCost;
-    
-    // Visual representation for the progress bar
-    const width = Math.min(cost * 10, 100);
-}
+$$
+\begin{align*}
+\text{Capacity}(\theta) = \alpha \cdot |\theta| \text{ where } \alpha = 3.6 \text{ bits/parameter}
+\end{align*}
+$$
 
-// Key Insight: If a model assigns high probability to text,
-// it needs fewer bits to compress it = more memorization!
+This represents a fundamental constraint on the maximum mutual information between training data and model parameters:
 
-// Examples:
-// 100% probability → 0 bits (perfect memorization)
-// 50% probability → 1 bit (some memorization)
-// 1% probability → ~6.6 bits (little/no memorization)
+$$
+\begin{align*}
+I(X; \hat{\Theta}) \leq 3.6 \cdot |\hat{\Theta}|
+\end{align*}
+$$
+
+**Physical Interpretation**: Each parameter can store approximately 3.6 bits of information about the training data. This is significantly less than the theoretical maximum for floating-point parameters (which could theoretically store unlimited information), indicating that practical training dynamics impose strict limits.
+
+**Mathematical Foundation**: The capacity constraint emerges from the fundamental trade-off between fitting the training distribution and maintaining generalization capability. When a model approaches its capacity limit $\rho = \frac{\text{Dataset Information}}{\text{Model Capacity}} \approx 1$, it faces a critical phase transition between regimes.
+
+**Universality Across Scales**: This 3.6 bits/parameter constant has been empirically validated across:
+
+- **Model architectures**: GPT-2 family with standard transformer architectures
+- **Parameter counts**: From 80K to 1.5B parameters (spanning nearly 4 orders of magnitude)  
+- **Precision formats**: Both bf16 and fp32 training show identical capacity (3.64 bits/param)
+- **Training procedures**: Standard gradient descent with various optimizers
+- **Dataset types**: Multiple natural language corpora with different characteristics
+
+**Lower Bound Nature**: This measurement represents a practical lower bound on theoretical information storage capacity, not an upper limit. Several factors contribute to this gap:
+
+1. **Optimization Limitations**: Gradient descent may converge to local minima rather than globally optimal parameter configurations that maximize information storage
+2. **Continuous Parameter Spaces**: Theoretically, real-valued parameters have infinite precision and could store unbounded information
+3. **Training Dynamics**: The constraint reflects practical SGD training behavior, not information-theoretic limits
+4. **Regularization Effects**: Implicit regularization from finite precision arithmetic and finite training time
+
+**Connection to Parameter Efficiency**: The 3.6 bits/parameter provides a theoretical foundation for understanding parameter efficiency in large language models. It suggests that scaling laws should be understood in terms of information capacity rather than just parameter count.
+
+### Predicting Double Descent and Phase Transitions
+
+The 3.6 bits/parameter capacity enables precise prediction of the double descent phenomenon through a critical capacity ratio that governs the memorization-generalization trade-off.
+
+**Critical Capacity Ratio**: Double descent occurs precisely when the ratio of dataset information content to model memorization capacity approaches unity:
+
+$$
+\begin{align*}
+\rho = \frac{H(X)}{\text{Capacity}(\theta)} = \frac{|X| \cdot \log_2(V^S)}{3.6 \cdot |\theta|}
+\end{align*}
+$$
+
+where:
+- $|X|$: Number of training sequences  
+- $V$: Vocabulary size
+- $S$: Sequence length
+- $|\theta|$: Number of model parameters
+
+**Information Content Estimation**: The dataset entropy $H(X) = |X| \cdot \log_2(V^S)$ assumes uniform distribution over token sequences. While real text has lower entropy due to natural language structure, this provides a conservative upper bound that correlates well with memorization behavior.
+
+**Three Distinct Learning Regimes**:
+
+**1. Under-parameterized Regime** ($\rho < 1$):
+- **Characteristics**: Model capacity exceeds dataset information content
+- **Memorization Behavior**: Can memorize entire dataset with capacity to spare
+- **Training Dynamics**: Zero training loss achievable through perfect memorization
+- **Generalization**: Poor due to lack of compression pressure
+- **Mathematical Description**: $\text{Capacity} > H(\text{Data}) \Rightarrow$ Pure memorization is optimal
+
+**2. Critical Regime** ($\rho \approx 1$):
+- **Characteristics**: Capacity exactly matches dataset information content  
+- **Memorization Behavior**: Forced to choose between different training examples
+- **Training Dynamics**: High variance, sensitivity to initialization
+- **Generalization**: Worst performance due to instability at phase boundary
+- **Mathematical Description**: Competition between memorization and compression
+
+**3. Over-parameterized Regime** ($\rho > 1$):
+- **Characteristics**: Dataset information exceeds model capacity
+- **Memorization Behavior**: Must compress data to fit within capacity constraints
+- **Training Dynamics**: Forced compression leads to pattern discovery
+- **Generalization**: Improved through implicit regularization
+- **Mathematical Description**: $H(\text{Data}) > \text{Capacity} \Rightarrow$ Compression necessary
+
+**Mathematical Characterization of Test Loss**: The test loss exhibits the characteristic double descent curve:
+
+$$
+\begin{align*}
+\mathcal{L}_{\text{test}}(\rho) = \begin{cases}
+\mathcal{L}_{\text{interpolation}}(\rho) & \text{if } \rho < 1 \\
+\mathcal{L}_{\text{critical}} + \epsilon(\rho) & \text{if } \rho \approx 1 \\
+\mathcal{L}_{\text{generalization}}(\rho) & \text{if } \rho > 1
+\end{cases}
+\end{align*}
+$$
+
+where:
+- $\mathcal{L}_{\text{interpolation}}(\rho)$: Decreasing loss in memorization regime
+- $\mathcal{L}_{\text{critical}}$: Peak loss at the critical transition point
+- $\epsilon(\rho)$: Sharp divergence term near $\rho = 1$
+- $\mathcal{L}_{\text{generalization}}(\rho)$: Decreasing loss in compression regime
+
+**Practical Implications**:
+
+1. **Model Sizing**: Target $\rho > 1.5$ to avoid critical regime instabilities
+2. **Training Stability**: Expect higher variance when $\rho \approx 1$  
+3. **Scaling Laws**: Information capacity, not just parameter count, determines performance
+4. **Architecture Design**: Optimize for bits-per-parameter efficiency rather than raw size
+
+## Memorization, Privacy, and Security Implications
+
+Understanding memorization has profound implications for privacy and security in language model deployment. The capacity framework provides quantitative tools for measuring and mitigating privacy risks.
+
+### Scaling Law for Membership Inference Attacks
+
+Membership inference attacks attempt to determine whether a specific text was included in the training dataset. The success rate of such attacks follows a predictable scaling law based on the capacity ratio:
+
+$$
+\begin{align*}
+\text{F1}_{\text{MI}}(\theta, \mathcal{D}) = \frac{1}{2}\left(1 + 1.34\sigma\left(-0.034\left(\frac{\text{Capacity}(\theta)}{|\mathcal{D}|} - 33.14\right)\right)\right)
+\end{align*}
+$$
+
+where:
+- $\sigma(x) = \frac{1}{1 + e^{-x}}$ is the sigmoid function
+- $\text{Capacity}(\theta) = 3.6 \cdot |\theta|$ is the model's information capacity
+- $|\mathcal{D}|$ represents the total information content of the dataset
+
+**Mathematical Interpretation**: This function exhibits a sharp transition around the critical point where $\frac{\text{Capacity}(\theta)}{|\mathcal{D}|} \approx 33.14$, indicating a phase transition in attack vulnerability.
+
+**Attack Success Regimes**:
+- **High Capacity**: When models have excess capacity relative to data, they memorize verbatim, making membership inference easy
+- **Critical Point**: Sharp transition region with maximum attack vulnerability
+- **Low Capacity**: Over-parameterized models compress data, reducing attack success
+
+### Privacy Threshold and Safe Operating Regions
+
+Models achieve practical privacy protection when the capacity-to-data ratio falls below a critical threshold:
+
+$$
+\begin{align*}
+\frac{3.6 \cdot |\theta|}{|\mathcal{D}|} < 0.001
+\end{align*}
+$$
+
+This constraint translates to requiring more than 1000 bits of training data per model parameter, or equivalently:
+
+$$
+\begin{align*}
+\frac{\text{Training tokens}}{|\theta|} > \frac{1000}{\log_2(\text{vocab size}) \cdot \text{sequence length}}
+\end{align*}
+$$
+
+For typical language models with vocabulary size $V = 50,000$ and sequence length $S = 2048$:
+
+$$
+\begin{align*}
+\frac{\text{Training tokens}}{|\theta|} > \frac{1000}{15.6 \cdot 2048} \approx 0.031 \text{ tokens/parameter}
+\end{align*}
+$$
+
+**Practical Guidelines**:
+- **Minimum Data Requirement**: >100 tokens per parameter for membership inference resistance
+- **Safe Operating Zone**: >1000 tokens per parameter for strong privacy guarantees
+- **Critical Monitoring**: Track capacity utilization during training to avoid privacy-vulnerable regimes
+
+### The Extraction vs Memorization Paradox
+
+A counterintuitive finding emerges when examining extractable memorized content:
+
+**Key Observation**: When the probability of extracting training examples equals the probability of extracting test examples:
+$$
+\begin{align*}
+p_{\text{extract}}(x \in \mathcal{D}_{\text{train}}) \approx p_{\text{extract}}(x \in \mathcal{D}_{\text{test}})
+\end{align*}
+$$
+
+then all successful extraction can be attributed to generalization capabilities rather than memorization.
+
+**Implications**:
+1. **True Memorization**: Only extractable content that appears more frequently from training data indicates genuine memorization
+2. **Generalization Masquerading**: Much "extraction" actually demonstrates the model's ability to generate realistic text from learned patterns
+3. **Privacy Assessment**: Simple extraction tests may overestimate privacy risks by conflating generation with memorization
+
+**Quantitative Measurement**: The memorization-specific extraction rate:
+$$
+\begin{align*}
+\text{True Memorization} = \max\{0, p_{\text{extract}}(\text{train}) - p_{\text{extract}}(\text{test})\}
+\end{align*}
+$$
+
+This provides a more accurate measure of privacy-relevant memorization than raw extraction rates.
+
+## Memorization Patterns and Selective Learning
+
+Neural networks don't memorize randomly - they exhibit systematic preferences for certain types of content based on information-theoretic properties.
+
+### TF-IDF and Rarity-Based Selection
+
+Documents with higher TF-IDF (Term Frequency-Inverse Document Frequency) scores are preferentially memorized due to their distinctiveness:
+
+$$
+\begin{align*}
+\text{TF-IDF}(d, \mathcal{D}) = \frac{1}{|d|} \sum_{w \in d} \text{tf}(w,d) \cdot \log \frac{|\mathcal{D}|}{\text{df}(w)}
+\end{align*}
+$$
+
+where:
+- $\text{tf}(w,d)$: Term frequency of word $w$ in document $d$
+- $\text{df}(w)$: Document frequency of word $w$ across corpus $\mathcal{D}$
+- $|d|$: Length of document $d$
+- $|\mathcal{D}|$: Total number of documents
+
+**Empirical Correlation**: Strong positive correlation ($r = 0.73$) between TF-IDF scores and memorization likelihood indicates that models preferentially store distinctive, rare content.
+
+**Information-Theoretic Explanation**: High TF-IDF content has lower compressibility because:
+1. **Rare terms** have high information content ($-\log p(\text{term})$)
+2. **Unique combinations** resist compression through pattern matching
+3. **Low redundancy** prevents amortization across multiple examples
+
+### Memorization Priority Function
+
+The probability that a model memorizes document $d$ follows a competitive allocation process:
+
+$$
+\begin{align*}
+P(\text{memorize}|d) \propto \exp\left(\beta \cdot \text{TF-IDF}(d) - \gamma \cdot \text{compressibility}(d) + \delta \cdot \text{frequency}(d)\right)
+\end{align*}
+$$
+
+**Parameter Interpretation**:
+- $\beta > 0$: Rarity weight - higher values prioritize unique content
+- $\gamma > 0$: Compressibility penalty - resist memorizing incompressible noise
+- $\delta > 0$: Frequency boost - common patterns receive priority
+
+**Compressibility Estimation**: Using lossless compression ratio as a proxy:
+$$
+\begin{align*}
+\text{compressibility}(d) = 1 - \frac{\text{compressed\_size}(d)}{\text{original\_size}(d)}
+\end{align*}
+$$
+
+**Frequency-Based Competition**: When capacity is limited, documents compete for memorization slots:
+$$
+\begin{align*}
+\text{frequency}(d) = \log\left(1 + \text{count}(d)\right)
+\end{align*}
+$$
+
+### Strategic Memorization Behavior
+
+Models exhibit intelligent allocation strategies that maximize information efficiency:
+
+**1. Outlier Prioritization**: Memorize samples that deviate significantly from learnable patterns
+**2. Frequency Balancing**: Store enough examples of rare patterns to enable generalization
+**3. Compression Optimization**: Prefer content that can be stored efficiently within parameter constraints
+
+**Mathematical Framework**: The optimal memorization strategy solves:
+$$
+\begin{align*}
+\max_{\text{mem\_set}} \sum_{d \in \text{mem\_set}} \text{value}(d) \text{ subject to } \sum_{d \in \text{mem\_set}} \text{cost}(d) \leq \text{Capacity}
+\end{align*}
+$$
+
+where:
+- $\text{value}(d)$: Information value of memorizing document $d$
+- $\text{cost}(d)$: Parameter capacity required to store $d$
+
+This resembles a knapsack optimization problem, explaining the observed systematic memorization patterns.
+
+## Connections to Broader Deep Learning Phenomena
+
+The memorization framework provides unified explanations for several mysterious phenomena in deep learning, revealing common underlying mechanisms.
+
+### Grokking: Sudden Generalization Through Capacity Reallocation
+
+Grokking - the phenomenon where models suddenly transition from memorization to generalization after extended training - can be understood as a dynamic capacity reallocation process.
+
+**Phase 1: Memorization Dominance** ($t < t_{\text{grok}}$):
+- **Capacity Allocation**: $C_{\text{mem}}(t) \approx \text{Capacity}(\theta)$, $C_{\text{gen}}(t) \approx 0$
+- **Learning Strategy**: Direct memorization of input-output pairs
+- **Loss Behavior**: Low training loss, high test loss (overfitting)
+- **Parameter Usage**: Most parameters encode specific training examples
+
+**Phase 2: Critical Transition** ($t = t_{\text{grok}}$):
+- **Discovery Event**: Model discovers compressible algorithmic structure
+- **Capacity Reallocation**: Rapid shift from memorization to pattern encoding
+- **Mathematical Signature**: $\frac{dC_{\text{gen}}}{dt} \gg 0$, $\frac{dC_{\text{mem}}}{dt} \ll 0$
+- **Loss Dynamics**: Sharp improvement in test performance
+
+**Phase 3: Generalization Dominance** ($t > t_{\text{grok}}$):
+- **Stable Allocation**: $C_{\text{gen}} > C_{\text{mem}}$, efficient pattern representation
+- **Algorithmic Behavior**: Model executes learned algorithms rather than table lookup
+- **Performance**: Both training and test loss remain low
+
+**Mathematical Model of Grokking**:
+$$
+\begin{align*}
+C_{\text{gen}}(t) = C_{\text{total}} \cdot \sigma\left(\frac{t - t_{\text{grok}}}{\tau}\right)
+\end{align*}
+$$
+$$
+\begin{align*}
+C_{\text{mem}}(t) = C_{\text{total}} - C_{\text{gen}}(t)
+\end{align*}
+$$
+
+where $\tau$ controls the transition sharpness and $t_{\text{grok}}$ is the critical time point.
+
+### Lottery Ticket Hypothesis: Optimal Capacity Utilization
+
+The lottery ticket hypothesis states that dense networks contain sparse subnetworks that achieve comparable performance when trained in isolation. This connects directly to capacity efficiency.
+
+**Winning Ticket Characterization**: A winning lottery ticket is a subnetwork that achieves optimal capacity allocation:
+
+$$
+\begin{align*}
+\text{Score}(\theta_{\text{sub}}) = \frac{\text{Generalization Performance}(\theta_{\text{sub}})}{\text{Capacity Used}} \cdot \text{Sparsity Bonus}
+\end{align*}
+$$
+
+More precisely:
+$$
+\begin{align*}
+\text{Score}(\theta_{\text{sub}}) = \frac{\mathcal{L}_{\text{test}}^{-1}(\theta_{\text{sub}})}{3.6 \cdot |\theta_{\text{sub}}|} \cdot \frac{|\theta_{\text{full}}|}{|\theta_{\text{sub}}|}
+\end{align*}
+$$
+
+**Capacity Efficiency Interpretation**:
+- **Bad tickets**: Waste capacity on irrelevant memorization
+- **Good tickets**: Efficiently allocate capacity to generalizable patterns  
+- **Winning tickets**: Optimal balance of capacity utilization and performance
+
+**Connection to Memorization**: Pruning removes parameters that store unimportant memorized content, leaving those that encode useful patterns.
+
+### Emergent Abilities: Capacity Threshold Effects
+
+Emergent abilities appear suddenly when models exceed critical size thresholds. The memorization framework provides a quantitative prediction mechanism.
+
+**Emergence Threshold**: New capabilities emerge when model capacity exceeds task complexity:
+
+$$
+\begin{align*}
+|\theta|_{\text{emergence}} = \frac{H(\text{Task})}{3.6} + \epsilon_{\text{compression}}
+\end{align*}
+$$
+
+where:
+- $H(\text{Task})$: Information content required for task competence
+- $\epsilon_{\text{compression}}$: Additional capacity needed for pattern discovery
+
+**Task Complexity Estimation**: For reasoning tasks requiring $n$ sequential steps with branching factor $b$:
+$$
+\begin{align*}
+H(\text{Task}) \approx n \cdot \log_2(b) + \log_2(\text{solution space})
+\end{align*}
+$$
+
+**Phase Transition Dynamics**: Emergence occurs when:
+1. **Insufficient Capacity**: Model can only memorize specific examples
+2. **Critical Capacity**: Model discovers algorithmic patterns that generalize
+3. **Abundant Capacity**: Reliable execution of learned algorithms
+
+**Examples**:
+- **Arithmetic**: Emerges when capacity exceeds the information needed to encode calculation procedures
+- **Chain-of-thought**: Appears when models can allocate capacity to intermediate reasoning steps
+- **In-context learning**: Develops when models can store pattern matching algorithms
+
+### Scaling Laws: Information-Theoretic Foundations
+
+Traditional scaling laws focus on parameter count, but the memorization framework suggests information capacity as the fundamental quantity.
+
+**Revised Scaling Law**:
+$$
+\begin{align*}
+\text{Performance} \propto \left(\frac{\text{Effective Capacity}}{\text{Task Complexity}}\right)^{\alpha}
+\end{align*}
+$$
+
+where $\text{Effective Capacity} = 3.6 \cdot |\theta| \cdot \text{efficiency}(\text{architecture})$
+
+This explains why architectural improvements can achieve better scaling than simple parameter increases.
+
+## Practical Implementation
+
+### Capacity-Aware Model Design
+
+```python
+def compute_model_size(dataset_bits, safety_factor=1.5, tokens_per_param=1000):
+    """
+    Compute required model size given dataset and safety requirements
+
+    Args:
+        dataset_bits: Total information in dataset
+        safety_factor: Multiplicative safety margin
+        tokens_per_param: Target ratio for good generalization
+
+    Returns:
+        Dictionary with model specifications
+    """
+    bits_per_param = 3.6
+
+    # Memorization-based lower bound
+    min_params_memorization = dataset_bits / bits_per_param
+
+    # Generalization-based sizing
+    min_params_generalization = dataset_bits / (tokens_per_param * np.log2(vocab_size))
+
+    # Take maximum and apply safety factor
+    recommended_params = max(min_params_memorization, min_params_generalization) * safety_factor
+
+    return {
+        'parameters': int(recommended_params),
+        'capacity_bits': recommended_params * bits_per_param,
+        'memorization_ratio': dataset_bits / (recommended_params * bits_per_param)
+    }
 ```
 
-<br />
+### Measuring Unintended Memorization
 
-**Critical Insight**: Once memorization capacity fills, training shifts to learning general patterns where 'grokking' begins. Models are forced to generalize. Scaling laws demonstrate that modern LLMs are trained on such vast datasets that membership reference (pulling out specifics) becomes extremely rare for average data points.
+```python
+def measure_unintended_memorization(model, reference_model, dataset):
+    """
+    Quantify unintended memorization using reference model method
+
+    Args:
+        model: Target model being evaluated
+        reference_model: Larger model trained on superset
+        dataset: Evaluation dataset
+
+    Returns:
+        Unintended memorization in bits
+    """
+    mem_U_total = 0
+
+    for x in dataset:
+        # Compute negative log-likelihoods
+        nll_target = -torch.log(model.forward(x))
+        nll_reference = -torch.log(reference_model.forward(x))
+
+        # Kolmogorov complexity approximation
+        H_K_given_reference = nll_reference
+        H_K_given_both = torch.min(nll_target, nll_reference)
+
+        # Unintended memorization for this sample
+        mem_U = torch.clamp(H_K_given_reference - H_K_given_both, min=0)
+        mem_U_total += mem_U.item()
+
+    return mem_U_total
+```
+
+## Theoretical Foundations and Future Directions
+
+### Statistical Learning Theory Connections
+
+The memorization framework bridges empirical observations with established theoretical foundations in statistical learning theory.
+
+**PAC-Bayes Bounds**: The generalization gap can be bounded using the memorization capacity:
+$$
+\begin{align*}
+\mathbb{E}[\mathcal{L}_{\text{test}} - \mathcal{L}_{\text{train}}] \leq \sqrt{\frac{\text{mem}(X, \hat{\Theta}) + \log(1/\delta)}{2m}}
+\end{align*}
+$$
+
+where $m$ is the training set size and $\delta$ is the confidence parameter.
+
+**Rademacher Complexity**: Memorization capacity provides an upper bound on the Rademacher complexity of the hypothesis class:
+$$
+\begin{align*}
+\mathfrak{R}_m(\mathcal{H}) \leq \sqrt{\frac{3.6 \cdot |\theta|}{m}}
+\end{align*}
+$$
+
+**Minimum Description Length (MDL)**: The optimal model balances fit quality with description length:
+$$
+\begin{align*}
+\text{Score}(\theta) = \mathcal{L}_{\text{train}}(\theta) + \frac{3.6 \cdot |\theta|}{m}
+\end{align*}
+$$
+
+### Multi-Modal and Cross-Domain Extensions
+
+The capacity framework extends beyond language models to other domains and modalities.
+
+**Multi-Modal Capacity Sharing**: For models processing multiple modalities (vision, language, audio):
+$$
+\begin{align*}
+\text{Capacity}_{\text{total}} = \sum_{m \in \text{modalities}} \alpha_m \cdot |\theta_m| + \alpha_{\text{shared}} \cdot |\theta_{\text{shared}}|
+\end{align*}
+$$
+
+where:
+- $\alpha_m$: Modality-specific capacity coefficient (may differ from 3.6)
+- $|\theta_m|$: Parameters dedicated to modality $m$
+- $\alpha_{\text{shared}}$: Capacity coefficient for shared representations
+
+**Cross-Domain Transfer**: When fine-tuning across domains:
+$$
+\begin{align*}
+\text{Transfer Efficiency} = \frac{\Delta \text{Performance}}{\Delta \text{Capacity Used}}
+\end{align*}
+$$
+
+**Continual Learning Dynamics**: Capacity allocation evolves over sequential tasks:
+$$
+\begin{align*}
+C_{\text{task}_i}(t) = C_{\text{total}} \cdot \exp\left(-\lambda(t - t_i)\right) \cdot \frac{I(\text{task}_i)}{\sum_j I(\text{task}_j)}
+\end{align*}
+$$
+
+where $\lambda$ represents the forgetting rate and $I(\text{task}_i)$ is task information content.
+
+### Quantum and Neuromorphic Extensions
+
+**Quantum Neural Networks**: Theoretical capacity for quantum parameters exploiting superposition:
+$$
+\begin{align*}
+\text{Capacity}_{\text{quantum}} = \alpha_{\text{classical}} \cdot \log_2(d) \cdot |\theta_{\text{quantum}}|
+\end{align*}
+$$
+
+where $d$ is the Hilbert space dimension, potentially providing exponential capacity advantages.
+
+**Neuromorphic Computing**: Spike-based neural networks may exhibit different capacity constraints:
+$$
+\begin{align*}
+\text{Capacity}_{\text{spike}} = \beta \cdot |\text{synapses}| \cdot \log_2(\text{spike rates})
+\end{align*}
+$$
+
+### Open Research Questions and Future Work
+
+**1. Architecture Universality**: 
+- Does $\alpha = 3.6$ hold for Transformers beyond GPT-2?
+- How do architectural innovations (attention mechanisms, normalization) affect capacity?
+- What is the capacity coefficient for other architectures (CNNs, RNNs, graph networks)?
+
+**2. Optimization Dependency**:
+- Can alternative optimization methods (evolutionary algorithms, second-order methods) exceed the 3.6 bits/parameter bound?
+- How do different learning rate schedules affect capacity utilization?
+- What role does the optimization landscape geometry play?
+
+**3. Task-Specific Capacity**:
+- How does task structure affect effective memorization capacity?
+- Can we predict task-specific capacity requirements?
+- How do compositional tasks scale with capacity?
+
+**4. Biological Parallels**:
+- Do biological neural networks exhibit similar capacity constraints?
+- How does synaptic plasticity relate to artificial parameter updates?
+- Can neuroscience inform better capacity utilization strategies?
+
+**5. Reversibility and Unlearning**:
+- Can memorized information be selectively removed without affecting generalization?
+- How can we design "forgettable" training procedures?
+- What are the fundamental limits of machine unlearning?
+
+**6. Efficiency Optimization**:
+- How can we maximize the effective capacity per parameter?
+- What architectural modifications improve capacity efficiency?
+- Can we predict optimal model sizes for given datasets?
+
+### Practical Implementation Framework
+
+**Capacity-Aware Training Pipeline**:
+1. **Pre-training Analysis**: Estimate dataset information content
+2. **Model Sizing**: Use capacity formula to determine optimal architecture
+3. **Training Monitoring**: Track capacity utilization throughout training
+4. **Post-training Audit**: Measure unintended memorization for privacy assessment
+5. **Deployment Optimization**: Prune parameters storing irrelevant memorized content
+
+**Capacity Optimization Strategies**:
+- **Dynamic Capacity Allocation**: Adjust parameter allocation during training based on task requirements
+- **Hierarchical Memorization**: Structure models to separate general patterns from specific memorization
+- **Federated Capacity**: Distribute memorization across multiple model instances to enhance privacy
+
+
 
 ## How does reasoning come into play?
 
@@ -909,35 +1587,70 @@ Here's an example of successfully solving the Tower of Hanoi algorithmically usi
 
 **Tower of Hanoi Recursive Algorithm:**
 
-```javascript
-// This is the core recursive algorithm for solving Tower of Hanoi
-solveTowerOfHanoi(n, source, destination, auxiliary) {
-    // BASE CASE: If there's only 1 disk, move it directly
-    if (n === 1) {
-        this.moves.push({ 
-            from: source, 
-            to: destination, 
-            disk: 1 
-        });
-    } else {
-        // RECURSIVE CASE: Break down the problem into 3 steps
-        
-        // Step 1: Move n-1 disks from source to auxiliary tower
-        // (using destination as temporary storage)
-        this.solveTowerOfHanoi(n - 1, source, auxiliary, destination);
-        
-        // Step 2: Move the largest disk from source to destination
-        this.moves.push({ 
-            from: source, 
-            to: destination, 
-            disk: n 
-        });
-        
-        // Step 3: Move n-1 disks from auxiliary to destination
-        // (using source as temporary storage)
-        this.solveTowerOfHanoi(n - 1, auxiliary, destination, source);
-    }
-}
+```python
+from typing import List, Tuple, Optional
+
+def solve_tower_of_hanoi(
+    n: int,
+    source: str = "A",
+    destination: str = "C",
+    auxiliary: str = "B",
+    moves: Optional[List[Tuple[int, str, str]]] = None,
+) -> Optional[List[Tuple[int, str, str]]]:
+    """
+    Solve the Towers of Hanoi problem recursively.
+
+    Parameters
+    ----------
+    n : int
+        Number of disks to move
+    source : str, optional
+        Name of the source peg (default is 'A')
+    destination : str, optional
+        Name of the destination peg (default is 'C')
+    auxiliary : str, optional
+        Name of the auxiliary peg (default is 'B')
+    moves : list, optional
+        List to store the sequence of moves (default is None)
+
+    Returns
+    -------
+    list
+        A list of tuples representing the moves, where each tuple is
+        (disk_number, source_peg, destination_peg)
+
+    Notes
+    -----
+    The algorithm follows the recursive pattern:
+    1. Move n-1 disks from source to auxiliary (using destination as temporary)
+    2. Move the largest disk from source to destination
+    3. Move n-1 disks from auxiliary to destination (using source as temporary)
+
+    Examples
+    --------
+    >>> solve_tower_of_hanoi(3)
+    [(1, 'A', 'C'), (2, 'A', 'B'), (1, 'C', 'B'), (3, 'A', 'C'),
+     (1, 'B', 'A'), (2, 'B', 'C'), (1, 'A', 'C')]
+    """
+    # Initialize moves list on first call
+    if moves is None:
+        moves = []
+
+    # Base case: no disks to move
+    if n == 0:
+        return moves
+
+    # Recursive case: move n disks
+    # Step 1: Move n-1 disks from source to auxiliary (using destination as temporary)
+    solve_tower_of_hanoi(n - 1, source, auxiliary, destination, moves)
+
+    # Step 2: Move the largest disk from source to destination
+    moves.append((n, source, destination))
+
+    # Step 3: Move n-1 disks from auxiliary to destination (using source as temporary)
+    solve_tower_of_hanoi(n - 1, auxiliary, destination, source, moves)
+
+    return moves
 ```
 
 ## Understanding the relationship
