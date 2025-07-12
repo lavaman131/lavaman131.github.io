@@ -9,44 +9,42 @@ import blogHeroImage from "../assets/images/blog/profile.png";
 const allBlogs = await getCollection("blog");
 // sort blogs by date
 allBlogs.sort(
-    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
 );
 ---
 
 <Layout title={`Blog | ${SITE_TITLE}`}>
-    <Fragment slot="main">
-        <div class="w-full min-w-96 mx-auto">
-            <!-- Centered Image Section -->
-            <div class="w-full flex justify-center items-center py-10 px-4">
-                <Image
-                    src={blogHeroImage}
-                    alt="Blog hero image"
-                    class="rounded-2xl shadow-2xl w-80 h-80 sm:w-96 sm:h-96 object-cover"
-                    width={1024}
-                    height={1024}
-                />
-            </div>
+  <Fragment slot="main">
+    <div class="w-full min-w-96 mx-auto">
+      <!-- Centered Image Section -->
+      <div class="w-full flex justify-center items-center py-10 px-4">
+        <Image
+          src={blogHeroImage}
+          alt="Blog hero image"
+          class="rounded-2xl shadow-2xl w-80 h-80 sm:w-96 sm:h-96 object-cover"
+          width={1024}
+          height={1024}
+        />
+      </div>
 
-            <!-- Blogs Grid -->
-            <div
-                class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20"
-            >
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"
-                >
-                    {
-                        allBlogs.map((blog) => (
-                            <BlogCard
-                                href={`/blog/${blog.slug}`}
-                                title={blog.data.title}
-                                date={blog.data.date}
-                                authors={blog.data.authors}
-                                description={blog.data.description}
-                            />
-                        ))
-                    }
-                </div>
-            </div>
+      <!-- Blogs Grid -->
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"
+        >
+          {
+            allBlogs.map((blog) => (
+              <BlogCard
+                href={`/blog/${blog.slug}`}
+                title={blog.data.title}
+                date={blog.data.date}
+                authors={blog.data.authors}
+                description={blog.data.description}
+              />
+            ))
+          }
         </div>
-    </Fragment>
+      </div>
+    </div>
+  </Fragment>
 </Layout>

@@ -9,28 +9,26 @@ allProjects.sort((a, b) => a.data.title.localeCompare(b.data.title));
 ---
 
 <Layout title={`Projects | ${SITE_TITLE}`}>
-    <Fragment slot="main">
-        <div class="w-full min-w-96 mx-auto">
-            <!-- Projects Grid -->
-            <div
-                class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20"
-            >
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"
-                >
-                    {
-                        allProjects.map((project) => (
-                            <ProjectCard
-                                href={`/projects/${project.slug}`}
-                                title={project.data.title}
-                                image={project.data.cover}
-                                githubUrl={project.data.githubUrl}
-                                paperUrl={project.data.paperUrl}
-                            />
-                        ))
-                    }
-                </div>
-            </div>
+  <Fragment slot="main">
+    <div class="w-full min-w-96 mx-auto">
+      <!-- Projects Grid -->
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-20">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"
+        >
+          {
+            allProjects.map((project) => (
+              <ProjectCard
+                href={`/projects/${project.slug}`}
+                title={project.data.title}
+                image={project.data.cover}
+                githubUrl={project.data.githubUrl}
+                paperUrl={project.data.paperUrl}
+              />
+            ))
+          }
         </div>
-    </Fragment>
+      </div>
+    </div>
+  </Fragment>
 </Layout>
