@@ -1,0 +1,109 @@
+---
+title: "Building Products with Agentic-Powered IDEs"
+date: "2025-07-23"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "How context engineering transforms AI-powered development tools from disappointing to transformative through smart prompting, MCP servers, and strategic tool integration."
+---
+
+AI-powered IDEs and terminal apps promised to revolutionize software development.
+
+If you just "plug and play," you're going to be disappointed. Context engineering makes the difference.
+
+Context engineering is the discipline of designing, constructing, and managing dynamic systems that provide language models (LMs) context—with the right information, tools, and instructions in the optimal format and at the right time, so the model can accurately and effectively accomplish its task.
+
+Recently, we built a multi-agentic system for a marketplace application using Cursor. AI-powered developer tools can be exceptionally powerful for speeding up development, but despite all the hype, they're far from "set it and forget it."
+
+We learned of the importance of context engineering or smart choices about tools, prompting, and frameworks.
+
+## Frontend Development with Figma Integration
+
+For the frontend, we used TypeScript, Vite, and Tailwind CSS, with all our designs living in Figma. To move quickly, we experimented with Figma's First Draft AI tool with mixed results where detailed prompting could get you good enough outputs.
+
+The real unlock came when we connected the Figma MCP server to Cursor, making sure to use Auto Layout for our designs in Figma. From there, getting the designs and components created for our FE was super fast (maybe not pixel-perfect but surprisingly close for a quick build). The setup for MCPs is super simple on Cursor (or other VSCode-based editors):
+
+Under Cursor > Settings > Cursor Settings > MCP Tools you can add Figma to your mcp.json file and then switch to dev mode in Figma while keeping the app open.
+
+```json
+"figma": {
+     "url": "http://127.0.0.1:3845/sse"
+   }
+```
+<br></br>
+
+For iterating on frontend components and designs, we learned that the more prescriptive and detailed our prompts, the better the output. Describing styles, specifying "vibe," calling out exact files, and feeding Cursor a handful of design screenshots from other apps allowed us to leverage its multimodal capabilities with the right amount of context, which was key.
+
+We started treating Cursor almost like a design partner, feeding it rich, structured content to get closer to our vision faster.
+
+## Database Integration and Documentation Access
+
+Next, we connected the Context7 MCP for accessing the latest documentation for libraries, plus the Supabase MCP with read access to give Cursor a direct line to our database structure. Notably, we only provide read access to the MCP for additional security.
+
+Context7 MCP configuration:
+```json 
+"context7": {
+     "command": "npx",
+     "args": ["-y", "@upstash/context7-mcp"]
+   }
+```
+<br></br>
+
+Supabase MCP configuration:
+```json
+"supabase": {
+     "command": "npx",
+     "args": [
+       "-y",
+       "@supabase/mcp-server-supabase@latest",
+       "--read-only",
+       "--project-ref="
+     ],
+     "env": {
+       "SUPABASE_ACCESS_TOKEN": ""
+     }
+   }
+```
+<br></br>
+
+This additional context helped us with debugging a row-level security (RLS) bug and gave Cursor a more actionable view of our entire stack. This was helpful for brainstorming or debugging with the chat in 'Ask' mode.
+
+## Development-Specific Instructions
+
+Another way that we were able to improve the return with Cursor was through development-specific instructions where we created a `.cursor/rules` file to outline information about our project, repos, and testing instructions. Since we were building different pieces and integrating as we went along, this was very helpful context when we needed to prompt Cursor to consistently format its responses with our development conventions and reference our tech stack. If we were working on this project longer term, we would also explore how to set up workflows to update the `.cursor/rules` file as our project changes and also link design docs, architecture diagrams, and technical specifications using Slack, Teams, and Google Drive MCPs.
+
+## The Main Takeaway
+
+Context is king and AI IDEs and terminal apps don't work out of the box. To get real productivity, you have to rethink your setup with MCP servers, widely-supported frameworks, and detailed, intentional prompts.
+
+## Current Challenges
+
+There are still challenges though…
+
+For true enterprise scale there's the bigger question: how do you pipe in codebase, developer actions, and real org context in a structured, privacy-safe way to continually self-improve these models and systems so the developer tools work better?
+
+Google's been vocal about their approach <a href="#ref-1">[1]</a>, capturing and learning from engineer/AI interactions to improve performance. They plan on including these improvements in future versions of Gemini but aren't revealing their dataset. Still, personalization based on your team's code, processes, habits, and interactions is the real unlock (check out what Asimov is doing here <a href="#ref-2">[2]</a>). Even with better prompting and MCP plugins, the scaling challenge isn't solved until AI can learn from your org's data at a deeper level. Despite significant improvements we still had to prompt the model at times that 'lives were at stake' and really only got 70-80% of the way there.
+
+## Future Opportunities
+
+Where do future opportunities still lie?
+
+One gap we discovered was the lack of a seamless and collaborative experience with these tools. We found Cursor genuinely helpful as a sounding board for brainstorming and debugging, often surfacing useful hypotheses or edge cases we hadn't considered. However, these IDEs haven't really nailed this "pair programming with AI" workflow yet. There's huge potential here and Cline is looking at this <a href="#ref-3">[3]</a> but there's still significant room for a true world class developer experience here.
+
+## Security Considerations
+
+Finally, a critical note is security. Agents paired with MCP servers have known vulnerabilities (including the Supabase MCP that does have clear risks and steps to help mitigate them <a href="#ref-4">[4]</a>), so it's essential to run proper vulnerability scanning and threat assessments and use best practices when using MCP servers and connecting data sources to any LLMs. One such safety measure is to use containerized agentic development tools like Dagger's Container Use (e.g. Docker container for agentic workflows). Another is logging MCP calls by models or possibly using guard models for agent YOLO mode (where the agent auto-confirms MCP calls). The last thing you want is a tool meant to boost productivity accidentally exposing sensitive data (e.g. API keys). This is an area that demands more investment and attention as these tools go mainstream.
+
+## Looking Ahead
+
+We're also excited to continue and explore pipelines in the wave of agentic coding CLIs like Claude Code, Gemini CLI, and Codex which provide an alternative perspective where there is still not a clear system design for agentic coding yet. The same tricks we shared above apply to these systems, but with even more flexibility for parallel agents. We see a new form of "AI bash scripting" emerging where traditional shell scripts can be used to spawn a swarm of agents to achieve complex software engineering tasks. Stay tuned for more thoughts.
+
+What's the biggest context challenge you've hit with AI coding tools? Did we miss anything? Feel free to reach out and we'd be happy to make further revisions to this post.
+
+## References
+
+<a id="ref-1"></a>[1] Google Research. (2024). AI in Software Engineering at Google: Progress and the Path Ahead. Retrieved from https://research.google/blog/ai-in-software-engineering-at-google-progress-and-the-path-ahead/
+
+<a id="ref-2"></a>[2] Asimov. (2024). Reflection AI - Asimov. Retrieved from https://reflection.ai/asimov/
+
+<a id="ref-3"></a>[3] Cline. (2024). Cline - AI Assistant for VS Code. Retrieved from https://cline.bot/
+
+<a id="ref-4"></a>[4] Supabase MCP Server. (2024). Security Risks and Mitigations. GitHub. Retrieved from https://github.com/ampcome-mcps/supabase-mcp?tab=readme-ov-file#security-risks 
