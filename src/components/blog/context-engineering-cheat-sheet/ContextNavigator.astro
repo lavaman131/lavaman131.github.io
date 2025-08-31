@@ -1,0 +1,621 @@
+---
+// Context Engineering Navigator Component
+---
+
+<div class="context-navigator mt-8 mb-8">
+  <div class="max-w-7xl mx-auto px-5">
+    <!-- Header -->
+    <header class="text-center mb-10">
+      <h1 class="text-4xl font-bold text-ctp-text mb-3">
+        Context Engineering Navigator
+      </h1>
+      <p class="text-lg text-ctp-subtext1">
+        Interactive guide to context engineering techniques for LLMs
+      </p>
+    </header>
+
+    <!-- Search Container -->
+    <div class="search-container mb-8 flex justify-center gap-2">
+      <input 
+        type="text" 
+        class="search-input px-5 py-3 text-base border-2 border-ctp-surface0 bg-ctp-mantle text-ctp-text rounded-full w-full max-w-md focus:border-ctp-blue focus:outline-none transition-colors duration-200" 
+        placeholder="Search techniques, use cases, or keywords..."
+      />
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="filter-buttons flex gap-3 flex-wrap justify-center mb-8">
+      <button class="filter-btn active px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-blue hover:border-ctp-blue hover:text-ctp-base hover:-translate-y-0.5" data-filter="all">
+        All Categories
+      </button>
+      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-blue hover:border-ctp-blue hover:text-ctp-base hover:-translate-y-0.5" data-filter="retrieval">
+        Context Retrieval & Generation
+      </button>
+      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-blue hover:border-ctp-blue hover:text-ctp-base hover:-translate-y-0.5" data-filter="processing">
+        Context Processing
+      </button>
+      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-blue hover:border-ctp-blue hover:text-ctp-base hover:-translate-y-0.5" data-filter="management">
+        Context Management
+      </button>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid flex flex-col gap-10 mb-10" id="techniquesGrid">
+      
+      <!-- Context Retrieval & Generation - Main Category -->
+      <div class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300" data-category="retrieval">
+        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center gap-4 text-ctp-text border-b-4 border-ctp-green pb-4">
+          <div class="w-8 h-8 rounded-full bg-ctp-green"></div>
+          Context Retrieval & Generation
+        </div>
+
+        <!-- Prompt Engineering & Context Generation -->
+        <div class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-green transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="prompt-engineering">
+          <div class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text">
+            <div class="w-5 h-5 rounded-full bg-ctp-green"></div>
+            Prompt Engineering & Context Generation
+          </div>
+          
+          <!-- Frameworks & Chain-of-Thought Foundations -->
+          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
+            Frameworks & Chain-of-Thought Foundations
+          </div>
+          <div class="technique-list space-y-3">
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="clear">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">CLEAR Framework</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Conciseness, Logic, Explicitness, Adaptability, Reflectiveness for robust prompt design</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Production AI</span>
+            </div>
+            
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="cot">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">Chain of Thought (CoT)</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Step-by-step reasoning with "Let's think step by step"</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Math</span>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Logic</span>
+            </div>
+            
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="tot">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">Tree of Thoughts (ToT)</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Hierarchical reasoning with exploration and backtracking</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Games</span>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Planning</span>
+            </div>
+            
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="got">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">Graph of Thoughts (GoT)</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Interconnected reasoning graphs with dependencies</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Architecture</span>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Complex Systems</span>
+            </div>
+          </div>
+
+          <!-- Learning Strategies -->
+          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
+            Learning Strategies
+          </div>
+          <div class="technique-list space-y-3">
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="zero-shot">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">Zero-shot</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">No examples, direct instruction</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Rapid Prototyping</span>
+            </div>
+            
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="few-shot">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">Few-shot</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">2-5 demonstration examples for task learning</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Classification</span>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Content Generation</span>
+            </div>
+            
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="in-context-learning">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">In-context learning</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Performance heavily depends on example selection and ordering</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Adaptive AI</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- External Knowledge Retrieval -->
+        <div class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-green transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="knowledge-retrieval">
+          <div class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text">
+            <div class="w-5 h-5 rounded-full bg-ctp-green"></div>
+            External Knowledge Retrieval
+          </div>
+          
+          <!-- RAG Fundamentals -->
+          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
+            Retrieval-Augmented Generation Fundamentals
+          </div>
+          <div class="technique-list space-y-3">
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="flashrag">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">FlashRAG</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Comprehensive evaluation and modular RAG implementation</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">RAG Prototyping</span>
+            </div>
+          </div>
+
+          <!-- Advanced Retrieval Strategies -->
+          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
+            Advanced Retrieval Strategies
+          </div>
+          <div class="technique-list space-y-3">
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="kragen">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">KRAGEN</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Integrates Knowledge Graphs with advanced prompting</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Enterprise Knowledge</span>
+            </div>
+            
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="composerag">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">ComposeRAG</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">LLM-planned retrieval decomposition and orchestration</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-hop Questions</span>
+            </div>
+          </div>
+
+          <!-- Adaptive Retrieval Mechanisms -->
+          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
+            Adaptive Retrieval Mechanisms
+          </div>
+          <div class="technique-list space-y-3">
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="self-rag">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">Self-RAG</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Dynamic retrieval decisions with quality assessment</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Adaptive AI</span>
+            </div>
+            
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="raptor">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">RAPTOR</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Hierarchical document processing with recursive clustering</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Research</span>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Legal Docs</span>
+            </div>
+            
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="hipporag">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">HippoRAG</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Memory-inspired retrieval with knowledge graphs and PageRank</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scientific Reviews</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Context Processing - Main Category -->
+      <div class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300" data-category="processing">
+        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center gap-4 text-ctp-text border-b-4 border-ctp-blue pb-4">
+          <div class="w-8 h-8 rounded-full bg-ctp-blue"></div>
+          Context Processing
+        </div>
+
+        <!-- Long Context Processing -->
+        <div class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-blue transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="long-context">
+          <div class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text">
+            <div class="w-5 h-5 rounded-full bg-ctp-blue"></div>
+            Long Context Processing
+          </div>
+          
+          <!-- Ultra-long Sequence -->
+          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
+            Ultra-long Sequence Context Processing
+          </div>
+          <div class="technique-list space-y-3">
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="transformer">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">Standard Transformer (Self-Attention, O²)</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Baseline self-attention with quadratic complexity</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">General LLM Tasks</span>
+            </div>
+          </div>
+
+          <!-- Architectural Innovations -->
+          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
+            Architectural Innovations for Long Context
+          </div>
+          <div class="technique-list space-y-3">
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="ssm">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">State Space Models (SSMs, e.g. Mamba)</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Linear complexity with constant memory through hidden states</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Streaming</span>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Real-time</span>
+            </div>
+            
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="dilated-attention">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">Dilated Attention (e.g. LongNet)</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Exponentially expanding attention fields</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Genomics</span>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Legal Analysis</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Context Management - Main Category -->
+      <div class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300" data-category="management">
+        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center gap-4 text-ctp-text border-b-4 border-ctp-peach pb-4">
+          <div class="w-8 h-8 rounded-full bg-ctp-peach"></div>
+          Context Management
+        </div>
+
+        <!-- Memory Hierarchies -->
+        <div class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-peach transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="memory-hierarchies">
+          <div class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text">
+            <div class="w-5 h-5 rounded-full bg-ctp-peach"></div>
+            Memory Hierarchies & Storage Architectures
+          </div>
+          
+          <!-- Virtual Memory Systems -->
+          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
+            Virtual Memory Systems
+          </div>
+          <div class="technique-list space-y-3">
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="memgpt">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">MemGPT</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Virtual memory management like OS systems</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Chatbots</span>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Personal Assistants</span>
+            </div>
+            
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="paged-attention">
+              <div class="technique-name font-semibold text-ctp-blue mb-1">PagedAttention</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Efficient KV cache memory management with non-contiguous blocks</div>
+              <span class="use-case inline-block bg-ctp-green bg-opacity-20 text-ctp-green px-2 py-1 rounded-xl text-xs mt-2 mr-2">Cloud Inference</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal for detailed information -->
+  <div class="modal fixed inset-0 bg-black bg-opacity-80 z-50 hidden items-center justify-center" id="techniqueModal">
+    <div class="modal-content bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 max-w-3xl max-h-[80vh] overflow-y-auto mx-5 relative">
+      <button class="close-btn absolute top-4 right-6 bg-none border-none text-2xl cursor-pointer text-ctp-subtext1 hover:text-ctp-text transition-colors duration-200">&times;</button>
+      <div id="modalBody">
+        <!-- Content will be populated dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal {
+    display: none;
+  }
+  
+  .modal.active {
+    display: flex;
+  }
+
+  .detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.25rem;
+  }
+
+  .detail-table th,
+  .detail-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--ctp-surface0, #45475a);
+  }
+
+  .detail-table th {
+    background-color: var(--ctp-mantle, #181825);
+    font-weight: 600;
+    color: var(--ctp-text, #cdd6f4);
+  }
+
+  .detail-table td {
+    vertical-align: top;
+    color: var(--ctp-subtext1, #bac2de);
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .main-grid {
+      gap: 1.5rem;
+    }
+    
+    .filter-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .modal-content {
+      margin: 0.5rem;
+      padding: 1.25rem;
+    }
+    
+    .detail-table th,
+    .detail-table td {
+      padding: 0.5rem;
+      font-size: 0.875rem;
+    }
+  }
+</style>
+
+<script>
+// Technique details database with the four required columns
+const techniqueDetails = {
+  // Context Retrieval & Generation
+  clear: {
+    title: "CLEAR Framework",
+    howItWorks: "CLEAR stands for Conciseness: Keep instructions focused and direct, Logic: Structure reasoning flow clearly, Explicitness: State requirements precisely, Adaptability: Design for various use cases, Reflectiveness: Build in self-evaluation",
+    whenToUse: "Design for various use cases with self-evaluation built in",
+    useCase: "Building robust prompt templates for production AI systems",
+    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+  },
+  cot: {
+    title: "Chain of Thought (CoT)",
+    howItWorks: "Breaks complex problems into step-by-step reasoning. Key phrase: 'Let's think step by step'. Significantly improves accuracy on complex problems",
+    whenToUse: "Multi-step arithmetic, logical reasoning tasks",
+    useCase: "Mathematical problem solving, debugging code logic",
+    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+  },
+  tot: {
+    title: "Tree of Thoughts (ToT)",
+    howItWorks: "Creates hierarchical reasoning with exploration and backtracking. Can explore multiple paths and backtrack when needed",
+    whenToUse: "Game optimization, complex decision trees",
+    useCase: "Strategic planning, chess moves, complex optimization",
+    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+  },
+  got: {
+    title: "Graph of Thoughts (GoT)",
+    howItWorks: "Models reasoning as interconnected graphs (thoughts = vertices, dependencies = edges). Better quality than ToT, lower computational cost",
+    whenToUse: "Complex multi-dependency problems",
+    useCase: "Software architecture design, project management",
+    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+  },
+  "zero-shot": {
+    title: "Zero-shot",
+    howItWorks: "No examples, direct instruction",
+    whenToUse: "Quick testing of model capabilities without examples",
+    useCase: "Rapid prototyping, model evaluation",
+    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+  },
+  "few-shot": {
+    title: "Few-shot",
+    howItWorks: "2-5 demonstration examples. Performance heavily depends on example selection and ordering",
+    whenToUse: "Limited training data available, domain-specific tasks",
+    useCase: "Classification tasks, content generation with examples",
+    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+  },
+  "in-context-learning": {
+    title: "In-context learning",
+    howItWorks: "Performance heavily depends on example selection and ordering",
+    whenToUse: "Dynamic adaptation to new tasks without retraining",
+    useCase: "Adaptive AI systems, personalized responses",
+    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+  },
+  flashrag: {
+    title: "FlashRAG",
+    howItWorks: "Comprehensive evaluation and modular RAG implementation",
+    whenToUse: "Good starting point for RAG experimentation",
+    useCase: "Rapid prototyping of retrieval systems",
+    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+  },
+  kragen: {
+    title: "KRAGEN",
+    howItWorks: "Integrates Knowledge Graphs and advanced prompting. Breaks down complex problems into smaller sub-problems retrieves relevant information through RAG, and consolidates the results for a more accurate and transparent response",
+    whenToUse: "Especially useful for enterprise-grade RAG where there's the need for fine control, reliability, and easy experimentation",
+    useCase: "Enterprise knowledge bases, complex domain-specific queries",
+    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+  },
+  composerag: {
+    title: "ComposeRAG",
+    howItWorks: "Uses the LLM to plan, decompose, and orchestrate retrievals. Breaks down a user's query into steps, retrieving relevant information for each step (from one or more sources) and then stitches the response together for a final coherent response",
+    whenToUse: "Great for multi-hop or compositional questions",
+    useCase: "Complex research queries, investigative journalism",
+    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+  },
+  "self-rag": {
+    title: "Self-RAG",
+    howItWorks: "Model decides when to retrieve information dynamically. Uses special tokens to control retrieval timing and quality assessment",
+    whenToUse: "Scenarios where not every query needs external knowledge",
+    useCase: "Conversational AI that adapts retrieval based on query complexity",
+    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+  },
+  raptor: {
+    title: "RAPTOR",
+    howItWorks: "Processes documents hierarchically using recursive clustering and summarization, constructing tree with differing levels of summarization from bottom up",
+    whenToUse: "Long-context documents, multi-hop reasoning tasks, complex queries requiring broad context",
+    useCase: "Research papers, legal documents, comprehensive reports, complex PDFs",
+    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+  },
+  hipporag: {
+    title: "HippoRAG",
+    howItWorks: "Memory-inspired retrieval architecture that synergistically orchestrates LLMs, knowledge graphs, and the Personalized PageRank algorithm to mimic the different roles of neocortex and hippocampus in human memory",
+    whenToUse: "Multi-hop question answering, continual knowledge integration, connecting facts across multiple sources",
+    useCase: "Scientific literature reviews, legal case briefings, medical diagnosis requiring synthesis of information from various sources",
+    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+  },
+  transformer: {
+    title: "Standard Transformer (Self-Attention, O²)",
+    howItWorks: "Baseline for most LLMs; uses self-attention mechanism with quadratic computational complexity",
+    whenToUse: "Use for moderate-length sequences (<8k tokens)",
+    useCase: "General LLM tasks, question answering, summarization",
+    sectionOfPaper: "4.2.1. Long Context Processing"
+  },
+  ssm: {
+    title: "State Space Models (SSMs, e.g. Mamba)",
+    howItWorks: "Linear computational complexity and constant memory through fixed-size hidden states",
+    whenToUse: "Need efficient, scalable long-context modeling with fixed memory",
+    useCase: "Real-time language modeling, streaming data, online inference with constant memory",
+    sectionOfPaper: "4.2.1. Long Context Processing"
+  },
+  "dilated-attention": {
+    title: "Dilated Attention (e.g. LongNet)",
+    howItWorks: "Uses exponentially expanding attentive fields as token distance grows leading to linear computational complexity while maintaining logarithmic dependency between tokens",
+    whenToUse: "Scaling to very long sequences while maintaining efficient computation",
+    useCase: "Genomics, legal/financial document analysis, logs",
+    sectionOfPaper: "4.2.1. Long Context Processing"
+  },
+  memgpt: {
+    title: "MemGPT",
+    howItWorks: "Virtual memory management like traditional operating systems. Pages information between limited context windows (main memory) and external storage. Components: System instructions, FIFO message queues, Writable scratchpads, External context (accessible via function calls)",
+    whenToUse: "OS-like memory management for LLMs, need unlimited context appearance with limited windows",
+    useCase: "Extended conversations, document analysis, personal companion systems, chatbots with persistent memory",
+    sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
+  },
+  "paged-attention": {
+    title: "PagedAttention",
+    howItWorks: "Manages key-value cache memory efficiently in LLMs by partitioning KV cache into blocks that can be stored non-contiguously, inspired by virtual memory paging",
+    whenToUse: "Optimizing memory usage during inference, high-throughput LLM serving",
+    useCase: "Cloud inference, large batch serving, production LLM deployment",
+    sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
+  }
+};
+
+// Initialize the navigator when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  // DOM elements
+  const searchInput = document.querySelector('.search-input');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const techniquesGrid = document.getElementById('techniquesGrid');
+  const modal = document.getElementById('techniqueModal');
+  const modalBody = document.getElementById('modalBody');
+  const closeBtn = document.querySelector('.close-btn');
+
+  if (!searchInput || !filterBtns.length || !techniquesGrid || !modal || !modalBody || !closeBtn) {
+    console.log('Context Navigator: Some elements not found, skipping initialization');
+    return;
+  }
+
+  // Search functionality
+  searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    filterTechniques(searchTerm);
+  });
+
+  // Filter functionality
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      
+      const filterValue = this.dataset.filter;
+      showCategory(filterValue);
+    });
+  });
+
+  // Technique click handlers
+  document.querySelectorAll('.technique').forEach(technique => {
+    technique.addEventListener('click', function() {
+      const techniqueId = this.dataset.technique;
+      showTechniqueDetails(techniqueId);
+    });
+  });
+
+  // Modal handlers
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) closeModal();
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+  });
+
+  function filterTechniques(searchTerm) {
+    const techniques = document.querySelectorAll('.technique');
+    const mainCategories = document.querySelectorAll('.main-category');
+    const subCategories = document.querySelectorAll('.sub-category');
+    
+    techniques.forEach(technique => {
+      const name = technique.querySelector('.technique-name').textContent.toLowerCase();
+      const description = technique.querySelector('.technique-description').textContent.toLowerCase();
+      const useCases = Array.from(technique.querySelectorAll('.use-case'))
+        .map(el => el.textContent.toLowerCase()).join(' ');
+      
+      const matches = name.includes(searchTerm) || 
+                     description.includes(searchTerm) || 
+                     useCases.includes(searchTerm);
+      
+      technique.style.display = matches ? 'block' : 'none';
+    });
+
+    // Hide/show sub-categories based on visible techniques
+    subCategories.forEach(subCategory => {
+      const visibleTechniques = subCategory.querySelectorAll('.technique:not([style*="display: none"])');
+      subCategory.style.display = visibleTechniques.length > 0 ? 'block' : 'none';
+    });
+
+    // Hide/show main categories based on visible sub-categories
+    mainCategories.forEach(mainCategory => {
+      const visibleSubCategories = mainCategory.querySelectorAll('.sub-category:not([style*="display: none"])');
+      mainCategory.style.display = visibleSubCategories.length > 0 ? 'block' : 'none';
+    });
+  }
+
+  function showCategory(filterValue) {
+    const mainCategories = document.querySelectorAll('.main-category');
+    
+    if (filterValue === 'all') {
+      mainCategories.forEach(category => {
+        category.style.display = 'block';
+        // Show all sub-categories within visible main categories
+        const subCategories = category.querySelectorAll('.sub-category');
+        subCategories.forEach(subCat => {
+          subCat.style.display = 'block';
+        });
+      });
+    } else {
+      mainCategories.forEach(category => {
+        if (category.dataset.category === filterValue) {
+          category.style.display = 'block';
+          // Show all sub-categories within visible main categories
+          const subCategories = category.querySelectorAll('.sub-category');
+          subCategories.forEach(subCat => {
+            subCat.style.display = 'block';
+          });
+        } else {
+          category.style.display = 'none';
+        }
+      });
+    }
+  }
+
+  function showTechniqueDetails(techniqueId) {
+    const details = techniqueDetails[techniqueId];
+    
+    if (!details) {
+      modalBody.innerHTML = '<h2 class="text-2xl font-bold text-ctp-text mb-4">Technique Details</h2><p class="text-ctp-subtext1">Detailed information coming soon!</p>';
+    } else {
+      modalBody.innerHTML = `
+        <h2 class="text-2xl font-bold text-ctp-text mb-4">${details.title}</h2>
+        <table class="detail-table">
+          <tr>
+            <th>How It Works</th>
+            <td>${details.howItWorks}</td>
+          </tr>
+          <tr>
+            <th>When To Use</th>
+            <td>${details.whenToUse}</td>
+          </tr>
+          <tr>
+            <th>Use Case</th>
+            <td>${details.useCase}</td>
+          </tr>
+          <tr>
+            <th>Section of Paper</th>
+            <td>${details.sectionOfPaper}</td>
+          </tr>
+        </table>
+      `;
+    }
+    
+    modal.classList.add('active');
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    modal.style.display = 'none';
+  }
+});
+</script>
