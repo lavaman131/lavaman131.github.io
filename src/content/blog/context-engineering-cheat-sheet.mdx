@@ -1,0 +1,1864 @@
+---
+title: "A Survey of Context Engineering for Large Language Models Cheat Sheet"
+date: "2025-01-24"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "An interactive cheat sheet covering context engineering techniques for LLMs including retrieval, processing, management, and dynamic assembly strategies."
+---
+
+Context engineering is the discipline of designing, constructing, and managing dynamic systems that provide language models with the right information, tools, and instructions in the optimal format and at the right time. This interactive cheat sheet covers the comprehensive landscape of context engineering techniques.
+
+<div style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+  <iframe
+    srcDoc={`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context Engineering Navigator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .search-input {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            width: 400px;
+            max-width: 80vw;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            outline: none;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            transform: translateY(-2px);
+        }
+
+        .main-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .main-category {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .main-category-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #333;
+            border-bottom: 3px solid;
+            padding-bottom: 15px;
+        }
+
+        .main-category[data-category="retrieval"] .main-category-title {
+            border-color: #4CAF50;
+            color: #2e7d32;
+        }
+
+        .main-category[data-category="processing"] .main-category-title {
+            border-color: #2196F3;
+            color: #1565c0;
+        }
+
+        .main-category[data-category="management"] .main-category-title {
+            border-color: #FF9800;
+            color: #e65100;
+        }
+
+        .main-category-title .category-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .retrieval-icon { background: #4CAF50; }
+        .processing-icon { background: #2196F3; }
+        .management-icon { background: #FF9800; }
+
+        .sub-category {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .sub-category:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .main-category[data-category="retrieval"] .sub-category {
+            border-color: #4CAF50;
+        }
+
+        .main-category[data-category="processing"] .sub-category {
+            border-color: #2196F3;
+        }
+
+        .main-category[data-category="management"] .sub-category {
+            border-color: #FF9800;
+        }
+
+        .category-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+        }
+
+        .category-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .main-category[data-category="retrieval"] .category-icon { background: #4CAF50; }
+        .main-category[data-category="processing"] .category-icon { background: #2196F3; }
+        .main-category[data-category="management"] .category-icon { background: #FF9800; }
+
+        .subsection-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 20px 0 15px 0;
+            color: #555;
+            border-left: 3px solid #ddd;
+            padding-left: 12px;
+        }
+
+        .technique-list {
+            space-y: 12px;
+        }
+
+        .technique {
+            padding: 12px 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
+        }
+
+        .technique:hover {
+            background: #e3f2fd;
+            border-color: #2196F3;
+            transform: translateX(5px);
+        }
+
+        .technique-name {
+            font-weight: 600;
+            color: #1976d2;
+            margin-bottom: 4px;
+        }
+
+        .technique-description {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .use-case {
+            display: inline-block;
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            margin-right: 6px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            margin: 20px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .detail-table th,
+        .detail-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .detail-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .detail-table td {
+            vertical-align: top;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .modal-content {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .detail-table th,
+            .detail-table td {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Context Engineering Navigator</h1>
+            <p>Interactive guide to context engineering techniques for LLMs</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search techniques, use cases, or keywords...">
+        </div>
+
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All Categories</button>
+            <button class="filter-btn" data-filter="retrieval">Context Retrieval & Generation</button>
+            <button class="filter-btn" data-filter="processing">Context Processing</button>
+            <button class="filter-btn" data-filter="management">Context Management</button>
+        </div>
+
+        <div class="main-grid" id="techniquesGrid">
+            <!-- Context Retrieval & Generation - Main Category -->
+            <div class="main-category" data-category="retrieval">
+                <div class="main-category-title">
+                    <div class="category-icon retrieval-icon"></div>
+                    Context Retrieval & Generation
+                </div>
+
+                <!-- Prompt Engineering & Context Generation -->
+                <div class="category-card sub-category" data-subcategory="prompt-engineering">
+                    <div class="category-title">
+                        <div class="category-icon"></div>
+                        Prompt Engineering & Context Generation
+                    </div>
+                    
+                    <!-- Frameworks & Chain-of-Thought Foundations -->
+                    <div class="subsection-title">Frameworks & Chain-of-Thought Foundations</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="clear">
+                            <div class="technique-name">CLEAR Framework</div>
+                            <div class="technique-description">Conciseness, Logic, Explicitness, Adaptability, Reflectiveness for robust prompt design</div>
+                            <span class="use-case">Production AI</span>
+                        </div>
+                        <div class="technique" data-technique="cot">
+                            <div class="technique-name">Chain of Thought (CoT)</div>
+                            <div class="technique-description">Step-by-step reasoning with "Let's think step by step"</div>
+                            <span class="use-case">Math</span><span class="use-case">Logic</span>
+                        </div>
+                        <div class="technique" data-technique="tot">
+                            <div class="technique-name">Tree of Thoughts (ToT)</div>
+                            <div class="technique-description">Hierarchical reasoning with exploration and backtracking</div>
+                            <span class="use-case">Games</span><span class="use-case">Planning</span>
+                        </div>
+                        <div class="technique" data-technique="got">
+                            <div class="technique-name">Graph of Thoughts (GoT)</div>
+                            <div class="technique-description">Interconnected reasoning graphs with dependencies</div>
+                            <span class="use-case">Architecture</span><span class="use-case">Complex Systems</span>
+                        </div>
+                    </div>
+
+                    <!-- Learning Strategies -->
+                    <div class="subsection-title">Learning Strategies</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="zero-shot">
+                            <div class="technique-name">Zero-shot</div>
+                            <div class="technique-description">No examples, direct instruction</div>
+                            <span class="use-case">Rapid Prototyping</span>
+                        </div>
+                        <div class="technique" data-technique="few-shot">
+                            <div class="technique-name">Few-shot</div>
+                            <div class="technique-description">2-5 demonstration examples for task learning</div>
+                            <span class="use-case">Classification</span><span class="use-case">Content Generation</span>
+                        </div>
+                        <div class="technique" data-technique="in-context-learning">
+                            <div class="technique-name">In-context learning</div>
+                            <div class="technique-description">Performance heavily depends on example selection and ordering</div>
+                            <span class="use-case">Adaptive AI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- External Knowledge Retrieval -->
+                <div class="category-card sub-category" data-subcategory="knowledge-retrieval">
+                    <div class="category-title">
+                        <div class="category-icon"></div>
+                        External Knowledge Retrieval
+                    </div>
+                    
+                    <!-- RAG Fundamentals -->
+                    <div class="subsection-title">Retrieval-Augmented Generation Fundamentals</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="flashrag">
+                            <div class="technique-name">FlashRAG</div>
+                            <div class="technique-description">Comprehensive evaluation and modular RAG implementation</div>
+                            <span class="use-case">RAG Prototyping</span>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Retrieval Strategies -->
+                    <div class="subsection-title">Advanced Retrieval Strategies</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="kragen">
+                            <div class="technique-name">KRAGEN</div>
+                            <div class="technique-description">Integrates Knowledge Graphs with advanced prompting</div>
+                            <span class="use-case">Enterprise Knowledge</span>
+                        </div>
+                        <div class="technique" data-technique="composerag">
+                            <div class="technique-name">ComposeRAG</div>
+                            <div class="technique-description">LLM-planned retrieval decomposition and orchestration</div>
+                            <span class="use-case">Multi-hop Questions</span>
+                        </div>
+                    </div>
+
+                    <!-- Adaptive Retrieval Mechanisms -->
+                    <div class="subsection-title">Adaptive Retrieval Mechanisms</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="self-rag">
+                            <div class="technique-name">Self-RAG</div>
+                            <div class="technique-description">Dynamic retrieval decisions with quality assessment</div>
+                            <span class="use-case">Adaptive AI</span>
+                        </div>
+                        <div class="technique" data-technique="raptor">
+                            <div class="technique-name">RAPTOR</div>
+                            <div class="technique-description">Hierarchical document processing with recursive clustering</div>
+                            <span class="use-case">Research</span><span class="use-case">Legal Docs</span>
+                        </div>
+                        <div class="technique" data-technique="hipporag">
+                            <div class="technique-name">HippoRAG</div>
+                            <div class="technique-description">Memory-inspired retrieval with knowledge graphs and PageRank</div>
+                            <span class="use-case">Scientific Reviews</span>
+                        </div>
+                    </div>
+
+                    <!-- Knowledge Graph Integration -->
+                    <div class="subsection-title">Knowledge Graph Integration and Structured Retrieval</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="kaping">
+                            <div class="technique-name">KAPING</div>
+                            <div class="technique-description">Retrieves facts using semantic similarity combining semantic network structure</div>
+                            <span class="use-case">Knowledge Graph Apps</span>
+                        </div>
+                        <div class="technique" data-technique="karpa">
+                            <div class="technique-name">KARPA</div>
+                            <div class="technique-description">Training-free KG adaptation with pre-planning and semantic matching</div>
+                            <span class="use-case">Real-time Integration</span>
+                        </div>
+                        <div class="technique" data-technique="think-on-graph">
+                            <div class="technique-name">Think-on-Graph</div>
+                            <div class="technique-description">Sequential reasoning over knowledge graphs with exploration</div>
+                            <span class="use-case">Complex Fact Verification</span>
+                        </div>
+                        <div class="technique" data-technique="structgpt">
+                            <div class="technique-name">StructGPT</div>
+                            <div class="technique-description">Iterative reading and reasoning for structured data sources</div>
+                            <span class="use-case">Database Querying</span>
+                        </div>
+                    </div>
+
+                    <!-- Agentic and Modular Systems -->
+                    <div class="subsection-title">Agentic and Modular Retrieval Systems</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="agenticrag">
+                            <div class="technique-name">AgenticRAG</div>
+                            <div class="technique-description">Autonomous AI agents in RAG pipeline with agentic design patterns</div>
+                            <span class="use-case">Multi-agent Reasoning</span>
+                        </div>
+                        <div class="technique" data-technique="graphrag">
+                            <div class="technique-name">Graph Enhanced RAG Systems (GraphRAG)</div>
+                            <div class="technique-description">Knowledge graphs in RAG for structured entity relationships</div>
+                            <span class="use-case">Enterprise Knowledge Bases</span>
+                        </div>
+                        <div class="technique" data-technique="realtime-rag">
+                            <div class="technique-name">Real Time RAG</div>
+                            <div class="technique-description">Processes streaming data with evolving knowledge graphs</div>
+                            <span class="use-case">News Monitoring</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Context Assembly -->
+                <div class="category-card sub-category" data-subcategory="context-assembly">
+                    <div class="category-title">
+                        <div class="category-icon"></div>
+                        Dynamic Context Assembly
+                    </div>
+                    
+                    <!-- Assembly Functions -->
+                    <div class="subsection-title">Assembly Functions and Orchestration Mechanisms</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="template-based">
+                            <div class="technique-name">Template-based formatting</div>
+                            <div class="technique-description">Consistent structure for context assembly</div>
+                            <span class="use-case">API Responses</span>
+                        </div>
+                        <div class="technique" data-technique="priority-based">
+                            <div class="technique-name">Priority-based selection</div>
+                            <div class="technique-description">Most important information first</div>
+                            <span class="use-case">Real-time Systems</span>
+                        </div>
+                        <div class="technique" data-technique="adaptive-composition">
+                            <div class="technique-name">Adaptive composition</div>
+                            <div class="technique-description">Adjusts to task requirements and model capabilities</div>
+                            <span class="use-case">Multi-domain Apps</span>
+                        </div>
+                    </div>
+
+                    <!-- Multi-Component Integration -->
+                    <div class="subsection-title">Multi-Component Integration Strategies</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="multi-component">
+                            <div class="technique-name">Multi-Component Integration</div>
+                            <div class="technique-description">Combines text, structured knowledge, temporal data, and external tools</div>
+                            <span class="use-case">Enterprise AI Systems</span>
+                        </div>
+                    </div>
+
+                    <!-- Automated Assembly -->
+                    <div class="subsection-title">Automated Assembly Optimizations</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="ape">
+                            <div class="technique-name">Automatic Prompt Engineer (APE)</div>
+                            <div class="technique-description">Search algorithms for optimal prompt discovery</div>
+                            <span class="use-case">Production Systems</span>
+                        </div>
+                        <div class="technique" data-technique="lm-bff">
+                            <div class="technique-name">LM-BFF</div>
+                            <div class="technique-description">Automated prompt-based fine-tuning with demonstrations</div>
+                            <span class="use-case">Few-shot Learning</span>
+                        </div>
+                        <div class="technique" data-technique="promptbreeder">
+                            <div class="technique-name">Promptbreeder</div>
+                            <div class="technique-description">Self-referential evolutionary prompt improvement</div>
+                            <span class="use-case">Autonomous Systems</span>
+                        </div>
+                        <div class="technique" data-technique="self-refine">
+                            <div class="technique-name">Self-Refine</div>
+                            <div class="technique-description">Generate → Critique → Revise → Repeat (20% improvement)</div>
+                            <span class="use-case">Content Creation</span>
+                        </div>
+                        <div class="technique" data-technique="langchain">
+                            <div class="technique-name">Langchain</div>
+                            <div class="technique-description">Sequential processing chains with extensive integrations</div>
+                            <span class="use-case">Workflows</span><span class="use-case">RAG Apps</span>
+                        </div>
+                        <div class="technique" data-technique="autogpt">
+                            <div class="technique-name">AutoGPT/AutoGen</div>
+                            <div class="technique-description">Multi-agent conversation orchestration</div>
+                            <span class="use-case">Code Gen</span><span class="use-case">Research</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Context Processing - Main Category -->
+            <div class="main-category" data-category="processing">
+                <div class="main-category-title">
+                    <div class="category-icon processing-icon"></div>
+                    Context Processing
+                </div>
+
+                <!-- Long Context Processing -->
+                <div class="category-card sub-category" data-subcategory="long-context">
+                    <div class="category-title">
+                        <div class="category-icon"></div>
+                        Long Context Processing
+                    </div>
+                    
+                    <!-- Ultra-long Sequence -->
+                    <div class="subsection-title">Ultra-long Sequence Context Processing</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="transformer">
+                            <div class="technique-name">Standard Transformer (Self-Attention, O²)</div>
+                            <div class="technique-description">Baseline self-attention with quadratic complexity</div>
+                            <span class="use-case">General LLM Tasks</span>
+                        </div>
+                    </div>
+
+                    <!-- Architectural Innovations -->
+                    <div class="subsection-title">Architectural Innovations for Long Context</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="ssm">
+                            <div class="technique-name">State Space Models (SSMs, e.g. Mamba)</div>
+                            <div class="technique-description">Linear complexity with constant memory through hidden states</div>
+                            <span class="use-case">Streaming</span><span class="use-case">Real-time</span>
+                        </div>
+                        <div class="technique" data-technique="dilated-attention">
+                            <div class="technique-name">Dilated Attention (e.g. LongNet)</div>
+                            <div class="technique-description">Exponentially expanding attention fields</div>
+                            <span class="use-case">Genomics</span><span class="use-case">Legal Analysis</span>
+                        </div>
+                        <div class="technique" data-technique="toeplitz">
+                            <div class="technique-name">Toeplitz Neural Networks</div>
+                            <div class="technique-description">Relative position encoding with log-linear complexity</div>
+                            <span class="use-case">Code Generation</span>
+                        </div>
+                        <div class="technique" data-technique="linear-attention">
+                            <div class="technique-name">Linear Attention</div>
+                            <div class="technique-description">Linear dot products of kernel feature maps</div>
+                            <span class="use-case">Scientific Papers</span>
+                        </div>
+                        <div class="technique" data-technique="non-attention">
+                            <div class="technique-name">Non-attention LLMs (Recursive memory, etc.)</div>
+                            <div class="technique-description">Recursive memory transformers with chunk summarization</div>
+                            <span class="use-case">Persistent Context Chatbots</span>
+                        </div>
+                    </div>
+
+                    <!-- Position Interpolation -->
+                    <div class="subsection-title">Position Interpolation & Context Extension</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="ntk-yarn">
+                            <div class="technique-name">NTK/YaRN</div>
+                            <div class="technique-description">Neural Tangent Kernel interpolation for positional encodings</div>
+                            <span class="use-case">Fine-tuning LLMs</span>
+                        </div>
+                        <div class="technique" data-technique="longrope">
+                            <div class="technique-name">LongRoPE</div>
+                            <div class="technique-description">Effective rescale factors for RoPE rotation angles</div>
+                            <span class="use-case">Patent Literature Mining</span>
+                        </div>
+                        <div class="technique" data-technique="pose">
+                            <div class="technique-name">PoSE</div>
+                            <div class="technique-description">Positional Skip-wisE training decouples train length from target context</div>
+                            <span class="use-case">Data Curation</span>
+                        </div>
+                        <div class="technique" data-technique="self-extend">
+                            <div class="technique-name">Self-Extend (bi-level/grouped/neighbor attention)</div>
+                            <div class="technique-description">Bi-level attention with grouped and neighbor mechanisms</div>
+                            <span class="use-case">Plug-and-play Extension</span>
+                        </div>
+                    </div>
+
+                    <!-- Optimization Techniques -->
+                    <div class="subsection-title">Optimization Techniques for Efficient Processing</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="gqa">
+                            <div class="technique-name">Grouped Query Attention (GQA)</div>
+                            <div class="technique-description">Optimizes multi-head attention by sharing key and value projections</div>
+                            <span class="use-case">Cost Savings</span>
+                        </div>
+                        <div class="technique" data-technique="flash-attention">
+                            <div class="technique-name">FlashAttention 1/2</div>
+                            <div class="technique-description">Memory-efficient attention with linear scaling</div>
+                            <span class="use-case">Training</span><span class="use-case">Inference</span>
+                        </div>
+                        <div class="technique" data-technique="ring-attention">
+                            <div class="technique-name">Ring Attention</div>
+                            <div class="technique-description">Distributes attention computation across multiple devices</div>
+                            <span class="use-case">Multi-GPU Setups</span>
+                        </div>
+                        <div class="technique" data-technique="sparse-attention">
+                            <div class="technique-name">Sparse Attention (LongLoRA, SinkLoRA)</div>
+                            <div class="technique-description">Selectively attends to subset of tokens</div>
+                            <span class="use-case">RAG Systems</span>
+                        </div>
+                        <div class="technique" data-technique="efficient-selective">
+                            <div class="technique-name">Efficient Selective Attention</div>
+                            <div class="technique-description">Dynamically selects important tokens for attention</div>
+                            <span class="use-case">Large Codebases</span>
+                        </div>
+                        <div class="technique" data-technique="bigbird">
+                            <div class="technique-name">BigBird</div>
+                            <div class="technique-description">Combines local, global, and random attention patterns</div>
+                            <span class="use-case">Biomedical Data Mining</span>
+                        </div>
+                    </div>
+
+                    <!-- Memory Management -->
+                    <div class="subsection-title">Memory Management & Context Compression</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="rolling-buffer">
+                            <div class="technique-name">Rolling Buffer Cache</div>
+                            <div class="technique-description">Fixed-size cache with sliding window mechanism</div>
+                            <span class="use-case">Real-time Applications</span>
+                        </div>
+                        <div class="technique" data-technique="streaming-llm">
+                            <div class="technique-name">Streaming LLM</div>
+                            <div class="technique-description">Memory-efficient continuous input processing</div>
+                            <span class="use-case">Live Chat</span><span class="use-case">Monitoring</span>
+                        </div>
+                        <div class="technique" data-technique="infini-attention">
+                            <div class="technique-name">Infini-attention</div>
+                            <div class="technique-description">Combines compressive memory with local attention</div>
+                            <span class="use-case">Retrieval-based LLMs</span>
+                        </div>
+                        <div class="technique" data-technique="heavy-hitter">
+                            <div class="technique-name">Heavy Hitter Oracle</div>
+                            <div class="technique-description">Identifies and prioritizes most important tokens</div>
+                            <span class="use-case">LLM API Deployment</span>
+                        </div>
+                        <div class="technique" data-technique="qwenlong">
+                            <div class="technique-name">QwenLong-CPRS, InfLLM</div>
+                            <div class="technique-description">Multi-granularity memory management with compression</div>
+                            <span class="use-case">Legal Archives</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contextual Self-Refinement -->
+                <div class="category-card sub-category" data-subcategory="self-refinement">
+                    <div class="category-title">
+                        <div class="category-icon"></div>
+                        Contextual Self-Refinement and Adaptation
+                    </div>
+                    
+                    <!-- Foundational Frameworks -->
+                    <div class="subsection-title">Foundational Self-Refinement Frameworks</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="self-refine-framework">
+                            <div class="technique-name">Self-Refine</div>
+                            <div class="technique-description">Generate → Critique → Revise → Repeat iterative process</div>
+                            <span class="use-case">Writing Assistants</span>
+                        </div>
+                        <div class="technique" data-technique="reflexion">
+                            <div class="technique-name">Reflexion</div>
+                            <div class="technique-description">Self-feedback mechanisms for performance improvement</div>
+                            <span class="use-case">Interactive Agents</span>
+                        </div>
+                        <div class="technique" data-technique="n-critics">
+                            <div class="technique-name">N-CRITICS, A2R, ISR-LLM</div>
+                            <div class="technique-description">Multiple critic models provide multi-dimensional evaluation</div>
+                            <span class="use-case">Scientific Writing</span>
+                        </div>
+                    </div>
+
+                    <!-- Meta-Learning -->
+                    <div class="subsection-title">Meta-Learning and Autonomous Evolution</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="self-developing">
+                            <div class="technique-name">SELF, Creator, Self-Developing</div>
+                            <div class="technique-description">Autonomous tool creation and self-improvement mechanisms</div>
+                            <span class="use-case">AutoML Systems</span>
+                        </div>
+                        <div class="technique" data-technique="meta-in-context">
+                            <div class="technique-name">In-Context Learning / Meta-in-context</div>
+                            <div class="technique-description">Fast adaptation using examples provided in context</div>
+                            <span class="use-case">Few-shot Learning</span>
+                        </div>
+                    </div>
+
+                    <!-- Memory-Augmented -->
+                    <div class="subsection-title">Memory-Augmented Adaptation Frameworks</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="memory-augmentation">
+                            <div class="technique-name">Memory Augmentation, Meta-Learned Loss, Decision-Pretrained Transformers</div>
+                            <div class="technique-description">Meta-learning abilities and improved sample efficiency</div>
+                            <span class="use-case">Lifelong Learning</span>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Reasoning -->
+                    <div class="subsection-title">Long Chain-of-Thought and Advanced Reasoning</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="advanced-reasoning">
+                            <div class="technique-name">Advanced Reasoning (Compact CoT, Auto Long-Short Reasoning)</div>
+                            <div class="technique-description">Optimized reasoning with reduced token usage</div>
+                            <span class="use-case">Cost-sensitive LLM Apps</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multi-Modal Context -->
+                <div class="category-card sub-category" data-subcategory="multimodal">
+                    <div class="category-title">
+                        <div class="category-icon"></div>
+                        Multi-Modal Context
+                    </div>
+                    
+                    <!-- Foundational Techniques -->
+                    <div class="subsection-title">Foundational Techniques</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="vpg-clip">
+                            <div class="technique-name">Visual Prompt Generators (VPGs), CLIP/CLAP + Q-Former</div>
+                            <div class="technique-description">Combines vision/audio with text using cross-modal encoders</div>
+                            <span class="use-case">Image Captioning</span><span class="use-case">VQA</span>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Integration -->
+                    <div class="subsection-title">Advanced Integration Strategies</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="cross-modal">
+                            <div class="technique-name">Cross-Modal Attention, Hierarchical Designs</div>
+                            <div class="technique-description">Deep fusion mechanisms across modalities</div>
+                            <span class="use-case">Complex Scene Analysis</span>
+                        </div>
+                        <div class="technique" data-technique="browse-concentrate">
+                            <div class="technique-name">Browse-and-Concentrate, Unified Training</div>
+                            <div class="technique-description">Joint training approach across modalities</div>
+                            <span class="use-case">Foundation Models</span>
+                        </div>
+                        <div class="technique" data-technique="video-adapters">
+                            <div class="technique-name">Adapters/Prompt Tuning for Video</div>
+                            <div class="technique-description">Parameter-efficient adaptation for video understanding</div>
+                            <span class="use-case">Surveillance Analysis</span>
+                        </div>
+                    </div>
+
+                    <!-- Emerging Applications -->
+                    <div class="subsection-title">Advanced Contextual Capabilities and Future Directions</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="emerging-adaptive">
+                            <div class="technique-name">Adaptive Hierarchical Token Compression, V2PE, ContextQFormer</div>
+                            <div class="technique-description">Advanced compression for variable-length inputs</div>
+                            <span class="use-case">Dynamic Media</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relational & Structured Context -->
+                <div class="category-card sub-category" data-subcategory="structured">
+                    <div class="category-title">
+                        <div class="category-icon"></div>
+                        Relational & Structured Context
+                    </div>
+                    
+                    <!-- Knowledge Graph Embeddings -->
+                    <div class="subsection-title">Knowledge Graph Embeddings and Neural Integration</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="gnn-graphformers">
+                            <div class="technique-name">Graph Neural Networks, GraphFormers, Heterformer</div>
+                            <div class="technique-description">Neural architectures for graph-structured data</div>
+                            <span class="use-case">Scientific Discovery</span>
+                        </div>
+                    </div>
+
+                    <!-- Verbalization -->
+                    <div class="subsection-title">Verbalization & Structured Data Representations</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="verbalization">
+                            <div class="technique-name">Verbalization/Structured Data Reps</div>
+                            <div class="technique-description">Converts structured data into natural language</div>
+                            <span class="use-case">Table QA</span>
+                        </div>
+                        <div class="technique" data-technique="programming-reps">
+                            <div class="technique-name">Programming Language Reps (Python/SQL)</div>
+                            <div class="technique-description">Uses programming languages as intermediate representations</div>
+                            <span class="use-case">Data Engineering</span>
+                        </div>
+                        <div class="technique" data-technique="matrix-reps">
+                            <div class="technique-name">Matrix Representations</div>
+                            <div class="technique-description">Compact matrix-based representations of structured information</div>
+                            <span class="use-case">Edge Deployments</span>
+                        </div>
+                    </div>
+
+                    <!-- Integration Frameworks -->
+                    <div class="subsection-title">Integration Frameworks & Synergized Approaches</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="k-bert">
+                            <div class="technique-name">K-BERT (Pretrain), KAPING (Inference Time), Adapters/Cross-attn</div>
+                            <div class="technique-description">Injects structured knowledge during pretraining or inference</div>
+                            <span class="use-case">Medical LLMs</span>
+                        </div>
+                        <div class="technique" data-technique="unified-approaches">
+                            <div class="technique-name">Unified Approaches (GreaseLM, QA-GNN)</div>
+                            <div class="technique-description">Combines natural language fluency with knowledge graph reasoning</div>
+                            <span class="use-case">Open-domain QA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Context Management - Main Category -->
+            <div class="main-category" data-category="management">
+                <div class="main-category-title">
+                    <div class="category-icon management-icon"></div>
+                    Context Management
+                </div>
+
+                <!-- Memory Hierarchies -->
+                <div class="category-card sub-category" data-subcategory="memory-hierarchies">
+                    <div class="category-title">
+                        <div class="category-icon"></div>
+                        Memory Hierarchies & Storage Architectures
+                    </div>
+                    
+                    <!-- Virtual Memory Systems -->
+                    <div class="subsection-title">Virtual Memory Systems</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="memgpt">
+                            <div class="technique-name">MemGPT</div>
+                            <div class="technique-description">Virtual memory management like OS systems</div>
+                            <span class="use-case">Chatbots</span><span class="use-case">Personal Assistants</span>
+                        </div>
+                        <div class="technique" data-technique="paged-attention">
+                            <div class="technique-name">PagedAttention</div>
+                            <div class="technique-description">Efficient KV cache memory management with non-contiguous blocks</div>
+                            <span class="use-case">Cloud Inference</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Memory -->
+                    <div class="subsection-title">Dynamic Memory Organizations</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="memorybank">
+                            <div class="technique-name">MemoryBank</div>
+                            <div class="technique-description">Ebbinghaus Forgetting Curve for natural memory decay</div>
+                            <span class="use-case">Long-term Companions</span>
+                        </div>
+                        <div class="technique" data-technique="readagent">
+                            <div class="technique-name">ReadAgent</div>
+                            <div class="technique-description">Human-like reading with pagination, gisting, and lookup</div>
+                            <span class="use-case">Document Analysis</span>
+                        </div>
+                        <div class="technique" data-technique="compressor-retriever">
+                            <div class="technique-name">Compressor-Retriever Systems</div>
+                            <div class="technique-description">Lifelong context management using base model functions</div>
+                            <span class="use-case">Long-term Learning Systems</span>
+                        </div>
+                    </div>
+
+                    <!-- System Configurations -->
+                    <div class="subsection-title">System Configurations</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="centralized">
+                            <div class="technique-name">Centralized Systems</div>
+                            <div class="technique-description">Excellent task coordination but poor scalability</div>
+                            <span class="use-case">Single-domain Chatbots</span>
+                        </div>
+                        <div class="technique" data-technique="decentralized">
+                            <div class="technique-name">Decentralized Systems</div>
+                            <div class="technique-description">Reduced context overflow but increased response time</div>
+                            <span class="use-case">Multi-agent Systems</span>
+                        </div>
+                        <div class="technique" data-technique="hybrid">
+                            <div class="technique-name">Hybrid Systems</div>
+                            <div class="technique-description">Balances shared knowledge with specialized processing</div>
+                            <span class="use-case">Enterprise AI Systems</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Context Compression -->
+                <div class="category-card sub-category" data-subcategory="compression">
+                    <div class="category-title">
+                        <div class="category-icon"></div>
+                        Context Compression
+                    </div>
+                    
+                    <!-- Context Manager Components -->
+                    <div class="subsection-title">Context Manager Components</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="snapshot">
+                            <div class="technique-name">Snapshot creation</div>
+                            <div class="technique-description">Save intermediate states during processing</div>
+                            <span class="use-case">Long-running Tasks</span>
+                        </div>
+                        <div class="technique" data-technique="state-restoration">
+                            <div class="technique-name">State restoration</div>
+                            <div class="technique-description">Resume from previous points in processing</div>
+                            <span class="use-case">Robust Production Systems</span>
+                        </div>
+                        <div class="technique" data-technique="window-management">
+                            <div class="technique-name">Window management</div>
+                            <div class="technique-description">Overall context optimization and organization</div>
+                            <span class="use-case">Multi-step Reasoning</span>
+                        </div>
+                    </div>
+
+                    <!-- Context Compression -->
+                    <div class="subsection-title">Context Compression</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="icae">
+                            <div class="technique-name">In-Context Autoencoder (ICAE)</div>
+                            <div class="technique-description">Compress long contexts into compact memory slots</div>
+                            <span class="use-case">Mobile Deployment</span>
+                        </div>
+                        <div class="technique" data-technique="rcc">
+                            <div class="technique-name">Recurrent Context Compression (RCC)</div>
+                            <div class="technique-description">Expands context window length in constrained storage</div>
+                            <span class="use-case">Edge Computing</span>
+                        </div>
+                    </div>
+
+                    <!-- Memory Augmented -->
+                    <div class="subsection-title">Memory Augmented Approaches</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="knn-memory">
+                            <div class="technique-name">kNN-Based Memory Caches</div>
+                            <div class="technique-description">Store key-value pairs of past inputs for lookup</div>
+                            <span class="use-case">Conversation Systems</span>
+                        </div>
+                    </div>
+
+                    <!-- Hierarchical Caching -->
+                    <div class="subsection-title">Hierarchical Caching Systems</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="hierarchical-caching">
+                            <div class="technique-name">Hierarchical Caching</div>
+                            <div class="technique-description">Multi-layer caching systems like Activation Refilling (ACRE)</div>
+                            <span class="use-case">Enterprise Systems</span>
+                        </div>
+                        <div class="technique" data-technique="infinite-llm">
+                            <div class="technique-name">Infinite-LLM with DistAttention</div>
+                            <div class="technique-description">Handle extremely long sequences using distributed attention</div>
+                            <span class="use-case">Large-scale Document Processing</span>
+                        </div>
+                        <div class="technique" data-technique="kcache">
+                            <div class="technique-name">KCache</div>
+                            <div class="technique-description">Optimized K/V cache distribution for speed</div>
+                            <span class="use-case">High-performance Serving</span>
+                        </div>
+                    </div>
+
+                    <!-- Multi-agent Distributive -->
+                    <div class="subsection-title">Multi-agent Distributive Processing</div>
+                    <div class="technique-list">
+                        <div class="technique" data-technique="multi-agent-distributive">
+                            <div class="technique-name">Multi-Agent Distributive Processing</div>
+                            <div class="technique-description">Handles massive inputs in distributed manner</div>
+                            <span class="use-case">Large-scale Knowledge Processing</span>
+                        </div>
+                        <div class="technique" data-technique="cache-access-pattern">
+                            <div class="technique-name">Cache Access Pattern Analysis</div>
+                            <div class="technique-description">High reusability patterns in RAG and agent applications</div>
+                            <span class="use-case">Production RAG Systems</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for detailed information -->
+    <div class="modal" id="techniqueModal">
+        <div class="modal-content">
+            <button class="close-btn">&times;</button>
+            <div id="modalBody">
+                <!-- Content will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Technique details database with the four required columns
+        const techniqueDetails = {
+            // Context Retrieval & Generation
+            clear: {
+                title: "CLEAR Framework",
+                howItWorks: "CLEAR stands for Conciseness: Keep instructions focused and direct, Logic: Structure reasoning flow clearly, Explicitness: State requirements precisely, Adaptability: Design for various use cases, Reflectiveness: Build in self-evaluation",
+                whenToUse: "Design for various use cases with self-evaluation built in",
+                useCase: "Building robust prompt templates for production AI systems",
+                sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+            },
+            cot: {
+                title: "Chain of Thought (CoT)",
+                howItWorks: "Breaks complex problems into step-by-step reasoning. Key phrase: 'Let's think step by step'. Significantly improves accuracy on complex problems",
+                whenToUse: "Multi-step arithmetic, logical reasoning tasks",
+                useCase: "Mathematical problem solving, debugging code logic",
+                sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+            },
+            tot: {
+                title: "Tree of Thoughts (ToT)",
+                howItWorks: "Creates hierarchical reasoning with exploration and backtracking. Can explore multiple paths and backtrack when needed",
+                whenToUse: "Game optimization, complex decision trees",
+                useCase: "Strategic planning, chess moves, complex optimization",
+                sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+            },
+            got: {
+                title: "Graph of Thoughts (GoT)",
+                howItWorks: "Models reasoning as interconnected graphs (thoughts = vertices, dependencies = edges). Better quality than ToT, lower computational cost",
+                whenToUse: "Complex multi-dependency problems",
+                useCase: "Software architecture design, project management",
+                sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+            },
+            "zero-shot": {
+                title: "Zero-shot",
+                howItWorks: "No examples, direct instruction",
+                whenToUse: "Quick testing of model capabilities without examples",
+                useCase: "Rapid prototyping, model evaluation",
+                sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+            },
+            "few-shot": {
+                title: "Few-shot",
+                howItWorks: "2-5 demonstration examples. Performance heavily depends on example selection and ordering",
+                whenToUse: "Limited training data available, domain-specific tasks",
+                useCase: "Classification tasks, content generation with examples",
+                sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+            },
+            "in-context-learning": {
+                title: "In-context learning",
+                howItWorks: "Performance heavily depends on example selection and ordering",
+                whenToUse: "Dynamic adaptation to new tasks without retraining",
+                useCase: "Adaptive AI systems, personalized responses",
+                sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
+            },
+            flashrag: {
+                title: "FlashRAG",
+                howItWorks: "Comprehensive evaluation and modular RAG implementation",
+                whenToUse: "Good starting point for RAG experimentation",
+                useCase: "Rapid prototyping of retrieval systems",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            kragen: {
+                title: "KRAGEN",
+                howItWorks: "Integrates Knowledge Graphs and advanced prompting. Breaks down complex problems into smaller sub-problems retrieves relevant information through RAG, and consolidates the results for a more accurate and transparent response",
+                whenToUse: "Especially useful for enterprise-grade RAG where there's the need for fine control, reliability, and easy experimentation",
+                useCase: "Enterprise knowledge bases, complex domain-specific queries",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            composerag: {
+                title: "ComposeRAG",
+                howItWorks: "Uses the LLM to plan, decompose, and orchestrate retrievals. Breaks down a user's query into steps, retrieving relevant information for each step (from one or more sources) and then stitches the response together for a final coherent response",
+                whenToUse: "Great for multi-hop or compositional questions",
+                useCase: "Complex research queries, investigative journalism",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            "self-rag": {
+                title: "Self-RAG",
+                howItWorks: "Model decides when to retrieve information dynamically. Uses special tokens to control retrieval timing and quality assessment",
+                whenToUse: "Scenarios where not every query needs external knowledge",
+                useCase: "Conversational AI that adapts retrieval based on query complexity",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            raptor: {
+                title: "RAPTOR",
+                howItWorks: "Processes documents hierarchically using recursive clustering and summarization, constructing tree with differing levels of summarization from bottom up",
+                whenToUse: "Long-context documents, multi-hop reasoning tasks, complex queries requiring broad context",
+                useCase: "Research papers, legal documents, comprehensive reports, complex PDFs",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            hipporag: {
+                title: "HippoRAG",
+                howItWorks: "Memory-inspired retrieval architecture that synergistically orchestrates LLMs, knowledge graphs, and the Personalized PageRank algorithm to mimic the different roles of neocortex and hippocampus in human memory",
+                whenToUse: "Multi-hop question answering, continual knowledge integration, connecting facts across multiple sources",
+                useCase: "Scientific literature reviews, legal case briefings, medical diagnosis requiring synthesis of information from various sources",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            kaping: {
+                title: "KAPING",
+                howItWorks: "Retrieves facts using semantic similarity combining semantic network structure with information content of concepts",
+                whenToUse: "Text classification, question answering, similarity-based search and recommendation",
+                useCase: "Document classification, content recommendation systems, knowledge graph applications",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            karpa: {
+                title: "KARPA",
+                howItWorks: "Training-free KG adaptation with pre-planning, semantic matching, and relation path reasoning",
+                whenToUse: "Complex knowledge graph reasoning without training overhead",
+                useCase: "Real-time knowledge integration, dynamic query processing",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            "think-on-graph": {
+                title: "Think-on-Graph",
+                howItWorks: "Sequential reasoning over knowledge graphs to locate relevant triples, conduct exploration to retrieve related information from external databases while generating multiple reasoning paths",
+                whenToUse: "Multi-path reasoning over structured knowledge",
+                useCase: "Complex fact verification, multi-step logical inference",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            structgpt: {
+                title: "StructGPT",
+                howItWorks: "Iterative reading and reasoning approach that constructs specialized functions to collect relevant evidence from structured data sources",
+                whenToUse: "Working with structured databases and knowledge bases",
+                useCase: "Database querying, structured data analysis",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            agenticrag: {
+                title: "AgenticRAG",
+                howItWorks: "Embeds autonomous AI agents into the RAG pipeline using agentic design patterns (reflection, planning, tool use, multi-agent collaboration) to dynamically manage retrieval strategies, iteratively refine contextual understanding, and adapt to task-specific requirements",
+                whenToUse: "Complex multi-step reasoning, multi-domain tasks requiring dynamic retrieval decisions, scenarios where not every query needs external knowledge",
+                useCase: "Multi-agent collaborative reasoning, personal assistants that need to access various data sources (emails, internal docs, web search), adaptive question answering systems",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            graphrag: {
+                title: "Graph Enhanced RAG Systems (e.g Microsoft's GraphRAG)",
+                howItWorks: "Incorporates knowledge graphs into RAG to capture structured relationships between entities, enabling multi-hop reasoning and deeper contextual retrieval. Uses graph traversal and Cypher queries alongside vector similarity search",
+                whenToUse: "Complex queries requiring multi-hop reasoning, scenarios needing both semantic understanding and symbolic reasoning, regulated environments requiring traceability",
+                useCase: "Enterprise knowledge bases with complex relationships, legal document analysis, scientific literature review, recommendation systems with rich entity relationships",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            "realtime-rag": {
+                title: "Real Time RAG",
+                howItWorks: "Processes streaming data in real-time by constructing evolving knowledge graphs that capture scene-object-entity relationships as data arrives, using lightweight models and dynamic priority-based knowledge extraction",
+                whenToUse: "Live data processing needs, streaming applications requiring immediate responses, scenarios with constantly changing information",
+                useCase: "News monitoring, market analysis, intelligent transportation systems, healthcare monitoring, satellite remote sensing, financial trading systems",
+                sectionOfPaper: "4.1.2. External Knowledge Retrieval"
+            },
+            "template-based": {
+                title: "Template-based formatting",
+                howItWorks: "Consistent structure for context assembly",
+                whenToUse: "Need for standardized output formats",
+                useCase: "API responses, report generation",
+                sectionOfPaper: "4.1.3. Dynamic Context Assembly"
+            },
+            "priority-based": {
+                title: "Priority-based selection",
+                howItWorks: "Most important info first in context assembly",
+                whenToUse: "Resource-constrained environments",
+                useCase: "Mobile apps, real-time systems",
+                sectionOfPaper: "4.1.3. Dynamic Context Assembly"
+            },
+            "adaptive-composition": {
+                title: "Adaptive composition",
+                howItWorks: "Adjusts to task requirements and model capabilities",
+                whenToUse: "Varying task complexity and resource constraints",
+                useCase: "Multi-domain applications, scalable AI systems",
+                sectionOfPaper: "4.1.3. Dynamic Context Assembly"
+            },
+            "multi-component": {
+                title: "Multi-Component Integration",
+                howItWorks: "Combines text, structured knowledge, temporal data, and external tools while maintaining coherent semantic relationships",
+                whenToUse: "Complex applications requiring diverse data types",
+                useCase: "Enterprise AI systems, comprehensive analytics platforms",
+                sectionOfPaper: "4.1.3. Dynamic Context Assembly"
+            },
+            ape: {
+                title: "Automatic Prompt Engineer (APE)",
+                howItWorks: "Uses search algorithms to find optimal prompts automatically. Treats instruction as 'program,' optimized by searching over pool of instruction candidates proposed by LLM to maximize chosen score function",
+                whenToUse: "Automated prompt optimization at scale, reducing development time by 60-80% for complex tasks",
+                useCase: "Production systems requiring optimal prompts, content generation, AI-powered chatbots",
+                sectionOfPaper: "4.1.3. Dynamic Context Assembly"
+            },
+            "lm-bff": {
+                title: "LM-BFF",
+                howItWorks: "Has automated pipelines that combine prompt-based fine-tuning with dynamic demonstrations. Suite of simple techniques for fine-tuning pre-trained language models on small number of annotated examples",
+                whenToUse: "Few-shot learning scenarios with limited training data, when you need better performance than standard fine-tuning",
+                useCase: "Entity extraction, classification tasks, domain adaptation with limited examples",
+                sectionOfPaper: "4.1.3. Dynamic Context Assembly"
+            },
+            promptbreeder: {
+                title: "Promptbreeder",
+                howItWorks: "Self-Referential Evolutionary Systems where LLMs improve their own task-prompts and mutation-prompts through 'natural selection' analogies. Evolves and adapts prompts for given domain using evolutionary algorithm",
+                whenToUse: "Self-improving prompt systems, scenarios requiring continuous adaptation and optimization",
+                useCase: "Autonomous AI systems, continuous learning applications, domain-specific optimization",
+                sectionOfPaper: "4.1.3. Dynamic Context Assembly"
+            },
+            "self-refine": {
+                title: "Self-Refine",
+                howItWorks: "Generate → Critique → Revise → Repeat, 20% performance improvement with GPT-4",
+                whenToUse: "Tasks where iterative improvement is valuable",
+                useCase: "Content creation, code review, creative writing",
+                sectionOfPaper: "4.1.3. Dynamic Context Assembly"
+            },
+            langchain: {
+                title: "Langchain",
+                howItWorks: "Sequential processing chains, agents, web browsing capabilities. Provides building blocks for AI applications with extensive integrations",
+                whenToUse: "Building complex AI workflows, chaining multiple LLM calls together, RAG applications",
+                useCase: "Chatbots, data retrieval and processing, internal knowledge management, API usage",
+                sectionOfPaper: "4.1.3. Dynamic Context Assembly"
+            },
+            autogpt: {
+                title: "AutoGPT/AutoGen",
+                howItWorks: "Complex AI agent development with user-friendly interfaces. Multi-agent conversation orchestration with event-driven architecture",
+                whenToUse: "Multi-agent systems requiring collaboration, autonomous task execution, complex agent dynamics",
+                useCase: "Code generation, personalized content creation at scale, automated workflows, research tasks",
+                sectionOfPaper: "4.1.3. Dynamic Context Assembly"
+            },
+
+            // Context Processing
+            transformer: {
+                title: "Standard Transformer (Self-Attention, O²)",
+                howItWorks: "Baseline for most LLMs; uses self-attention mechanism with quadratic computational complexity",
+                whenToUse: "Use for moderate-length sequences (<8k tokens)",
+                useCase: "General LLM tasks, question answering, summarization",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            ssm: {
+                title: "State Space Models (SSMs, e.g. Mamba)",
+                howItWorks: "Linear computational complexity and constant memory through fixed-size hidden states",
+                whenToUse: "Need efficient, scalable long-context modeling with fixed memory",
+                useCase: "Real-time language modeling, streaming data, online inference with constant memory",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "dilated-attention": {
+                title: "Dilated Attention (e.g. LongNet)",
+                howItWorks: "Uses exponentially expanding attentive fields as token distance grows leading to linear computational complexity while maintaining logarithmic dependency between tokens",
+                whenToUse: "Scaling to very long sequences while maintaining efficient computation",
+                useCase: "Genomics, legal/financial document analysis, logs",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            toeplitz: {
+                title: "Toeplitz Neural Networks",
+                howItWorks: "Model sequences with relative position encoded Toeplitz matrices reducing space time complexity to log linear",
+                whenToUse: "Need to extrapolate far beyond training context length (e.g., from 512 to 14k tokens)",
+                useCase: "Code generation, document QA, long sequence forecasting",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "linear-attention": {
+                title: "Linear Attention",
+                howItWorks: "Expresses self attention as linear dot products of kernel feature maps",
+                whenToUse: "Processing extremely long contexts (10k–100k+ tokens) with strict speed/memory requirements",
+                useCase: "Scientific papers, whole-book summarization, historical document analysis",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "non-attention": {
+                title: "Non-attention LLMs (Recursive memory, etc.)",
+                howItWorks: "Uses recursive memory transformers, breaking long sequences into chunks. Model keeps a summary ('memory') of each chunk. As model moves through sequence it recursively updates and uses this memory",
+                whenToUse: "Hard limitations on quadratic scaling like massive input sizes, real-time constraints",
+                useCase: "Chatbots with persistent, ever-growing context, logging agents",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "ntk-yarn": {
+                title: "NTK/YaRN",
+                howItWorks: "Neural Tangent Kernel uses NTK interpolation for positional encodings, linear interpolation for stretching position indices, and attention distribution correction tweaks attention mechanism",
+                whenToUse: "Extending pretrained models to longer sequences with stability",
+                useCase: "Fine-tuning LLMs to process longer documents for specialized tasks",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            longrope: {
+                title: "LongRoPE",
+                howItWorks: "Identifies effective rescale factors for RoPE's rotation angles for each RoPE dimension based on token positions. Uses evolutionary search algorithm with progressive extension strategy to achieve 2048k context window",
+                whenToUse: "Rapidly adapting LLMs to massive token windows (256k–2M tokens)",
+                useCase: "Patent or scientific literature mining, big data retrieval",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            pose: {
+                title: "PoSE",
+                howItWorks: "Positional Skip-wisE training decouples train length from target context by dividing original context window into chunks with distinct skipping bias terms to manipulate position indices during training",
+                whenToUse: "Pushing sequence length limits during training or inference efficiently without full-length fine-tuning",
+                useCase: "Data curation, codebase analysis, long meeting transcripts",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "self-extend": {
+                title: "Self-Extend (bi-level/grouped/neighbor attention)",
+                howItWorks: "Constructs bi-level attention: grouped attention for distant tokens using FLOOR operation and neighbor attention for adjacent tokens within specified range",
+                whenToUse: "Need long-context processing without expensive re-training",
+                useCase: "Plug-and-play context extension in deployed systems",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            gqa: {
+                title: "Grouped Query Attention (GQA)",
+                howItWorks: "Optimizes multi-head attention by sharing key and value projections across multiple query heads, reducing memory bandwidth requirements",
+                whenToUse: "Balancing efficiency and flexibility in attention mechanisms",
+                useCase: "Scaling up LLM inference for cost savings",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "flash-attention": {
+                title: "FlashAttention 1/2",
+                howItWorks: "Memory-efficient attention algorithm that fuses operations and uses tiling to reduce memory accesses while maintaining exact attention computation",
+                whenToUse: "Training/inference of large LLMs on GPUs and want linear memory scaling",
+                useCase: "Cloud inference, large batch serving, distributed training",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "ring-attention": {
+                title: "Ring Attention",
+                howItWorks: "Distributes attention computation across multiple devices using ring communication pattern",
+                whenToUse: "Distributing computation across multiple devices or nodes",
+                useCase: "Multi-GPU or TPU setups; scaling beyond single device limits",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "sparse-attention": {
+                title: "Sparse Attention (LongLoRA, SinkLoRA)",
+                howItWorks: "Selectively attends to subset of tokens based on patterns or learned importance",
+                whenToUse: "Only a small subset of the context is relevant and want to reduce unnecessary computation",
+                useCase: "Retrieval-augmented generation, selective context retrieval",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "efficient-selective": {
+                title: "Efficient Selective Attention",
+                howItWorks: "Dynamically selects important tokens for attention computation",
+                whenToUse: "Need fine-grained focus on important tokens in huge input",
+                useCase: "Large codebases, multi-document Q&A",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            bigbird: {
+                title: "BigBird",
+                howItWorks: "Combines local, global, and random attention patterns in sparse attention mechanism",
+                whenToUse: "Balancing local/global/random attention for long documents with graph-like dependencies",
+                useCase: "Biomedical data mining, graph-structured documents, knowledge bases",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "rolling-buffer": {
+                title: "Rolling Buffer Cache",
+                howItWorks: "Maintains fixed-size cache with sliding window mechanism for token storage",
+                whenToUse: "Managing limited memory resources in inference/deployment",
+                useCase: "Real-time applications with fixed compute/memory budget",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "streaming-llm": {
+                title: "Streaming LLM",
+                howItWorks: "Processes continuous input streams with memory-efficient caching mechanisms",
+                whenToUse: "Need continuous, real-time input processing with memory conservation",
+                useCase: "Live chat moderation, streaming summarization",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "infini-attention": {
+                title: "Infini-attention",
+                howItWorks: "Combines compressive memory with local attention in single model block",
+                whenToUse: "Merging long-term and local memory in a single model block",
+                useCase: "Retrieval-based LLMs, systems requiring both detail and recall",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "heavy-hitter": {
+                title: "Heavy Hitter Oracle",
+                howItWorks: "Identifies and prioritizes most important tokens/context for attention",
+                whenToUse: "Prioritizing high-value context, maximizing throughput/latency",
+                useCase: "LLM API deployment, latency-sensitive applications",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            qwenlong: {
+                title: "QwenLong-CPRS, InfLLM",
+                howItWorks: "Multi-granularity memory management with compression techniques",
+                whenToUse: "Extreme long-context requirements; multi-granularity memory management",
+                useCase: "Legal/medical archives, multi-chapter document analysis",
+                sectionOfPaper: "4.2.1. Long Context Processing"
+            },
+            "self-refine-framework": {
+                title: "Self-Refine",
+                howItWorks: "Generate → Critique → Revise → Repeat iterative process for output improvement",
+                whenToUse: "You want iterative output improvement and error correction",
+                useCase: "Automated writing assistants, code review bots",
+                sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
+            },
+            reflexion: {
+                title: "Reflexion",
+                howItWorks: "Uses self-feedback and reflection mechanisms to improve task performance over time",
+                whenToUse: "Need 'reflection' or self-feedback to improve task performance over time",
+                useCase: "Interactive agents, multi-turn dialog, strategic planning",
+                sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
+            },
+            "n-critics": {
+                title: "N-CRITICS, A2R, ISR-LLM",
+                howItWorks: "Multiple critic models provide multi-dimensional evaluation and refinement",
+                whenToUse: "High accuracy is critical; want multi-dimensional evaluation/refinement",
+                useCase: "Scientific writing, factual report generation, compliance documentation",
+                sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
+            },
+            "self-developing": {
+                title: "SELF, Creator, Self-Developing",
+                howItWorks: "Autonomous tool creation and self-improvement mechanisms",
+                whenToUse: "Desire autonomous tool creation and self-improvement",
+                useCase: "AutoML systems, LLM-driven agent ecosystems, research automation",
+                sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
+            },
+            "meta-in-context": {
+                title: "In-Context Learning / Meta-in-context",
+                howItWorks: "Fast adaptation using examples provided in context without parameter updates",
+                whenToUse: "Fast adaptation to new tasks or environments with little to no retraining",
+                useCase: "Few-shot/zero-shot learning, adapting to unseen data formats",
+                sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
+            },
+            "memory-augmentation": {
+                title: "Memory Augmentation, Meta-Learned Loss, Decision-Pretrained Transformers",
+                howItWorks: "Meta-learning abilities and improved sample efficiency through architectural innovations",
+                whenToUse: "You want meta-learning abilities or improved sample efficiency",
+                useCase: "Lifelong learning, reinforcement learning, robotics",
+                sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
+            },
+            "advanced-reasoning": {
+                title: "Advanced Reasoning (Compact CoT, Auto Long-Short Reasoning)",
+                howItWorks: "Optimized reasoning with reduced token usage while maintaining performance",
+                whenToUse: "Reducing token use while maintaining (or improving) reasoning",
+                useCase: "Cost-sensitive LLM apps, mobile or edge deployments, complex reasoning tasks",
+                sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
+            },
+            "vpg-clip": {
+                title: "Visual Prompt Generators (VPGs), CLIP/CLAP + Q-Former",
+                howItWorks: "Combines vision/audio with text in unified model using cross-modal encoders",
+                whenToUse: "Incorporating vision/audio with text in a unified model",
+                useCase: "Image captioning, VQA, multi-modal retrieval",
+                sectionOfPaper: "4.2.3. Multimodal Context"
+            },
+            "cross-modal": {
+                title: "Cross-Modal Attention, Hierarchical Designs",
+                howItWorks: "Deep fusion mechanisms across modalities with hierarchical processing",
+                whenToUse: "Deep fusion of multiple modalities or scaling to very large inputs",
+                useCase: "Complex scene analysis, video QA, scientific image interpretation",
+                sectionOfPaper: "4.2.3. Multimodal Context"
+            },
+            "browse-concentrate": {
+                title: "Browse-and-Concentrate, Unified Training",
+                howItWorks: "Joint training approach across modalities from the outset",
+                whenToUse: "Need joint, robust learning across modalities from the outset",
+                useCase: "Foundation models, multi-modal pretraining",
+                sectionOfPaper: "4.2.3. Multimodal Context"
+            },
+            "video-adapters": {
+                title: "Adapters/Prompt Tuning for Video",
+                howItWorks: "Parameter-efficient adaptation for video understanding",
+                whenToUse: "Efficiently adding new modalities or long-form video understanding",
+                useCase: "Surveillance analysis, sports analytics, lecture summarization",
+                sectionOfPaper: "4.2.3. Multimodal Context"
+            },
+            "emerging-adaptive": {
+                title: "Adaptive Hierarchical Token Compression, V2PE, ContextQFormer",
+                howItWorks: "Advanced compression and context handling for variable-length inputs",
+                whenToUse: "Dealing with unbounded or variable-length multi-modal context",
+                useCase: "Dynamic media, streaming environments, AI-driven broadcast",
+                sectionOfPaper: "4.2.3. Multimodal Context"
+            },
+            "gnn-graphformers": {
+                title: "Graph Neural Networks, GraphFormers, Heterformer",
+                howItWorks: "Neural architectures designed for graph-structured data processing",
+                whenToUse: "Input data is inherently structured/relational (graphs, KGs, DBs)",
+                useCase: "Scientific discovery, knowledge base QA, relational reasoning",
+                sectionOfPaper: "4.2.4. Relational and Structured Context"
+            },
+            verbalization: {
+                title: "Verbalization/Structured Data Reps",
+                howItWorks: "Converts structured data into natural language representations",
+                whenToUse: "Need LLMs to reason over non-text data",
+                useCase: "Table QA, knowledge base integration, data extraction",
+                sectionOfPaper: "4.2.4. Relational and Structured Context"
+            },
+            "programming-reps": {
+                title: "Programming Language Reps (Python/SQL)",
+                howItWorks: "Uses programming languages as intermediate representations",
+                whenToUse: "Complex logic and reasoning required; NL may be too ambiguous",
+                useCase: "Data engineering, code synthesis, database querying",
+                sectionOfPaper: "4.2.4. Relational and Structured Context"
+            },
+            "matrix-reps": {
+                title: "Matrix Representations",
+                howItWorks: "Compact matrix-based representations of structured information",
+                whenToUse: "Reducing parameter count while keeping structured data performance",
+                useCase: "Lightweight edge deployments, on-device ML",
+                sectionOfPaper: "4.2.4. Relational and Structured Context"
+            },
+            "k-bert": {
+                title: "K-BERT (Pretrain), KAPING (Inference Time), Adapters/Cross-attn",
+                howItWorks: "Injects structured knowledge during pretraining or inference",
+                whenToUse: "Factual grounding is key, or you want to inject structured knowledge on the fly",
+                useCase: "Medical/financial LLMs, retrieval-augmented generation",
+                sectionOfPaper: "4.2.4. Relational and Structured Context"
+            },
+            "unified-approaches": {
+                title: "Unified Approaches (GreaseLM, QA-GNN)",
+                howItWorks: "Combines natural language fluency with knowledge graph reasoning",
+                whenToUse: "Need both NL fluency and KG-based reasoning in one system",
+                useCase: "Open-domain QA, research assistants, scientific agents",
+                sectionOfPaper: "4.2.4. Relational and Structured Context"
+            },
+
+            // Context Management
+            memgpt: {
+                title: "MemGPT",
+                howItWorks: "Virtual memory management like traditional operating systems. Pages information between limited context windows (main memory) and external storage. Components: System instructions, FIFO message queues, Writable scratchpads, External context (accessible via function calls)",
+                whenToUse: "OS-like memory management for LLMs, need unlimited context appearance with limited windows",
+                useCase: "Extended conversations, document analysis, personal companion systems, chatbots with persistent memory",
+                sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
+            },
+            "paged-attention": {
+                title: "PagedAttention",
+                howItWorks: "Manages key-value cache memory efficiently in LLMs by partitioning KV cache into blocks that can be stored non-contiguously, inspired by virtual memory paging",
+                whenToUse: "Optimizing memory usage during inference, high-throughput LLM serving",
+                useCase: "Cloud inference, large batch serving, production LLM deployment",
+                sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
+            },
+            memorybank: {
+                title: "MemoryBank",
+                howItWorks: "Uses Ebbinghaus Forgetting Curve principles. Dynamically adjusts memory strength based on time and significance, incorporating memory updating mechanism that permits AI to forget and reinforce memory",
+                whenToUse: "Long-term context retention with natural forgetting patterns, sustained interaction scenarios",
+                useCase: "Personal companion systems, psychological counseling, long-term AI companions",
+                sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
+            },
+            readagent: {
+                title: "ReadAgent",
+                howItWorks: "Three-part system: 1. Episode pagination: Segments content into manageable chunks, 2. Memory gisting: Creates concise representations, 3. Interactive lookup: Enables targeted information retrieval",
+                whenToUse: "Human-like reading of very long documents, need 20x context extension",
+                useCase: "Long document analysis, research paper comprehension, multi-document Q&A",
+                sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
+            },
+            "compressor-retriever": {
+                title: "Compressor-Retriever Systems",
+                howItWorks: "Lifelong context management using base model functions to compress and retrieve content with end-to-end differentiability",
+                whenToUse: "Lifelong learning applications requiring continuous context management",
+                useCase: "Long-term learning systems, evolving knowledge bases",
+                sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
+            },
+            centralized: {
+                title: "Centralized Systems",
+                howItWorks: "Excellent task coordination but poor scalability, context overflow as topics increase",
+                whenToUse: "Simple, focused applications",
+                useCase: "Single-domain chatbots, focused task automation",
+                sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
+            },
+            decentralized: {
+                title: "Decentralized Systems",
+                howItWorks: "Reduced context overflow but increased response time due to inter-agent querying",
+                whenToUse: "Complex, multi-domain applications",
+                useCase: "Multi-agent systems, distributed knowledge processing",
+                sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
+            },
+            hybrid: {
+                title: "Hybrid Systems",
+                howItWorks: "Balances shared knowledge with specialized processing, semi-autonomous operation",
+                whenToUse: "Most real-world applications requiring both coordination and scalability",
+                useCase: "Enterprise AI systems, complex conversational agents",
+                sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
+            },
+            snapshot: {
+                title: "Snapshot creation",
+                howItWorks: "Save intermediate states during processing",
+                whenToUse: "Need to preserve processing checkpoints",
+                useCase: "Long-running tasks, recovery systems",
+                sectionOfPaper: "4.3.3. Context Compression"
+            },
+            "state-restoration": {
+                title: "State restoration",
+                howItWorks: "Resume from previous points in processing",
+                whenToUse: "Recovery from interruptions or failures",
+                useCase: "Robust production systems",
+                sectionOfPaper: "4.3.3. Context Compression"
+            },
+            "window-management": {
+                title: "Window management",
+                howItWorks: "Overall context optimization and organization",
+                whenToUse: "Managing complex context workflows",
+                useCase: "Multi-step reasoning, complex document processing",
+                sectionOfPaper: "4.3.3. Context Compression"
+            },
+            icae: {
+                title: "In-Context Autoencoder (ICAE)",
+                howItWorks: "Condenses long contexts into compact memory slots that LLMs can directly condition on compressed representations",
+                whenToUse: "Significant context reduction while preserving critical information",
+                useCase: "Memory-constrained environments, mobile LLM deployment",
+                sectionOfPaper: "4.3.3. Context Compression"
+            },
+            rcc: {
+                title: "Recurrent Context Compression (RCC)",
+                howItWorks: "Expands context window length in constrained storage using instruction reconstruction techniques",
+                whenToUse: "Working within strict memory limitations",
+                useCase: "Edge computing, resource-limited deployment",
+                sectionOfPaper: "4.3.3. Context Compression"
+            },
+            "knn-memory": {
+                title: "kNN-Based Memory Caches",
+                howItWorks: "Store key-value pairs of past inputs for lookup with contrastive learning to improve retrieval accuracy, side networks address memory staleness",
+                whenToUse: "Need efficient lookup of historical interactions",
+                useCase: "Conversation systems, recommendation engines",
+                sectionOfPaper: "4.3.3. Context Compression"
+            },
+            "hierarchical-caching": {
+                title: "Hierarchical Caching",
+                howItWorks: "Multi-layer caching systems like Activation Refilling (ACRE)",
+                whenToUse: "Complex applications with varied access patterns",
+                useCase: "Enterprise systems with multiple data tiers",
+                sectionOfPaper: "4.3.3. Context Compression"
+            },
+            "infinite-llm": {
+                title: "Infinite-LLM with DistAttention",
+                howItWorks: "Handle extremely long sequences using distributed attention mechanisms",
+                whenToUse: "Processing unlimited sequence lengths",
+                useCase: "Large-scale document processing",
+                sectionOfPaper: "4.3.3. Context Compression"
+            },
+            kcache: {
+                title: "KCache",
+                howItWorks: "Smart optimization: K cache in high-bandwidth memory, V cache in CPU memory for optimized inference speed and memory usage",
+                whenToUse: "Inference speed optimization is critical",
+                useCase: "High-performance serving, cost optimization",
+                sectionOfPaper: "4.3.3. Context Compression"
+            },
+            "multi-agent-distributive": {
+                title: "Multi-Agent Distributive Processing",
+                howItWorks: "Handles massive inputs in distributed manner with high cache reusability in RAG and agent workloads",
+                whenToUse: "Processing massive datasets across distributed systems",
+                useCase: "Large-scale knowledge processing, enterprise RAG",
+                sectionOfPaper: "4.3.3. Context Compression"
+            },
+            "cache-access-pattern": {
+                title: "Cache Access Pattern Analysis",
+                howItWorks: "High reusability patterns in RAG and agent applications to reduce redundancy",
+                whenToUse: "Optimizing performance through better caching strategies",
+                useCase: "Production RAG systems, agent platforms",
+                sectionOfPaper: "4.3.3. Context Compression"
+            }
+        };
+
+        // DOM elements
+        const searchInput = document.querySelector('.search-input');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const techniquesGrid = document.getElementById('techniquesGrid');
+        const modal = document.getElementById('techniqueModal');
+        const modalBody = document.getElementById('modalBody');
+        const closeBtn = document.querySelector('.close-btn');
+
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            filterTechniques(searchTerm);
+        });
+
+        // Filter functionality
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filterValue = this.dataset.filter;
+                showCategory(filterValue);
+            });
+        });
+
+        // Technique click handlers
+        document.querySelectorAll('.technique').forEach(technique => {
+            technique.addEventListener('click', function() {
+                const techniqueId = this.dataset.technique;
+                showTechniqueDetails(techniqueId);
+            });
+        });
+
+        // Modal handlers
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+
+        function filterTechniques(searchTerm) {
+            const techniques = document.querySelectorAll('.technique');
+            const mainCategories = document.querySelectorAll('.main-category');
+            const subCategories = document.querySelectorAll('.sub-category');
+            
+            techniques.forEach(technique => {
+                const name = technique.querySelector('.technique-name').textContent.toLowerCase();
+                const description = technique.querySelector('.technique-description').textContent.toLowerCase();
+                const useCases = Array.from(technique.querySelectorAll('.use-case'))
+                    .map(el => el.textContent.toLowerCase()).join(' ');
+                
+                const matches = name.includes(searchTerm) || 
+                               description.includes(searchTerm) || 
+                               useCases.includes(searchTerm);
+                
+                technique.style.display = matches ? 'block' : 'none';
+            });
+
+            // Hide/show sub-categories based on visible techniques
+            subCategories.forEach(subCategory => {
+                const visibleTechniques = subCategory.querySelectorAll('.technique:not([style*="display: none"])');
+                subCategory.style.display = visibleTechniques.length > 0 ? 'block' : 'none';
+            });
+
+            // Hide/show main categories based on visible sub-categories
+            mainCategories.forEach(mainCategory => {
+                const visibleSubCategories = mainCategory.querySelectorAll('.sub-category:not([style*="display: none"])');
+                mainCategory.style.display = visibleSubCategories.length > 0 ? 'block' : 'none';
+            });
+        }
+
+        function showCategory(filterValue) {
+            const mainCategories = document.querySelectorAll('.main-category');
+            
+            if (filterValue === 'all') {
+                mainCategories.forEach(category => {
+                    category.style.display = 'block';
+                    // Show all sub-categories within visible main categories
+                    const subCategories = category.querySelectorAll('.sub-category');
+                    subCategories.forEach(subCat => {
+                        subCat.style.display = 'block';
+                    });
+                });
+            } else {
+                mainCategories.forEach(category => {
+                    if (category.dataset.category === filterValue) {
+                        category.style.display = 'block';
+                        // Show all sub-categories within visible main categories
+                        const subCategories = category.querySelectorAll('.sub-category');
+                        subCategories.forEach(subCat => {
+                            subCat.style.display = 'block';
+                        });
+                    } else {
+                        category.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        function showTechniqueDetails(techniqueId) {
+            const details = techniqueDetails[techniqueId];
+            
+            if (!details) {
+                modalBody.innerHTML = '<h2>Technique Details</h2><p>Detailed information coming soon!</p>';
+            } else {
+                modalBody.innerHTML = \`
+                    <h2>\${details.title}</h2>
+                    <table class="detail-table">
+                        <tr>
+                            <th>How It Works</th>
+                            <td>\${details.howItWorks}</td>
+                        </tr>
+                        <tr>
+                            <th>When To Use</th>
+                            <td>\${details.whenToUse}</td>
+                        </tr>
+                        <tr>
+                            <th>Use Case</th>
+                            <td>\${details.useCase}</td>
+                        </tr>
+                        <tr>
+                            <th>Section of Paper</th>
+                            <td>\${details.sectionOfPaper}</td>
+                        </tr>
+                    </table>
+                \`;
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>`}
+    width="100%"
+    height="12500px"
+    style={{ border: 'none', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
+    title="Context Engineering Navigator"
+  />
+</div>
+
+This interactive cheat sheet provides a comprehensive overview of context engineering techniques for Large Language Models. Click on any technique to see detailed information including how it works, when to use it, use cases, and the corresponding section from the research literature.
+
+The techniques are organized into four main categories:
+
+## 🔍 Context Retrieval & Generation
+Techniques for gathering and generating relevant context, including prompt engineering strategies, learning approaches, and retrieval-augmented generation methods.
+
+## ⚙️ Context Processing  
+Methods for efficiently processing long contexts, including architectural innovations, optimization techniques, and memory management approaches.
+
+## 🧠 Context Management
+Systems for organizing, storing, and utilizing contextual information, including memory hierarchies, compression techniques, and intelligent management strategies.
+
+## 🔧 Dynamic Context Assembly
+Frameworks and tools for dynamically assembling context from multiple sources, including automated prompt engineering and tool integration approaches.
+
+Each technique entry provides:
+- **How it works**: Technical description of the approach
+- **When to use**: Appropriate scenarios and conditions  
+- **Use case**: Specific applications and examples
+- **Section of paper**: Reference to the corresponding research literature
+
+Use the search functionality to find specific techniques or filter by category to explore different aspects of context engineering. This resource serves as a practical reference for implementing context engineering solutions in production LLM systems.
