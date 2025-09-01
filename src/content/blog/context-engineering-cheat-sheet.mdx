@@ -7,30 +7,24 @@ description: "An interactive cheat sheet covering context engineering techniques
 
 import ContextNavigator from "../../components/blog/context-engineering-cheat-sheet/ContextNavigator.astro";
 
-Context engineering is the discipline of designing, constructing, and managing dynamic systems that provide language models with the right information, tools, and instructions in the optimal format and at the right time. This interactive cheat sheet covers the comprehensive landscape of context engineering techniques.
+Based on our reading of “A Survey of Context Engineering for Large Language Models”
+that has broad implications, we'll be providing a cheat sheet and discussion covering the topics in the paper.
+
+This post focuses on the theoretical foundational components of context engineering, including context retrieval and generation, context processing, and context management, and provides a summarized cheat sheet for navigating this space outlined in red below. Future cheats will further cover the implementations of these foundational components.
+
+Although context engineering as a concept may shift with new model architectures or other changes, it will most likely evolve over time in approaches and principles across layers but will still exist as a way to provide models with personalized, up-to-date, relevant information. It also serves as a way to navigate the existing challenges we have with generating large datasets that give models the capability to handle difficult problems. These datasets are expensive to create and will take time to develop properly as society shifts into the AI age.
+
+We encourage you to reference this cheat sheet to determine which parts, depending on your AI use case, you want to dive deeper into. For each section, we've provided sample use cases that may best apply to the methodology and cited back to the original section in the paper.
+
+At the end we've also included additional resources in the [Resources](#resources) section for context engineering that we've found most useful when building AI systems in the real world.
 
 <ContextNavigator />
 
-This interactive cheat sheet provides a comprehensive overview of context engineering techniques for Large Language Models. Click on any technique to see detailed information including how it works, when to use it, use cases, and the corresponding section from the research literature.
+# Resources
 
-The techniques are organized into four main categories:
+- Original paper guiding this post: https://arxiv.org/abs/2507.13334 Github: https://github.com/Meirtz/Awesome-Context-Engineering
+- Context Engineering Guide: https://docs.google.com/document/d/1JU8w-E4LlseFZm-ag22GSBU5A2rp2nb7iFGBNAbFL7k/edit?usp=sharing
+- Manus Context Engineering for AI Agents: [https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus?utm_source=tldrai)
+- Factors 2 & 3: https://github.com/humanlayer/12-factor-agents
+- Ultimate Context Engineering Cheat Sheet https://x.com/lenadroid/status/1943685060785524824
 
-## 🔍 Context Retrieval & Generation
-Techniques for gathering and generating relevant context, including prompt engineering strategies, learning approaches, and retrieval-augmented generation methods.
-
-## ⚙️ Context Processing  
-Methods for efficiently processing long contexts, including architectural innovations, optimization techniques, and memory management approaches.
-
-## 🧠 Context Management
-Systems for organizing, storing, and utilizing contextual information, including memory hierarchies, compression techniques, and intelligent management strategies.
-
-## 🔧 Dynamic Context Assembly
-Frameworks and tools for dynamically assembling context from multiple sources, including automated prompt engineering and tool integration approaches.
-
-Each technique entry provides:
-- **How it works**: Technical description of the approach
-- **When to use**: Appropriate scenarios and conditions  
-- **Use case**: Specific applications and examples
-- **Section of paper**: Reference to the corresponding research literature
-
-Use the search functionality to find specific techniques or filter by category to explore different aspects of context engineering. This resource serves as a practical reference for implementing context engineering solutions in production LLM systems.
