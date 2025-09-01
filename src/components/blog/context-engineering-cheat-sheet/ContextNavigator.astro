@@ -1020,6 +1020,31 @@
       font-size: 0.875rem;
     }
   }
+
+  /* Show dropdown arrows for collapsible sections */
+  .sub-category summary {
+    list-style: none;
+    position: relative;
+  }
+  
+  .sub-category summary::-webkit-details-marker {
+    display: none;
+  }
+  
+  .sub-category summary::before {
+    content: "▼";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.875rem;
+    color: var(--ctp-subtext1);
+    transition: transform 0.2s ease;
+  }
+  
+  .sub-category[open] summary::before {
+    transform: translateY(-50%) rotate(180deg);
+  }
 </style>
 
 <script>
