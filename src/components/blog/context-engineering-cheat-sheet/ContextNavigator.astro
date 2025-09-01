@@ -44,9 +44,14 @@
       
       <!-- Context Retrieval & Generation - Main Category -->
       <div class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300" data-category="retrieval">
-        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center gap-4 text-ctp-text border-b-4 border-ctp-green pb-4">
-          <div class="w-8 h-8 rounded-full bg-ctp-green"></div>
-          Context Retrieval & Generation
+        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 border-ctp-green pb-4">
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-ctp-green"></div>
+            Context Retrieval & Generation
+          </div>
+          <button class="collapse-toggle-btn px-3 py-1 text-sm font-medium text-ctp-subtext1 hover:text-ctp-text border border-ctp-blue hover:border-ctp-blue rounded-lg transition-all duration-200 hover:bg-ctp-surface0" data-category="retrieval">
+            Collapse All
+          </button>
         </div>
 
         <!-- Prompt Engineering & Context Generation -->
@@ -344,9 +349,14 @@
 
       <!-- Context Processing - Main Category -->
       <div class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300" data-category="processing">
-        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center gap-4 text-ctp-text border-b-4 border-ctp-blue pb-4">
-          <div class="w-8 h-8 rounded-full bg-ctp-blue"></div>
-          Context Processing
+        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 border-ctp-blue pb-4">
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-ctp-blue"></div>
+            Context Processing
+          </div>
+          <button class="collapse-toggle-btn px-3 py-1 text-sm font-medium text-ctp-subtext1 hover:text-ctp-text border border-ctp-blue hover:border-ctp-blue rounded-lg transition-all duration-200 hover:bg-ctp-surface0" data-category="processing">
+            Collapse All
+          </button>
         </div>
 
         <!-- Long Context Processing -->
@@ -746,9 +756,14 @@
 
       <!-- Context Management - Main Category -->
       <div class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300" data-category="management">
-        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center gap-4 text-ctp-text border-b-4 border-ctp-peach pb-4">
-          <div class="w-8 h-8 rounded-full bg-ctp-peach"></div>
-          Context Management
+        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 border-ctp-peach pb-4">
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 rounded-full bg-ctp-peach"></div>
+            Context Management
+          </div>
+          <button class="collapse-toggle-btn px-3 py-1 text-sm font-medium text-ctp-subtext1 hover:text-ctp-text border border-ctp-blue hover:border-ctp-blue rounded-lg transition-all duration-200 hover:bg-ctp-surface0" data-category="management">
+            Collapse
+          </button>
         </div>
 
         <!-- Memory Hierarchies -->
@@ -984,6 +999,28 @@
     border-color: var(--ctp-blue);
     color: var(--ctp-base);
     transform: translateY(-2px);
+  }
+
+  /* Collapse toggle button styles */
+  .collapse-toggle-btn {
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .collapse-toggle-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .collapse-toggle-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Enhanced subcategory animations */
+  .sub-category {
+    transition: all 0.3s ease;
   }
 
   /* Enhanced technique hover styles */
@@ -1781,6 +1818,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Collapse/Expand toggle handlers
+  document.querySelectorAll('.collapse-toggle-btn').forEach(toggleBtn => {
+    toggleBtn.addEventListener('click', function() {
+      const categoryName = this.dataset.category;
+      const mainCategory = this.closest('.main-category');
+      const subCategories = mainCategory.querySelectorAll('.sub-category');
+      
+      // Check current state based on button text
+      const isCollapsed = this.textContent.trim() === 'Expand All';
+      
+      if (isCollapsed) {
+        // Expand all subcategories
+        subCategories.forEach(subCat => {
+          subCat.setAttribute('open', '');
+        });
+        this.textContent = 'Collapse All';
+      } else {
+        // Collapse all subcategories
+        subCategories.forEach(subCat => {
+          subCat.removeAttribute('open');
+        });
+        this.textContent = 'Expand All';
+      }
+    });
+  });
+
+  // Listen for manual subcategory toggles to update button text
+  document.querySelectorAll('.sub-category summary').forEach(summary => {
+    summary.addEventListener('click', function() {
+      const subCategory = this.closest('.sub-category');
+      const mainCategory = this.closest('.main-category');
+      
+      // Use setTimeout to allow the details element to update first
+      setTimeout(() => {
+        updateToggleButtonText(mainCategory);
+      }, 10);
+    });
+  });
+
   // Modal handlers
   closeBtn.addEventListener('click', closeModal);
   modal.addEventListener('click', function(e) {
@@ -1794,6 +1870,11 @@ document.addEventListener('DOMContentLoaded', function() {
       // Clear technique selection when closing modal
       document.querySelectorAll('.technique').forEach(t => t.classList.remove('selected'));
     }
+  });
+
+  // Initialize toggle button text on load
+  document.querySelectorAll('.main-category').forEach(mainCategory => {
+    updateToggleButtonText(mainCategory);
   });
 
   function filterTechniques(searchTerm) {
@@ -1838,6 +1919,7 @@ document.addEventListener('DOMContentLoaded', function() {
         subCategories.forEach(subCat => {
           subCat.style.display = 'block';
         });
+        updateToggleButtonText(category);
       });
     } else {
       mainCategories.forEach(category => {
@@ -1848,10 +1930,25 @@ document.addEventListener('DOMContentLoaded', function() {
           subCategories.forEach(subCat => {
             subCat.style.display = 'block';
           });
+          updateToggleButtonText(category);
         } else {
           category.style.display = 'none';
         }
       });
+    }
+  }
+
+  function updateToggleButtonText(mainCategory) {
+    const toggleBtn = mainCategory.querySelector('.collapse-toggle-btn');
+    const subCategories = mainCategory.querySelectorAll('.sub-category');
+    const openSubCategories = mainCategory.querySelectorAll('.sub-category[open]');
+    
+    if (openSubCategories.length === 0) {
+      toggleBtn.textContent = 'Expand All';
+    } else if (openSubCategories.length === subCategories.length) {
+      toggleBtn.textContent = 'Collapse All';
+    } else {
+      toggleBtn.textContent = 'Collapse All'; // Default to collapse when mixed
     }
   }
 
