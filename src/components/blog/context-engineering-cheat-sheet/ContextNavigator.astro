@@ -25,16 +25,16 @@
 
     <!-- Filter Buttons -->
     <div class="filter-buttons flex gap-3 flex-wrap justify-center mb-8">
-      <button class="filter-btn active px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-blue hover:border-ctp-blue hover:text-ctp-base hover:-translate-y-0.5" data-filter="all">
+      <button class="filter-btn active px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5" data-filter="all">
         All Categories
       </button>
-      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-blue hover:border-ctp-blue hover:text-ctp-base hover:-translate-y-0.5" data-filter="retrieval">
+      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5" data-filter="retrieval">
         Context Retrieval & Generation
       </button>
-      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-blue hover:border-ctp-blue hover:text-ctp-base hover:-translate-y-0.5" data-filter="processing">
+      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5" data-filter="processing">
         Context Processing
       </button>
-      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-blue hover:border-ctp-blue hover:text-ctp-base hover:-translate-y-0.5" data-filter="management">
+      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5" data-filter="management">
         Context Management
       </button>
     </div>
@@ -61,7 +61,7 @@
             Frameworks & Chain-of-Thought Foundations
           </div>
           <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-blue hover:bg-opacity-10 hover:border-ctp-blue hover:translate-x-1" data-technique="clear">
+            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="clear">
               <div class="technique-name font-semibold text-ctp-blue mb-1">CLEAR Framework</div>
               <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Conciseness, Logic, Explicitness, Adaptability, Reflectiveness for robust prompt design</div>
               <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Production AI</span>
@@ -971,6 +971,56 @@
     display: flex;
   }
 
+  /* Enhanced filter button styles */
+  .filter-btn.active {
+    background-color: var(--ctp-blue);
+    border-color: var(--ctp-blue);
+    color: var(--ctp-base);
+    box-shadow: 0 4px 12px rgba(137, 180, 250, 0.3);
+  }
+
+  .filter-btn.active:hover {
+    background-color: var(--ctp-blue);
+    border-color: var(--ctp-blue);
+    color: var(--ctp-base);
+    transform: translateY(-2px);
+  }
+
+  /* Enhanced technique hover styles */
+  .technique:hover .technique-name {
+    color: var(--ctp-blue);
+  }
+
+  .technique:hover .technique-description {
+    color: var(--ctp-text);
+  }
+
+  .technique:hover .use-case {
+    border-color: var(--ctp-blue);
+    color: var(--ctp-blue);
+  }
+
+  /* Technique selection state */
+  .technique.selected {
+    background-color: var(--ctp-surface1);
+    border-color: var(--ctp-blue);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(137, 180, 250, 0.2);
+  }
+
+  .technique.selected .technique-name {
+    color: var(--ctp-blue);
+  }
+
+  .technique.selected .technique-description {
+    color: var(--ctp-text);
+  }
+
+  .technique.selected .use-case {
+    border-color: var(--ctp-blue);
+    color: var(--ctp-blue);
+  }
+
   .detail-table {
     width: 100%;
     border-collapse: collapse;
@@ -1720,6 +1770,12 @@ document.addEventListener('DOMContentLoaded', function() {
   // Technique click handlers
   document.querySelectorAll('.technique').forEach(technique => {
     technique.addEventListener('click', function() {
+      // Remove previous selections
+      document.querySelectorAll('.technique').forEach(t => t.classList.remove('selected'));
+      
+      // Add selection to current technique
+      this.classList.add('selected');
+      
       const techniqueId = this.dataset.technique;
       showTechniqueDetails(techniqueId);
     });
@@ -1735,6 +1791,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       closeModal();
+      // Clear technique selection when closing modal
+      document.querySelectorAll('.technique').forEach(t => t.classList.remove('selected'));
     }
   });
 
@@ -1833,6 +1891,8 @@ document.addEventListener('DOMContentLoaded', function() {
   function closeModal() {
     modal.classList.remove('active');
     modal.style.display = 'none';
+    // Clear technique selection when closing modal
+    document.querySelectorAll('.technique').forEach(t => t.classList.remove('selected'));
   }
 });
 </script>
