@@ -1826,11 +1826,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.querySelector('.search-input');
   const filterBtns = document.querySelectorAll('.filter-btn');
   const techniquesGrid = document.getElementById('techniquesGrid');
-  const modal = document.getElementById('techniqueModal');
-  const modalBody = document.getElementById('modalBody');
   const closeBtn = document.querySelector('.close-btn');
 
-  if (!searchInput || !filterBtns.length || !techniquesGrid || !modal || !modalBody || !closeBtn) {
+  if (!searchInput || !filterBtns.length || !techniquesGrid || !closeBtn) {
     console.log('Context Navigator: Some elements not found, skipping initialization');
     return;
   }
@@ -1862,7 +1860,7 @@ document.addEventListener('DOMContentLoaded', function() {
       this.classList.add('selected');
       
       const techniqueId = this.dataset.technique;
-      showTechniqueDetails(techniqueId);
+         showTechniqueDetails(techniqueId);
     });
   });
 
@@ -1905,20 +1903,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Modal handlers
-  closeBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) closeModal();
-  });
-
-  // Keyboard navigation
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeModal();
-      // Clear technique selection when closing modal
-      document.querySelectorAll('.technique').forEach(t => t.classList.remove('selected'));
-    }
-  });
 
   // Initialize toggle button text on load
   document.querySelectorAll('.main-category').forEach(mainCategory => {
@@ -2001,43 +1985,52 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function showTechniqueDetails(techniqueId) {
+    const techniqueElement = document.querySelector(`[data-technique="${techniqueId}"]`);
     const details = techniqueDetails[techniqueId];
     
-    if (!details) {
-      modalBody.innerHTML = '<h2 class="text-2xl font-bold text-ctp-text mb-4">Technique Details</h2><p class="text-ctp-subtext1">Detailed information coming soon!</p>';
-    } else {
-      modalBody.innerHTML = `
-        <h2 class="text-2xl font-bold text-ctp-text mb-4">${details.title}</h2>
-        <table class="detail-table">
-          <tr>
-            <th>How It Works</th>
-            <td>${details.howItWorks}</td>
-          </tr>
-          <tr>
-            <th>When To Use</th>
-            <td>${details.whenToUse}</td>
-          </tr>
-          <tr>
-            <th>Use Case</th>
-            <td>${details.useCase}</td>
-          </tr>
-          <tr>
-            <th>Section of Paper</th>
-            <td>${details.sectionOfPaper}</td>
-          </tr>
-        </table>
-      `;
-    }
+    // Check if details are already expanded
+    let existingDetails = techniqueElement.querySelector('.technique-details');
     
-    modal.classList.add('active');
-    modal.style.display = 'flex';
+    if (existingDetails) {
+      // Collapse - remove existing details and selected state
+      existingDetails.remove();
+      techniqueElement.classList.remove('expanded', 'selected');
+    } else {
+      // Remove previous selections from other techniques
+      document.querySelectorAll('.technique').forEach(t => t.classList.remove('selected'));
+      // Expand - add details
+      const detailsDiv = document.createElement('div');
+      detailsDiv.className = 'technique-details mt-4 p-4 bg-ctp-surface0 rounded-lg border-l-4 border-ctp-blue';
+      
+      if (!details) {
+        detailsDiv.innerHTML = '<p class="text-ctp-subtext1">Detailed information coming soon!</p>';
+      } else {
+        detailsDiv.innerHTML = `
+          <table class="detail-table w-full">
+            <tr>
+              <th class="text-left py-2 pr-4 text-ctp-text font-semibold">How It Works</th>
+              <td class="py-2 text-ctp-subtext1">${details.howItWorks}</td>
+            </tr>
+            <tr>
+              <th class="text-left py-2 pr-4 text-ctp-text font-semibold">When To Use</th>
+              <td class="py-2 text-ctp-subtext1">${details.whenToUse}</td>
+            </tr>
+            <tr>
+              <th class="text-left py-2 pr-4 text-ctp-text font-semibold">Use Case</th>
+              <td class="py-2 text-ctp-subtext1">${details.useCase}</td>
+            </tr>
+            <tr>
+              <th class="text-left py-2 pr-4 text-ctp-text font-semibold">Section of Paper</th>
+              <td class="py-2 text-ctp-subtext1">${details.sectionOfPaper}</td>
+            </tr>
+          </table>
+        `;
+      }
+      
+      techniqueElement.appendChild(detailsDiv);
+      techniqueElement.classList.add('expanded', 'selected');
+    }
   }
 
-  function closeModal() {
-    modal.classList.remove('active');
-    modal.style.display = 'none';
-    // Clear technique selection when closing modal
-    document.querySelectorAll('.technique').forEach(t => t.classList.remove('selected'));
-  }
 });
 </script>
