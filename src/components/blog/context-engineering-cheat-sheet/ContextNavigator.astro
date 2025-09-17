@@ -244,7 +244,7 @@
             
             <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="graph-enhanced-rag">
               <div class="technique-name font-semibold text-ctp-blue mb-1">Graph Enhanced RAG Systems</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Incorporates knowledge graphs into RAG to capture structured relationships between entities, enabling multi-hop reasoning and deeper contextual retrieval using graph traversal and Cypher queries alongside vector similarity search</div>
+              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Incorporates knowledge graphs into RAG to capture structured relationships between entities, enabling multi-hop reasoning and deeper contextual retrieval using graph traversal and Cypher queries alongside vector similarity search (e.g. Microsoft's GraphRAG)</div>
               <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Enterprise knowledge bases with complex relationships</span>
               <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Legal document analysis</span>
               <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scientific literature review</span>
@@ -1185,6 +1185,8 @@
 </style>
 
 <script>
+import Fuse from 'fuse.js';
+
 // Technique details database with the four required columns
 const techniqueDetails = {
   // Context Retrieval & Generation - Prompt Engineering & Context Generation
@@ -1822,8 +1824,30 @@ const techniqueDetails = {
   }
 };
 
+// Prepare search data for Fuse.js
+let searchData = [];
+let fuse = null;
+
 // Initialize the navigator when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+  // Build search index from DOM elements
+  buildSearchIndex();
+
+  // Initialize Fuse.js
+  const fuseOptions = {
+    keys: [
+      { name: 'name', weight: 0.4 },
+      { name: 'description', weight: 0.3 },
+      { name: 'useCases', weight: 0.2 },
+      { name: 'tags', weight: 0.1 }
+    ],
+    threshold: 0.5,
+    includeScore: true,
+    minMatchCharLength: 1,
+    ignoreLocation: true
+  };
+
+  fuse = new Fuse(searchData, fuseOptions);
   // DOM elements
   const searchInput = document.querySelector('.search-input');
   const filterBtns = document.querySelectorAll('.filter-btn');
@@ -1911,22 +1935,62 @@ document.addEventListener('DOMContentLoaded', function() {
     updateToggleButtonText(mainCategory);
   });
 
-  function filterTechniques(searchTerm) {
+  function buildSearchIndex() {
     const techniques = document.querySelectorAll('.technique');
+    searchData = [];
+
+    techniques.forEach(technique => {
+      const name = technique.querySelector('.technique-name').textContent.trim();
+      const description = technique.querySelector('.technique-description').textContent.trim();
+      const useCases = Array.from(technique.querySelectorAll('.use-case'))
+        .map(el => el.textContent.trim()).join(' ');
+
+      // Create searchable tags from name and description
+      const tags = [
+        ...name.toLowerCase().split(/\s+/),
+        ...description.toLowerCase().split(/\s+/),
+        // Add acronym extraction for things like "RAG", "GraphRAG"
+        ...(name.match(/[A-Z]{2,}/g) || []).map(acronym => acronym.toLowerCase()),
+        // Add compound word extraction for "graph based" -> "GraphRAG"
+        ...(description.match(/\b(?:graph|neural|attention|memory|context)\s+\w+/gi) || []).map(phrase => phrase.toLowerCase())
+      ].filter(tag => tag.length > 2);
+
+      searchData.push({
+        element: technique,
+        name: name,
+        description: description,
+        useCases: useCases,
+        tags: tags.join(' '),
+        techniqueId: technique.dataset.technique
+      });
+    });
+  }
+
+  function filterTechniques(searchTerm) {
     const mainCategories = document.querySelectorAll('.main-category');
     const subCategories = document.querySelectorAll('.sub-category');
-    
-    techniques.forEach(technique => {
-      const name = technique.querySelector('.technique-name').textContent.toLowerCase();
-      const description = technique.querySelector('.technique-description').textContent.toLowerCase();
-      const useCases = Array.from(technique.querySelectorAll('.use-case'))
-        .map(el => el.textContent.toLowerCase()).join(' ');
-      
-      const matches = name.includes(searchTerm) || 
-                     description.includes(searchTerm) || 
-                     useCases.includes(searchTerm);
-      
-      technique.style.display = matches ? 'block' : 'none';
+
+    if (!searchTerm.trim()) {
+      // Show all techniques if search is empty
+      document.querySelectorAll('.technique').forEach(technique => {
+        technique.style.display = 'block';
+      });
+      subCategories.forEach(subCategory => {
+        subCategory.style.display = 'block';
+      });
+      mainCategories.forEach(mainCategory => {
+        mainCategory.style.display = 'block';
+      });
+      return;
+    }
+
+    // Use Fuse.js for fuzzy search
+    const results = fuse.search(searchTerm);
+    const matchedElements = new Set(results.map(result => result.item.element));
+
+    // Hide all techniques first, then show matched ones
+    document.querySelectorAll('.technique').forEach(technique => {
+      technique.style.display = matchedElements.has(technique) ? 'block' : 'none';
     });
 
     // Hide/show sub-categories based on visible techniques

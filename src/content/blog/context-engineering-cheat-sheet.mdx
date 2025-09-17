@@ -7,24 +7,32 @@ description: "An interactive cheat sheet covering context engineering techniques
 
 import ContextNavigator from "../../components/blog/context-engineering-cheat-sheet/ContextNavigator.astro";
 
-Based on our reading of “A Survey of Context Engineering for Large Language Models”
-that has broad implications, we'll be providing a Context Engineering Navigator that will allow you to search and learn about all methods discussed in the first section of the paper.
+When building production ML systems, you've likely hit the bottlenecks where your models struggle with domain-specific tasks, real-time information access, and personalized responses. In addition, comprehensive dataset creation costs to help alleviate these problems are steep and can be difficult to obtain depending on the use case. Context engineering, or the systematic application of context retrieval, context processing, generation, and management techniques, addresses this by providing models with targeted information at inference time. This helps to eliminate the need for massive specialized training datasets.
 
-This post focuses on the theoretical foundational components of context engineering, including context retrieval and generation, context processing, and context management. We plan on covering additional application based methods of the paper in the next iteration.
+Based on "A Survey of Context Engineering for Large Language Models" [\[1\]](#resources), we've developed a Context Engineering Navigator that allows you to search and explore the foundational methods from the paper's theoretical framework. This post covers the core components such as context retrieval and generation strategies, context processing methodologies, and context management systems that enable models to access personalized, current information without continuous retraining overhead.
 
-Although context engineering as a concept may shift with new model architectures or other changes, it will most likely evolve over time in approaches and principles across layers but will still exist as a way to provide models with personalized, up-to-date, relevant information. It also serves as a way to navigate the existing challenges we have with generating large datasets that give models the capability to handle difficult problems. These datasets are expensive to create and will take time to develop properly as society shifts into the AI age.
+Context engineering approaches will inevitably evolve with new model architectures, but the fundamental principle of efficiently supplying models with relevant external information remains critical for scaling AI systems. Instead of waiting years for comprehensive datasets to emerge, context engineering delivers immediate performance improvements across specialized domains and dynamic information requirements.
 
-We encourage you to reference this cheat sheet to determine which parts, depending on your AI use case, you want to dive deeper into. For each section, we've provided sample use cases that may best apply to the methodology and cited back to the original section in the paper.
-
-At the end we've also included additional resources in the [Resources](#resources) section for context engineering that we've found most useful when building AI systems in the real world.
+Reference this technical guide to identify which context engineering methods suit your specific implementation needs. You can select a category between **All Categories**, **Context Retrieval & Generation**, **Context Processing**, and **Context Management**, then explore the different frameworks and methods in detail by clicking on specific items to learn how they work, when to use them, and review use cases with references to the original paper. At the end, we've also included additional resources for context engineering that we've found most effective when deploying these techniques in real-world systems.
 
 <ContextNavigator />
 
 # Resources
 
-- Original paper guiding this post: https://arxiv.org/abs/2507.13334 Github: https://github.com/Meirtz/Awesome-Context-Engineering
-- Context Engineering Guide: https://docs.google.com/document/d/1JU8w-E4LlseFZm-ag22GSBU5A2rp2nb7iFGBNAbFL7k/edit?usp=sharing
-- Manus Context Engineering for AI Agents: [https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus?utm_source=tldrai)
-- 12 Factor Agents Factors 2 & 3: https://github.com/humanlayer/12-factor-agents
-- Ultimate Context Engineering Cheat Sheet https://x.com/lenadroid/status/1943685060785524824
+[1] Original paper guiding this post: https://arxiv.org/abs/2507.13334 
+
+Github: https://github.com/Meirtz/Awesome-Context-Engineering
+
+
+[2] Context Engineering Guide: https://docs.google.com/document/d/1JU8w-E4LlseFZm-ag22GSBU5A2rp2nb7iFGBNAbFL7k/edit?usp=sharing
+
+
+[3] Manus Context Engineering for AI Agents: [https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus?utm_source=tldrai)
+
+
+[4] 12 Factor Agents Factors 2 & 3: https://github.com/humanlayer/12-factor-agents
+
+
+[5] Ultimate Context Engineering Cheat Sheet: https://x.com/lenadroid/status/1943685060785524824
+
 
