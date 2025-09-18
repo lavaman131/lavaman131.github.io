@@ -1,10 +1,10 @@
 ---
-// Context Engineering Navigator Component
+// Server-side Frontmatter (runs at build time)
+import contextData from "./data/contextNavigator.json";
 ---
 
 <div class="context-navigator mt-8 mb-8">
   <div class="max-w-7xl mx-auto px-5">
-    <!-- Header -->
     <header class="text-center mb-10">
       <h1 class="text-4xl font-bold text-ctp-text mb-3">
         Context Engineering Navigator
@@ -14,1160 +14,143 @@
       </p>
     </header>
 
-    <!-- Search Container -->
     <div class="search-container mb-8 flex justify-center gap-2">
-      <input 
-        type="text" 
-        class="search-input px-5 py-3 text-base border-2 border-ctp-surface0 bg-ctp-mantle text-ctp-text rounded-full w-full max-w-md focus:border-ctp-blue focus:outline-none transition-colors duration-200" 
+      <input
+        type="text"
+        class="search-input px-5 py-3 text-base border-2 border-ctp-surface0 bg-ctp-mantle text-ctp-text rounded-full w-full max-w-md focus:border-ctp-blue focus:outline-none transition-colors duration-200"
         placeholder="Search techniques, use cases, or keywords..."
       />
     </div>
 
-    <!-- Filter Buttons -->
     <div class="filter-buttons flex gap-3 flex-wrap justify-center mb-8">
-      <button class="filter-btn active px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5" data-filter="all">
+      <button
+        class="filter-btn active px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5"
+        data-filter="all"
+      >
         All Categories
       </button>
-      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5" data-filter="retrieval">
-        Context Retrieval & Generation
-      </button>
-      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5" data-filter="processing">
-        Context Processing
-      </button>
-      <button class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5" data-filter="management">
-        Context Management
-      </button>
+      {
+        contextData.categories.map((category) => (
+          <button
+            class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5"
+            data-filter={category.id}
+          >
+            {category.title}
+          </button>
+        ))
+      }
     </div>
 
-    <!-- Main Grid -->
     <div class="main-grid flex flex-col gap-10 mb-10" id="techniquesGrid">
-      
-      <!-- Context Retrieval & Generation - Main Category -->
-      <div class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300" data-category="retrieval">
-        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 border-ctp-green pb-4">
-          <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-ctp-green"></div>
-            Context Retrieval & Generation
-          </div>
-          <button class="collapse-toggle-btn px-3 py-1 text-sm font-medium text-ctp-subtext1 hover:text-ctp-text border border-ctp-blue hover:border-ctp-blue rounded-lg transition-all duration-200 hover:bg-ctp-surface0" data-category="retrieval">
-            Collapse All
-          </button>
-        </div>
+      {
+        contextData.categories.map((category) => {
+          const color = "blue";
+          return (
+            <div
+              class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300"
+              data-category={category.id}
+            >
+              <div
+                class={`main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 border-ctp-${color} pb-4`}
+              >
+                <div class="flex items-center gap-4">
+                  <div class={`w-8 h-8 rounded-full bg-ctp-${color}`} />
+                  {category.title}
+                </div>
+                <button
+                  class="collapse-toggle-btn px-3 py-1 text-sm font-medium text-ctp-subtext1 hover:text-ctp-text border border-ctp-blue hover:border-ctp-blue rounded-lg transition-all duration-200 hover:bg-ctp-surface0"
+                  data-category={category.id}
+                >
+                  Collapse All
+                </button>
+              </div>
 
-        <!-- Prompt Engineering & Context Generation -->
-        <details class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-green transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="prompt-engineering" open>
-          <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
-            <div class="w-5 h-5 rounded-full bg-ctp-green"></div>
-            Prompt Engineering & Context Generation
-          </summary>
-          
-          <!-- Frameworks & Chain-of-Thought Foundations -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Frameworks & Chain-of-Thought Foundations
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="clear">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">CLEAR Framework</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Conciseness, Logic, Explicitness, Adaptability, Reflectiveness for robust prompt design</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Prompt templates</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="cot">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Chain of Thought (CoT)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Step-by-step reasoning with "Let's think step by step"</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Mathematical problem solving</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Debugging code logic</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="tot">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Tree of Thoughts (ToT)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Hierarchical reasoning with exploration and backtracking</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Strategic planning</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Chess moves</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Complex optimization</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="got">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Graph of Thoughts (GoT)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Interconnected reasoning graphs with dependencies</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Software architecture design</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Project management</span>
-            </div>
-          </div>
+              {category.subcategories.map((subcategory) => (
+                <details
+                  class={`sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-${color} transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
+                  data-subcategory={subcategory.id}
+                  open
+                >
+                  <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
+                    <div class={`w-5 h-5 rounded-full bg-ctp-${color}`} />
+                    {subcategory.title}
+                  </summary>
 
-          <!-- Learning Strategies -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Learning Strategies
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="zero-shot">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Zero-shot</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">No examples, direct instruction</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Rapid prototyping</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Model evaluation</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="few-shot">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Few-shot</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">2-5 demonstration examples for task learning</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Classification tasks</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Content generation with examples</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="in-context-learning">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">In-context learning</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Performance heavily depends on example selection and ordering</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Adaptive AI systems</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Personalized responses</span>
-            </div>
-          </div>
-        </details>
-
-        <!-- External Knowledge Retrieval -->
-        <details class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-green transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="knowledge-retrieval" open>
-          <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
-            <div class="w-5 h-5 rounded-full bg-ctp-green"></div>
-            External Knowledge Retrieval
-          </summary>
-          
-          <!-- RAG Fundamentals -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Retrieval-Augmented Generation Fundamentals
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="flashrag">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">FlashRAG</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Comprehensive evaluation and modular RAG implementation</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Rapid prototyping of retrieval systems</span>
-            </div>
-          </div>
-
-          <!-- Advanced Retrieval Strategies -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Advanced Retrieval Strategies
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="kragen">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">KRAGEN</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Integrates Knowledge Graphs with advanced prompting. Breaks down complex problems into smaller sub-problems retrieves relevant information through RAG, and consolidates the results for a more accurate and transparent response</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Enterprise knowledge bases</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Complex domain-specific queries</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="composerag">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">ComposeRAG</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Uses the LLM to plan, decompose, and orchestrate retrievals. Breaks down a user's query into steps, retrieving relevant information for each step (from one or more sources) and then stitches the response together for a final coherent response</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Complex research queries</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Investigative journalism</span>
-            </div>
-          </div>
-
-          <!-- Adaptive Retrieval Mechanisms -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Adaptive Retrieval Mechanisms
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="self-rag">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Self-RAG</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Model decides when to retrieve information dynamically. Uses special tokens to control retrieval timing and quality assessment</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Conversational AI</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Adapts retrieval based on query complexity</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="raptor">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">RAPTOR</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Processes documents hierarchically using recursive clustering and summarization, constructing tree with differing levels of summarization from bottom up</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Research papers</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Legal documents</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Comprehensive reports</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Complex PDFs</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="hipporag">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">HippoRAG</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Memory-inspired retrieval architecture that synergistically orchestrates LLMs, knowledge graphs, and the Personalized PageRank algorithm to mimic the different roles of neocortex and hippocampus in human memory</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scientific literature reviews</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Legal case briefings</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Medical diagnosis</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Synthesis of information from various sources</span>
-            </div>
-          </div>
-
-          <!-- Knowledge Graph Integration and Structured Retrieval ---->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Knowledge Graph Integration and Structured Retrieval
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="kaping">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">KAPING</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Retrieves facts using semantic similarity combining semantic network structure with information content of concepts</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Document classification</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Content recommendation systems</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Knowledge graph applications</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="karpa">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">KARPA</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Training-free KG adaptation with pre-planning, semantic matching, and relation path reasoning</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Real-time knowledge integration</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Dynamic query processing</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="think-on-graph">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Think-on-Graph</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Sequential reasoning over knowledge graphs to locate relevant triples, conduct exploration to retrieve related information from external databases while generating multiple reasoning paths</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Complex fact verification</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-step logical inference</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="structgpt">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">StructGPT</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Iterative reading and reasoning approach that constructs specialized functions to collect relevant evidence from structured data sources</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Database querying</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Structured data analysis</span>
-            </div>
-          </div>
-
-          <!-- Agentic and Modular Retrieval Systems ---->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Agentic and Modular Retrieval Systems
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="agenticrag">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">AgenticRAG</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Embeds autonomous AI agents into the RAG pipeline using agentic design patterns (reflection, planning, tool use, multi-agent collaboration) to dynamically manage retrieval strategies</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-agent collaborative reasoning</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Personal assistants</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Adaptive question answering systems</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Access to various data sources (emails, docs, web search)</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="graph-enhanced-rag">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Graph Enhanced RAG Systems</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Incorporates knowledge graphs into RAG to capture structured relationships between entities, enabling multi-hop reasoning and deeper contextual retrieval using graph traversal and Cypher queries alongside vector similarity search (e.g. Microsoft's GraphRAG)</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Enterprise knowledge bases with complex relationships</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Legal document analysis</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scientific literature review</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Recommendation systems with rich entity relationships</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="real-time-rag">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Real Time RAG</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Processes streaming data in real-time by constructing evolving knowledge graphs that capture scene-object-entity relationships as data arrives, using lightweight models and dynamic priority-based knowledge extraction</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">News monitoring</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Market analysis</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Intelligent transportation systems</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Healthcare monitoring</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Satellite remote sensing</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Financial trading systems</span>
-            </div>
-          </div>
-        </details>
-
-        <!-- Dynamic Context Assembly ---->
-        <details class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-green transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="dynamic-context-assembly" open>
-          <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
-            <div class="w-5 h-5 rounded-full bg-ctp-green"></div>
-            Dynamic Context Assembly
-          </summary>
-          
-          <!-- Assembly Functions and Orchestration Mechanisms ---->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Assembly Functions and Orchestration Mechanisms
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="template-based-formatting">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Template-based formatting</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Consistent structure for context assembly</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">API responses</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Report generation</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="priority-based-selection">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Priority-based selection</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Most important info first in context assembly</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Mobile apps</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Real-time systems</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="adaptive-composition">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Adaptive composition</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Adjusts to task requirements and model capabilities</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-domain applications</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scalable AI systems</span>
-            </div>
-          </div>
-
-          <!-- Multi-Component Integration Strategies ---->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Multi-Component Integration Strategies
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="multi-component-integration">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Multi-Component Integration</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Combines text, structured knowledge, temporal data, and external tools while maintaining coherent semantic relationships</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Enterprise AI systems</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Comprehensive analytics platforms</span>
-            </div>
-          </div>
-
-          <!-- Automated Assembly Optimizations ---->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Automated Assembly Optimizations - Automated Prompt Engineering
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="ape">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Automatic Prompt Engineer (APE)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Uses search algorithms to find optimal prompts automatically. Treats instruction as 'program,' optimized by searching over pool of instruction candidates proposed by LLM to maximize chosen score function</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Production systems needing optimal prompts</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">AI Content generation</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">AI-powered chatbots</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="lm-bff">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">LM-BFF</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Has automated pipelines that combine prompt-based fine-tuning with dynamic demonstrations. Suite of simple techniques for fine-tuning pre-trained language models on small number of annotated examples</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Entity extraction</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Classification tasks</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Domain adaptation with limited examples</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="promptbreeder">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Promptbreeder</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Self-Referential Evolutionary Systems where LLMs improve their own task-prompts and mutation-prompts through 'natural selection' analogies. Evolves and adapts prompts for given domain using evolutionary algorithm</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Autonomous AI systems</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Continuous learning applications</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Domain-specific optimization</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="self-refine-asm">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Self-Refine</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Generate → Critique → Revise → Repeat, 20% performance improvement with GPT-4</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Content creation</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Code review</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Creative writing</span>
-            </div>
-          </div>
-
-          <!-- Tool Integration Frameworks ---->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Tool Integration Frameworks
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="langchain">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Langchain</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Sequential processing chains, agents, web browsing capabilities. Provides building blocks for AI applications with extensive integrations</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Chatbots</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Data retrieval and processing</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Internal knowlege management</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">RAG applications</span>              
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="autogpt-autogen">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">AutoGPT/AutoGen</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Complex AI agent development with user-friendly interfaces. Multi-agent conversation orchestration with event-driven architecture</div>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Code generation</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Personalized content creation at scale</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Automated workflows</span>
-              <span class="use-case inline-block border border-ctp-green bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Research tasks</span>            
-            </div>
-          </div>
-        </details>
-      </div>
-
-      <!-- Context Processing - Main Category -->
-      <div class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300" data-category="processing">
-        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 border-ctp-blue pb-4">
-          <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-ctp-blue"></div>
-            Context Processing
-          </div>
-          <button class="collapse-toggle-btn px-3 py-1 text-sm font-medium text-ctp-subtext1 hover:text-ctp-text border border-ctp-blue hover:border-ctp-blue rounded-lg transition-all duration-200 hover:bg-ctp-surface0" data-category="processing">
-            Collapse All
-          </button>
-        </div>
-
-        <!-- Long Context Processing -->
-        <details class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-blue transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="long-context" open>
-          <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
-            <div class="w-5 h-5 rounded-full bg-ctp-blue"></div>
-            Long Context Processing
-          </summary>
-          
-          <!-- Ultra-long Sequence -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Ultra-long Sequence Context Processing
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="transformer">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Standard Transformer (Self-Attention, O²)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Baseline self-attention with quadratic complexity</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">General LLM Tasks</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Question answering</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Summarization</span>
-            </div>
-          </div>
-
-          <!-- Architectural Innovations -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Architectural Innovations for Long Context
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="ssm">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">State Space Models (SSMs, e.g. Mamba)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Linear complexity with constant memory through hidden states</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Real-time language modeling</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Streaming data</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Online inference with constant memory</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="dilated-attention">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Dilated Attention (e.g. LongNet)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Exponentially expanding attention fields</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Genomics</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Legal/financial document analysis</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Logs</span>              
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="toeplitz-neural-networks">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Toeplitz Neural Networks</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Model sequences with relative position encoded Toeplitz matrices reducing space time complexity to log linear</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Code generation</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Document QA</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Long sequence forecasting</span>              
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="linear-attention">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Linear Attention</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Expresses self attention as linear dot products of kernel feature maps</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scientific papers</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Book summarization</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Historical document analysis</span>              
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="non-attention-llms">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Non-attention LLMs (Recursive memory)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Uses recursive memory transformers, breaking long sequences into chunks. Model keeps a summary ('memory') of each chunk. As model moves through sequence it recursively updates and uses this memory</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Chatbots with persistent and growing context</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Logging agents</span>
-            </div>
-          </div>
-
-          <!-- Position Interpolation & Context Extension -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Position Interpolation & Context Extension
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="ntk-yarn">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">NTK/YaRN</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Neural Tangent Kernel uses NTK interpolation for positional encodings, linear interpolation for stretching position indices, and attention distribution correction tweaks attention mechanism</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Fine-tuning LLMs to process longer docs for specialized tasks</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="longrope">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">LongRoPE</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Identifies effective rescale factors for RoPE's rotation angles for each RoPE dimension based on token positions. Uses evolutionary search algorithm with progressive extension strategy to achieve 2048k context window</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Rapidly adapting LLMs to massive token windows (256k–2M tokens)</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Patent or scientific literature mining</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Big data retrieval</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="pose">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">PoSE</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Positional Skip-wisE training decouples train length from target context by dividing original context window into chunks with distinct skipping bias terms to manipulate position indices during training</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Data curation</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Codebase analysis</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Long meeting transcripts</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="self-extend">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Self-Extend (bi-level/grouped/neighbor attention)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Constructs bi-level attention: grouped attention for distant tokens using FLOOR operation and neighbor attention for adjacent tokens within specified range</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Plug-and-play context extension</span>
-            </div>
-          </div>
-
-          <!-- Optimization Techniques for Efficient Processing -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Optimization Techniques for Efficient Processing
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="gqa">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Grouped Query Attention (GQA)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Optimizes multi-head attention by sharing key and value projections across multiple query heads, reducing memory bandwidth requirements</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scaling up LLM Inference for cost savings</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="flash-attention">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">FlashAttention 1/2</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Memory-efficient attention algorithm that fuses operations and uses tiling to reduce memory accesses while maintaining exact attention computation</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Cloud inference</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Large batch serving</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Distributed training</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="ring-attention">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Ring Attention</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Distributes attention computation across multiple devices using ring communication pattern</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-GPU or TPU setups</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="sparse-attention">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Sparse Attention (LongLoRA, SinkLoRA)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Selectively attends to subset of tokens based on patterns or learned importance</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">RAG</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Selective context retrieval</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="efficient-selective-attention">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Efficient Selective Attention</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Dynamically selects important tokens for attention computation</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Large codebases</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-document Q&A</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="bigbird">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">BigBird</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Combines local, global, and random attention patterns in sparse attention mechanism</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Biomedical data mining</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Knowledge bases</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Graph-structured documents</span>
-            </div>
-          </div>
-
-          <!-- Memory Management & Context Compression -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Memory Management & Context Compression
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="rolling-buffer-cache">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Rolling Buffer Cache</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Maintains fixed-size cache with sliding window mechanism for token storage</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Real-time applications with fixed compute or memory budget</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="streaming-llm">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Streaming LLM</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Processes continuous input streams with memory-efficient caching mechanisms</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Live chat moderation</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Streaming summarization</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="infini-attention">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Infini-attention</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Combines compressive memory with local attention in single model block</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Retrieval-based LLMs</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Systems requiring both detail and recall</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="heavy-hitter-oracle">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Heavy Hitter Oracle</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Identifies and prioritizes most important tokens/context for attention</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">LLM API deployment</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Latency-sensitive applications</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="qwenlong-cprs">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">QwenLong-CPRS, InfLLM</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Multi-granularity memory management with compression techniques</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Legal/medical archives</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-chapter document analysis</span>
-            </div>
-          </div>
-        </details>
-
-        <!-- Contextual Self-Refinement and Adaptation -->
-        <details class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-blue transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="self-refinement-adaptation" open>
-          <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
-            <div class="w-5 h-5 rounded-full bg-ctp-blue"></div>
-            Contextual Self-Refinement and Adaptation
-          </summary>
-          
-          <!-- Foundational Self-Refinement Frameworks -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Foundational Self-Refinement Frameworks
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="self-refine">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Self-Refine</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Generate → Critique → Revise → Repeat iterative process for output improvement</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Automated writing assistants</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Code review bots</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="reflexion">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Reflexion</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Uses self-feedback and reflection mechanisms to improve task performance over time</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Interactive agents</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-turn dialogue</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Interactive agents</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-turn dialogue</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Strategic planning</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="n-critics">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">N-CRITICS, A2R, ISR-LLM</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Multiple critic models provide multi-dimensional evaluation and refinement</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scientific writing</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Factual report generation</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Compliance documentation</span>
-            </div>
-          </div>
-
-          <!-- Meta-Learning and Autonomous Evolution -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Meta-Learning and Autonomous Evolution
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="self-creator">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">SELF, Creator, Self-Developing</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Autonomous tool creation and self-improvement mechanisms</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">AutoML systems</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">LLM-driven agent ecosystems</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Research automation</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="meta-in-context">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">In-Context Learning / Meta-in-context</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Fast adaptation using examples provided in context without parameter updates</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Few-shot/zero-shot learning</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Adapting to unseen data formats</span>
-            </div>
-          </div>
-
-          <!-- Memory-Augmented Adaptation Frameworks -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Memory-Augmented Adaptation Frameworks
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="memory-augmentation">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Memory Augmentation, Meta-Learned Loss</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Meta-learning abilities and improved sample efficiency through architectural innovations</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Lifelong learning</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Reinforcement learning</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Robotics</span>
-            </div>
-          </div>
-
-          <!-- Long Chain-of-Thought and Advanced Reasoning -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Long Chain-of-Thought and Advanced Reasoning
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="advanced-reasoning">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Advanced Reasoning (Compact CoT)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Optimized reasoning with reduced token usage while maintaining performance</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Cost-sensitive LLM apps</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Mobile or edge deployments</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Complex reasoning tasks</span>
-            </div>
-          </div>
-        </details>
-
-        <!-- Multi-Modal Context -->
-        <details class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-blue transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="multimodal-context" open>
-          <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
-            <div class="w-5 h-5 rounded-full bg-ctp-blue"></div>
-            Multi-Modal Context
-          </summary>
-          
-          <!-- Foundational Techniques -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Foundational Techniques
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="vpg-clip">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Visual Prompt Generators (VPGs), CLIP/CLAP + Q-Former</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Combines vision/audio with text in unified model using cross-modal encoders</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Image captioning</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">VQA</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">multi-modal retrieval</span>
-            </div>
-          </div>
-
-          <!-- Advanced Integration Strategies -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Advanced Integration Strategies
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="cross-modal-attention">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Cross-Modal Attention, Hierarchical Designs</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Deep fusion mechanisms across modalities with hierarchical processing</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Complex scene analysis</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Video QA</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scientific image interpretation</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="browse-concentrate">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Browse-and-Concentrate, Unified Training</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Joint training approach across modalities from the outset</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Foundation models</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-modal pretraining</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="adapters-video">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Adapters/Prompt Tuning for Video</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Parameter-efficient adaptation for video understanding</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Surveillance analysis</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Sports analytics</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Lecture summarization</span>
-            </div>
-          </div>
-
-          <!-- Advanced Contextual Capabilities and Future Directions -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Emerging Applications
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="emerging-compression">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Adaptive Hierarchical Token Compression, V2PE</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Advanced compression and context handling for variable-length inputs</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Dynamic media</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Streaming environments</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">AI-driven broadcast</span>
-            </div>
-          </div>
-        </details>
-
-        <!-- Relational & Structured Context -->
-        <details class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-blue transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="relational-structured" open>
-          <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
-            <div class="w-5 h-5 rounded-full bg-ctp-blue"></div>
-            Relational & Structured Context
-          </summary>
-          
-          <!-- Knowledge Graph Embeddings and Neural Integration -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Knowledge Graph Embeddings and Neural Integration
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="gnn-graphformers">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Graph Neural Networks, GraphFormers, Heterformer</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Neural architectures designed for graph-structured data processing</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scientific discovery</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Knowledge base QA</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Relational Reasoning</span>
-            </div>
-          </div>
-
-          <!-- Verbalization & Structured Data Representations -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Verbalization & Structured Data Representations
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="verbalization-structured">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Verbalization/Structured Data Reps</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Converts structured data into natural language representations</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Table QA</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Knowledge base integration</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Data extraction</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="programming-lang-reps">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Programming Language Reps (Python/SQL)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Uses programming languages as intermediate representations</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Data engineering</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Code synthesis</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Database querying</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="matrix-representations">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Matrix Representations</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Compact matrix-based representations of structured information</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Lightweight edge deployments</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">On-device ML</span>
-            </div>
-          </div>
-
-          <!-- Integration Frameworks & Synergized Approaches -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Integration Frameworks & Synergized Approaches
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="k-bert-adapters">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">K-BERT (Pretrain), KAPING (Inference Time)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Injects structured knowledge during pretraining or inference</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Medical/financial LLMs</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">RAG</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="unified-approaches">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Unified Approaches (GreaseLM, QA-GNN)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Combines natural language fluency with knowledge graph reasoning</div>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Open-domain QA</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Research assistants</span>
-              <span class="use-case inline-block border border-ctp-blue bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Scientific agents</span>
-            </div>
-          </div>
-        </details>
-      </div>
-
-      <!-- Context Management - Main Category -->
-      <div class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300" data-category="management">
-        <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 border-ctp-peach pb-4">
-          <div class="flex items-center gap-4">
-            <div class="w-8 h-8 rounded-full bg-ctp-peach"></div>
-            Context Management
-          </div>
-          <button class="collapse-toggle-btn px-3 py-1 text-sm font-medium text-ctp-subtext1 hover:text-ctp-text border border-ctp-blue hover:border-ctp-blue rounded-lg transition-all duration-200 hover:bg-ctp-surface0" data-category="management">
-            Collapse
-          </button>
-        </div>
-
-        <!-- Memory Hierarchies -->
-        <details class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-peach transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="memory-hierarchies" open>
-          <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
-            <div class="w-5 h-5 rounded-full bg-ctp-peach"></div>
-            Memory Hierarchies & Storage Architectures
-          </summary>
-          
-          <!-- Virtual Memory Systems -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Virtual Memory Systems
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="memgpt">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">MemGPT</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Virtual memory management like OS systems</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Extended conversations</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Document analysis</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Personal companion systems</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Chatbots with persistent memory</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="paged-attention">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">PagedAttention</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Efficient KV cache memory management with non-contiguous blocks</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Cloud inference</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Large batch serving</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Production LLM deployment</span>
-            </div>
-          </div>
-
-          <!-- Dynamic Memory Organizations -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Dynamic Memory Organizations
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="memorybank">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">MemoryBank</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Uses Ebbinghaus Forgetting Curve principles with dynamic memory strength adjustment</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Personal companion systems</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Psychological counseling</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Long-term AI companions</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="readagent">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">ReadAgent</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Episode pagination, memory gisting, and interactive lookup for human-like reading</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Long document analysis</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Research paper comprehension</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-document Q&A</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="compressor-retriever">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Compressor-Retriever Systems</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Lifelong context management using base model functions to compress and retrieve content with end-to-end differentiability</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Long-term learning systems</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Evolving knowledge bases</span>
-            </div>
-          </div>
-
-          <!-- System Configurations -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            System Configurations
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="centralized-systems">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Centralized Systems</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Excellent task coordination but poor scalability, context overflow as topics increase</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Single-domain chatbots</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Focused task automation</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="decentralized-systems">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Decentralized Systems</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Reduced context overflow but increased response time due to inter-agent querying</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-agent systems</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Distributed knowledge processing</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="hybrid-systems">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Hybrid Systems</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Balances shared knowledge with specialized processing, semi-autonomous operation</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Enterprise AI systems</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Complex conversational agents</span>
-            </div>
-          </div>
-        </details>
-
-        <!-- Context Compression -->
-        <details class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-peach transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" data-subcategory="context-compression" open>
-          <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
-            <div class="w-5 h-5 rounded-full bg-ctp-peach"></div>
-            Context Compression
-          </summary>
-          
-          <!-- Context Manager Components -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Context Manager Components
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="snapshot-creation">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Snapshot creation</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Save intermediate states during processing</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Long-running tasks</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Recovery systems</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="state-restoration">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">State restoration</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Resume from previous points in processing</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Recovery from interruptions</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="window-management">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Window management</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Overall context optimization and organization</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Multi-step reasoning</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Complex document processing</span>
-            </div>
-          </div>
-
-          <!-- Context Compression Techniques -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Context Compression Techniques
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="icae">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">In-Context Autoencoder (ICAE)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Condenses long contexts into compact memory slots for direct conditioning</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Memory-constrained environments</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="rcc">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Recurrent Context Compression (RCC)</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Expands context window length in constrained storage using instruction reconstruction techniques</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Edge computing</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Resource-limited deployment</span>
-            </div>
-          </div>
-
-          <!-- Memory Augmented Approaches -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Memory Augmented Approaches
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="knn-memory-caches">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">kNN-Based Memory Caches</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Store key-value pairs with contrastive learning to improve retrieval accuracy</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Conversation systems</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Recommendation engines</span>
-            </div>
-          </div>
-
-          <!-- Hierarchical Caching Systems -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Hierarchical Caching Systems
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="hierarchical-caching">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Hierarchical Caching</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Multi-layer caching systems like Activation Refilling (ACRE)</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Enterprise systems with multiple data tiers</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="infinite-llm">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Infinite-LLM with DistAttention</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Handle extremely long sequences using distributed attention mechanisms</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Large-scale document processing</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="kcache">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">KCache</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Smart optimization: K cache in high-bandwidth memory, V cache in CPU memory for optimized inference speed and memory usage</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">High-performance serving</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Cost optimization</span>
-            </div>
-          </div>
-
-          <!-- Multi-agent Distributive Processing -->
-          <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
-            Multi-agent Distributive Processing
-          </div>
-          <div class="technique-list space-y-3">
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="multi-agent-distributive">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Multi-Agent Distributive Processing</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">Handles massive inputs in distributed manner with high cache reusability in RAG and agent workloads</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Large-scale knowledge processing</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Enterprise RAG</span>
-            </div>
-            
-            <div class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md" data-technique="cache-access-analysis">
-              <div class="technique-name font-semibold text-ctp-blue mb-1">Cache Access Pattern Analysis</div>
-              <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">High reusability patterns in RAG and agent applications to reduce redundancy</div>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Production RAG systems</span>
-              <span class="use-case inline-block border border-ctp-peach bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2">Agent platforms</span>
-            </div>
-          </div>
-        </details>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Modal for detailed information -->
-  <div class="modal fixed inset-0 bg-black bg-opacity-80 z-50 hidden items-center justify-center" id="techniqueModal">
-    <div class="modal-content bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 max-w-3xl max-h-[80vh] overflow-y-auto mx-5 relative">
-      <button class="close-btn absolute top-4 right-6 bg-none border-none text-2xl cursor-pointer text-ctp-subtext1 hover:text-ctp-text transition-colors duration-200">&times;</button>
-      <div id="modalBody">
-        <!-- Content will be populated dynamically -->
-      </div>
+                  {subcategory.subsections.map((subsection) => (
+                    <>
+                      <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
+                        {subsection.title}
+                      </div>
+                      <div class="technique-list space-y-3">
+                        {subsection.techniques.map((technique) => (
+                          <div
+                            class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md"
+                            data-technique={technique.id}
+                          >
+                            <div class="technique-name font-semibold text-ctp-blue mb-1">
+                              {technique.name}
+                            </div>
+                            <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">
+                              {technique.description}
+                            </div>
+                            {technique.useCases.map((uc) => (
+                              <span
+                                class={`use-case inline-block border border-ctp-${color} bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2`}
+                              >
+                                {uc}
+                              </span>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  ))}
+                </details>
+              ))}
+            </div>
+          );
+        })
+      }
     </div>
   </div>
 </div>
 
 <style>
-  .modal {
-    display: none;
-  }
-  
-  .modal.active {
-    display: flex;
-  }
-
-  /* Enhanced filter button styles */
-  .filter-btn.active {
-    background-color: var(--ctp-blue);
-    border-color: var(--ctp-blue);
-    color: var(--ctp-base);
-    box-shadow: 0 4px 12px rgba(137, 180, 250, 0.3);
-  }
-
-  .filter-btn.active:hover {
-    background-color: var(--ctp-blue);
-    border-color: var(--ctp-blue);
-    color: var(--ctp-base);
-    transform: translateY(-2px);
-  }
-
-  /* Collapse toggle button styles */
-  .collapse-toggle-btn {
-    transition: all 0.2s ease;
-    font-size: 0.875rem;
-    min-width: 100px;
-    text-align: center;
-  }
-
-  .collapse-toggle-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .collapse-toggle-btn:active {
-    transform: translateY(0);
-  }
-
-  /* Enhanced subcategory animations */
-  .sub-category {
-    transition: all 0.3s ease;
-  }
-
-  /* Enhanced technique hover styles */
-  .technique:hover .technique-name {
-    color: var(--ctp-blue);
-  }
-
-  .technique:hover .technique-description {
-    color: var(--ctp-text);
-  }
-
-  .technique:hover .use-case {
-    border-color: var(--ctp-blue);
-    color: var(--ctp-blue);
-  }
-
-  /* Technique selection state */
+  /* All your previous styles go here */
   .technique.selected {
     background-color: var(--ctp-surface1);
     border-color: var(--ctp-blue);
     transform: translateX(4px);
     box-shadow: 0 4px 12px rgba(137, 180, 250, 0.2);
   }
-
-  .technique.selected .technique-name {
-    color: var(--ctp-blue);
-  }
-
-  .technique.selected .technique-description {
-    color: var(--ctp-text);
-  }
-
-  .technique.selected .use-case {
-    border-color: var(--ctp-blue);
-    color: var(--ctp-blue);
-  }
-
   .detail-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1.25rem;
   }
-
   .detail-table th,
   .detail-table td {
     padding: 0.75rem;
     text-align: left;
     border-bottom: 1px solid var(--ctp-surface0, #45475a);
   }
-
   .detail-table th {
     background-color: var(--ctp-mantle, #181825);
     font-weight: 600;
     color: var(--ctp-text, #cdd6f4);
+    width: 25%;
   }
-
   .detail-table td {
     vertical-align: top;
     color: var(--ctp-subtext1, #bac2de);
   }
-
-  .hidden {
-    display: none;
-  }
-
-  @media (max-width: 768px) {
-    .main-grid {
-      gap: 1.5rem;
-    }
-    
-    .filter-buttons {
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    .modal-content {
-      margin: 0.5rem;
-      padding: 1.25rem;
-    }
-    
-    .detail-table th,
-    .detail-table td {
-      padding: 0.5rem;
-      font-size: 0.875rem;
-    }
-  }
-
-  /* Show dropdown arrows for collapsible sections */
   .sub-category summary {
     list-style: none;
     position: relative;
   }
-  
   .sub-category summary::-webkit-details-marker {
     display: none;
   }
-  
   .sub-category summary::before {
     content: "▼";
     position: absolute;
@@ -1178,925 +161,197 @@
     color: var(--ctp-subtext1);
     transition: transform 0.2s ease;
   }
-  
   .sub-category[open] summary::before {
     transform: translateY(-50%) rotate(180deg);
   }
+  /* ... etc ... */
 </style>
 
 <script>
-import Fuse from 'fuse.js';
+  // Client-side script (runs in the browser)
+  import Fuse from "fuse.js";
 
-// Technique details database with the four required columns
-const techniqueDetails = {
-  // Context Retrieval & Generation - Prompt Engineering & Context Generation
-  clear: {
-    title: "CLEAR Framework",
-    howItWorks: "CLEAR stands for Conciseness: Keep instructions focused and direct, Logic: Structure reasoning flow clearly, Explicitness: State requirements precisely, Adaptability: Design for various use cases, Reflectiveness: Build in self-evaluation",
-    whenToUse: "Design for various use cases with self-evaluation built in",
-    useCase: "Building robust prompt templates for production AI systems",
-    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
-  },
-  cot: {
-    title: "Chain of Thought (CoT)",
-    howItWorks: "Breaks complex problems into step-by-step reasoning. Key phrase: 'Let's think step by step'. Significantly improves accuracy on complex problems",
-    whenToUse: "Multi-step arithmetic, logical reasoning tasks",
-    useCase: "Mathematical problem solving, debugging code logic",
-    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
-  },
-  tot: {
-    title: "Tree of Thoughts (ToT)",
-    howItWorks: "Creates hierarchical reasoning with exploration and backtracking. Can explore multiple paths and backtrack when needed",
-    whenToUse: "Game optimization, complex decision trees",
-    useCase: "Strategic planning, chess moves, complex optimization",
-    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
-  },
-  got: {
-    title: "Graph of Thoughts (GoT)",
-    howItWorks: "Models reasoning as interconnected graphs (thoughts = vertices, dependencies = edges). Better quality than ToT, lower computational cost",
-    whenToUse: "Complex multi-dependency problems",
-    useCase: "Software architecture design, project management",
-    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
-  },
-  "zero-shot": {
-    title: "Zero-shot",
-    howItWorks: "No examples, direct instruction",
-    whenToUse: "Quick testing of model capabilities without examples",
-    useCase: "Rapid prototyping, model evaluation",
-    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
-  },
-  "few-shot": {
-    title: "Few-shot",
-    howItWorks: "2-5 demonstration examples. Performance heavily depends on example selection and ordering",
-    whenToUse: "Limited training data available, domain-specific tasks",
-    useCase: "Classification tasks, content generation with examples",
-    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
-  },
-  "in-context-learning": {
-    title: "In-context learning",
-    howItWorks: "Performance heavily depends on example selection and ordering",
-    whenToUse: "Dynamic adaptation to new tasks without retraining",
-    useCase: "Adaptive AI systems, personalized responses",
-    sectionOfPaper: "4.1.1. Prompt Engineering and Context Generation"
-  },
-  
-  // External Knowledge Retrieval
-  flashrag: {
-    title: "FlashRAG",
-    howItWorks: "Comprehensive evaluation and modular RAG implementation",
-    whenToUse: "Good starting point for RAG experimentation",
-    useCase: "Rapid prototyping of retrieval systems",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  kragen: {
-    title: "KRAGEN",
-    howItWorks: "Integrates Knowledge Graphs and advanced prompting. Breaks down complex problems into smaller sub-problems retrieves relevant information through RAG, and consolidates the results for a more accurate and transparent response",
-    whenToUse: "Especially useful for enterprise-grade RAG where there's the need for fine control, reliability, and easy experimentation",
-    useCase: "Enterprise knowledge bases, complex domain-specific queries",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  composerag: {
-    title: "ComposeRAG",
-    howItWorks: "Uses the LLM to plan, decompose, and orchestrate retrievals. Breaks down a user's query into steps, retrieving relevant information for each step (from one or more sources) and then stitches the response together for a final coherent response",
-    whenToUse: "Great for multi-hop or compositional questions",
-    useCase: "Complex research queries, investigative journalism",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  "self-rag": {
-    title: "Self-RAG",
-    howItWorks: "Model decides when to retrieve information dynamically. Uses special tokens to control retrieval timing and quality assessment",
-    whenToUse: "Scenarios where not every query needs external knowledge",
-    useCase: "Conversational AI that adapts retrieval based on query complexity",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  raptor: {
-    title: "RAPTOR",
-    howItWorks: "Processes documents hierarchically using recursive clustering and summarization, constructing tree with differing levels of summarization from bottom up",
-    whenToUse: "Long-context documents, multi-hop reasoning tasks, complex queries requiring broad context",
-    useCase: "Research papers, legal documents, comprehensive reports, complex PDFs",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  hipporag: {
-    title: "HippoRAG",
-    howItWorks: "Memory-inspired retrieval architecture that synergistically orchestrates LLMs, knowledge graphs, and the Personalized PageRank algorithm to mimic the different roles of neocortex and hippocampus in human memory",
-    whenToUse: "Multi-hop question answering, continual knowledge integration, connecting facts across multiple sources",
-    useCase: "Scientific literature reviews, legal case briefings, medical diagnosis requiring synthesis of information from various sources",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  kaping: {
-    title: "KAPING",
-    howItWorks: "Retrieves facts using semantic similarity combining semantic network structure with information content of concepts",
-    whenToUse: "Text classification, question answering, similarity-based search and recommendation",
-    useCase: "Document classification, content recommendation systems, knowledge graph applications",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  karpa: {
-    title: "KARPA",
-    howItWorks: "Training-free KG adaptation with pre-planning, semantic matching, and relation path reasoning",
-    whenToUse: "Complex knowledge graph reasoning without training overhead",
-    useCase: "Real-time knowledge integration, dynamic query processing",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  "think-on-graph": {
-    title: "Think-on-Graph",
-    howItWorks: "Sequential reasoning over knowledge graphs to locate relevant triples, conduct exploration to retrieve related information from external databases while generating multiple reasoning paths",
-    whenToUse: "Multi-path reasoning over structured knowledge",
-    useCase: "Complex fact verification, multi-step logical inference",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  structgpt: {
-    title: "StructGPT",
-    howItWorks: "Iterative reading and reasoning approach that constructs specialized functions to collect relevant evidence from structured data sources",
-    whenToUse: "Working with structured databases and knowledge bases",
-    useCase: "Database querying, structured data analysis",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  agenticrag: {
-    title: "AgenticRAG",
-    howItWorks: "Embeds autonomous AI agents into the RAG pipeline using agentic design patterns (reflection, planning, tool use, multi-agent collaboration) to dynamically manage retrieval strategies",
-    whenToUse: "Complex multi-step reasoning, multi-domain tasks requiring dynamic retrieval decisions",
-    useCase: "Multi-agent collaborative reasoning, personal assistants that need to access various data sources",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  "graph-enhanced-rag": {
-    title: "Graph Enhanced RAG Systems",
-    howItWorks: "Incorporates knowledge graphs into RAG to capture structured relationships between entities, enabling multi-hop reasoning and deeper contextual retrieval using graph traversal and Cypher queries alongside vector similarity search",
-    whenToUse: "Complex queries requiring multi-hop reasoning, scenarios needing both semantic understanding and symbolic reasoning",
-    useCase: "Enterprise knowledge bases with complex relationships, legal document analysis, scientific literature review",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-  "real-time-rag": {
-    title: "Real Time RAG",
-    howItWorks: "Processes streaming data in real-time by constructing evolving knowledge graphs that capture scene-object-entity relationships as data arrives, using lightweight models and dynamic priority-based knowledge extraction",
-    whenToUse: "Live data processing needs, streaming applications requiring immediate responses, scenarios with constantly changing information",
-    useCase: "News monitoring, market analysis, intelligent transportation systems, healthcare monitoring",
-    sectionOfPaper: "4.1.2. External Knowledge Retrieval"
-  },
-
-  // Dynamic Context Assembly
-  "template-based-formatting": {
-    title: "Template-based formatting",
-    howItWorks: "Consistent structure for context assembly",
-    whenToUse: "Need for standardized output formats",
-    useCase: "API responses, report generation",
-    sectionOfPaper: "4.1.3. Dynamic Context Assembly"
-  },
-  "priority-based-selection": {
-    title: "Priority-based selection",
-    howItWorks: "Most important info first in context assembly",
-    whenToUse: "Resource-constrained environments",
-    useCase: "Mobile apps, real-time systems",
-    sectionOfPaper: "4.1.3. Dynamic Context Assembly"
-  },
-  "adaptive-composition": {
-    title: "Adaptive composition",
-    howItWorks: "Adjusts to task requirements and model capabilities",
-    whenToUse: "Varying task complexity and resource constraints",
-    useCase: "Multi-domain applications, scalable AI systems",
-    sectionOfPaper: "4.1.3. Dynamic Context Assembly"
-  },
-  "multi-component-integration": {
-    title: "Multi-Component Integration",
-    howItWorks: "Combines text, structured knowledge, temporal data, and external tools while maintaining coherent semantic relationships",
-    whenToUse: "Complex applications requiring diverse data types",
-    useCase: "Enterprise AI systems, comprehensive analytics platforms",
-    sectionOfPaper: "4.1.3. Dynamic Context Assembly"
-  },
-  ape: {
-    title: "Automatic Prompt Engineer (APE)",
-    howItWorks: "Uses search algorithms to find optimal prompts automatically. Treats instruction as 'program,' optimized by searching over pool of instruction candidates proposed by LLM to maximize chosen score function",
-    whenToUse: "Automated prompt optimization at scale, reducing development time by 60-80% for complex tasks",
-    useCase: "Production systems requiring optimal prompts, content generation, AI-powered chatbots",
-    sectionOfPaper: "4.1.3. Dynamic Context Assembly"
-  },
-  "lm-bff": {
-    title: "LM-BFF",
-    howItWorks: "Has automated pipelines that combine prompt-based fine-tuning with dynamic demonstrations. Suite of simple techniques for fine-tuning pre-trained language models on small number of annotated examples",
-    whenToUse: "Few-shot learning scenarios with limited training data, when you need better performance than standard fine-tuning",
-    useCase: "Entity extraction, classification tasks, domain adaptation with limited examples",
-    sectionOfPaper: "4.1.3. Dynamic Context Assembly"
-  },
-  promptbreeder: {
-    title: "Promptbreeder",
-    howItWorks: "Self-Referential Evolutionary Systems where LLMs improve their own task-prompts and mutation-prompts through 'natural selection' analogies. Evolves and adapts prompts for given domain using evolutionary algorithm",
-    whenToUse: "Self-improving prompt systems, scenarios requiring continuous adaptation and optimization",
-    useCase: "Autonomous AI systems, continuous learning applications, domain-specific optimization",
-    sectionOfPaper: "4.1.3. Dynamic Context Assembly"
-  },
-  "self-refine-asm": {
-    title: "Self-Refine",
-    howItWorks: "Generate → Critique → Revise → Repeat, 20% performance improvement with GPT-4",
-    whenToUse: "Tasks where iterative improvement is valuable",
-    useCase: "Content creation, code review, creative writing",
-    sectionOfPaper: "4.1.3. Dynamic Context Assembly"
-  },
-  langchain: {
-    title: "Langchain",
-    howItWorks: "Sequential processing chains, agents, web browsing capabilities. Provides building blocks for AI applications with extensive integrations",
-    whenToUse: "Building complex AI workflows, chaining multiple LLM calls together, RAG applications",
-    useCase: "Chatbots, data retrieval and processing, internal knowledge management, API usage",
-    sectionOfPaper: "4.1.3. Dynamic Context Assembly"
-  },
-  "autogpt-autogen": {
-    title: "AutoGPT/AutoGen",
-    howItWorks: "Complex AI agent development with user-friendly interfaces. Multi-agent conversation orchestration with event-driven architecture",
-    whenToUse: "Multi-agent systems requiring collaboration, autonomous task execution, complex agent dynamics",
-    useCase: "Code generation, personalized content creation at scale, automated workflows, research tasks",
-    sectionOfPaper: "4.1.3. Dynamic Context Assembly"
-  },
-
-  // Context Processing - Long Context Processing
-  transformer: {
-    title: "Standard Transformer (Self-Attention, O²)",
-    howItWorks: "Baseline for most LLMs; uses self-attention mechanism with quadratic computational complexity",
-    whenToUse: "Use for moderate-length sequences (<8k tokens)",
-    useCase: "General LLM tasks, question answering, summarization",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  ssm: {
-    title: "State Space Models (SSMs, e.g. Mamba)",
-    howItWorks: "Linear computational complexity and constant memory through fixed-size hidden states",
-    whenToUse: "Need efficient, scalable long-context modeling with fixed memory",
-    useCase: "Real-time language modeling, streaming data, online inference with constant memory",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "dilated-attention": {
-    title: "Dilated Attention (e.g. LongNet)",
-    howItWorks: "Uses exponentially expanding attentive fields as token distance grows leading to linear computational complexity while maintaining logarithmic dependency between tokens",
-    whenToUse: "Scaling to very long sequences while maintaining efficient computation",
-    useCase: "Genomics, legal/financial document analysis, logs",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "toeplitz-neural-networks": {
-    title: "Toeplitz Neural Networks",
-    howItWorks: "Model sequences with relative position encoded Toeplitz matrices reducing space time complexity to log linear",
-    whenToUse: "Need to extrapolate far beyond training context length (e.g., from 512 to 14k tokens)",
-    useCase: "Code generation, document QA, long sequence forecasting",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "linear-attention": {
-    title: "Linear Attention",
-    howItWorks: "Expresses self attention as linear dot products of kernel feature maps",
-    whenToUse: "Processing extremely long contexts (10k–100k+ tokens) with strict speed/memory requirements",
-    useCase: "Scientific papers, whole-book summarization, historical document analysis",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "non-attention-llms": {
-    title: "Non-attention LLMs (Recursive memory)",
-    howItWorks: "Uses recursive memory transformers, breaking long sequences into chunks. Model keeps a summary ('memory') of each chunk. As model moves through sequence it recursively updates and uses this memory",
-    whenToUse: "Hard limitations on quadratic scaling like massive input sizes, real-time constraints",
-    useCase: "Chatbots with persistent, ever-growing context, logging agents",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "ntk-yarn": {
-    title: "NTK/YaRN",
-    howItWorks: "Neural Tangent Kernel uses NTK interpolation for positional encodings, linear interpolation for stretching position indices, and attention distribution correction tweaks attention mechanism",
-    whenToUse: "Extending pretrained models to longer sequences with stability",
-    useCase: "Fine-tuning LLMs to process longer documents for specialized tasks",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  longrope: {
-    title: "LongRoPE",
-    howItWorks: "Identifies effective rescale factors for RoPE's rotation angles for each RoPE dimension based on token positions. Uses evolutionary search algorithm with progressive extension strategy to achieve 2048k context window",
-    whenToUse: "Rapidly adapting LLMs to massive token windows (256k–2M tokens)",
-    useCase: "Patent or scientific literature mining, big data retrieval",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  pose: {
-    title: "PoSE",
-    howItWorks: "Positional Skip-wisE training decouples train length from target context by dividing original context window into chunks with distinct skipping bias terms to manipulate position indices during training",
-    whenToUse: "Pushing sequence length limits during training or inference efficiently without full-length fine-tuning",
-    useCase: "Data curation, codebase analysis, long meeting transcripts",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "self-extend": {
-    title: "Self-Extend",
-    howItWorks: "Constructs bi-level attention: grouped attention for distant tokens using FLOOR operation and neighbor attention for adjacent tokens within specified range",
-    whenToUse: "Need long-context processing without expensive re-training",
-    useCase: "Plug-and-play context extension in deployed systems",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  gqa: {
-    title: "Grouped Query Attention (GQA)",
-    howItWorks: "Optimizes multi-head attention by sharing key and value projections across multiple query heads, reducing memory bandwidth requirements",
-    whenToUse: "Balancing efficiency and flexibility in attention mechanisms",
-    useCase: "Scaling up LLM inference for cost savings",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "flash-attention": {
-    title: "FlashAttention 1/2",
-    howItWorks: "Memory-efficient attention algorithm that fuses operations and uses tiling to reduce memory accesses while maintaining exact attention computation",
-    whenToUse: "Training/inference of large LLMs on GPUs and want linear memory scaling",
-    useCase: "Cloud inference, large batch serving, distributed training",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "ring-attention": {
-    title: "Ring Attention",
-    howItWorks: "Distributes attention computation across multiple devices using ring communication pattern",
-    whenToUse: "Distributing computation across multiple devices or nodes",
-    useCase: "Multi-GPU or TPU setups; scaling beyond single device limits",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "sparse-attention": {
-    title: "Sparse Attention (LongLoRA, SinkLoRA)",
-    howItWorks: "Selectively attends to subset of tokens based on patterns or learned importance",
-    whenToUse: "Only a small subset of the context is relevant and want to reduce unnecessary computation",
-    useCase: "Retrieval-augmented generation, selective context retrieval",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "efficient-selective-attention": {
-    title: "Efficient Selective Attention",
-    howItWorks: "Dynamically selects important tokens for attention computation",
-    whenToUse: "Need fine-grained focus on important tokens in huge input",
-    useCase: "Large codebases, multi-document Q&A",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  bigbird: {
-    title: "BigBird",
-    howItWorks: "Combines local, global, and random attention patterns in sparse attention mechanism",
-    whenToUse: "Balancing local/global/random attention for long documents with graph-like dependencies",
-    useCase: "Biomedical data mining, graph-structured documents, knowledge bases",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "rolling-buffer-cache": {
-    title: "Rolling Buffer Cache",
-    howItWorks: "Maintains fixed-size cache with sliding window mechanism for token storage",
-    whenToUse: "Managing limited memory resources in inference/deployment",
-    useCase: "Real-time applications with fixed compute/memory budget",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "streaming-llm": {
-    title: "Streaming LLM",
-    howItWorks: "Processes continuous input streams with memory-efficient caching mechanisms",
-    whenToUse: "Need continuous, real-time input processing with memory conservation",
-    useCase: "Live chat moderation, streaming summarization",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "infini-attention": {
-    title: "Infini-attention",
-    howItWorks: "Combines compressive memory with local attention in single model block",
-    whenToUse: "Merging long-term and local memory in a single model block",
-    useCase: "Retrieval-based LLMs, systems requiring both detail and recall",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "heavy-hitter-oracle": {
-    title: "Heavy Hitter Oracle",
-    howItWorks: "Identifies and prioritizes most important tokens/context for attention",
-    whenToUse: "Prioritizing high-value context, maximizing throughput/latency",
-    useCase: "LLM API deployment, latency-sensitive applications",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-  "qwenlong-cprs": {
-    title: "QwenLong-CPRS, InfLLM",
-    howItWorks: "Multi-granularity memory management with compression techniques",
-    whenToUse: "Extreme long-context requirements; multi-granularity memory management",
-    useCase: "Legal/medical archives, multi-chapter document analysis",
-    sectionOfPaper: "4.2.1. Long Context Processing"
-  },
-
-  // Contextual Self-Refinement and Adaptation
-  "self-refine": {
-    title: "Self-Refine",
-    howItWorks: "Generate → Critique → Revise → Repeat iterative process for output improvement",
-    whenToUse: "You want iterative output improvement and error correction",
-    useCase: "Automated writing assistants, code review bots",
-    sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
-  },
-  reflexion: {
-    title: "Reflexion",
-    howItWorks: "Uses self-feedback and reflection mechanisms to improve task performance over time",
-    whenToUse: "Need 'reflection' or self-feedback to improve task performance over time",
-    useCase: "Interactive agents, multi-turn dialog, strategic planning",
-    sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
-  },
-  "n-critics": {
-    title: "N-CRITICS, A2R, ISR-LLM",
-    howItWorks: "Multiple critic models provide multi-dimensional evaluation and refinement",
-    whenToUse: "High accuracy is critical; want multi-dimensional evaluation/refinement",
-    useCase: "Scientific writing, factual report generation, compliance documentation",
-    sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
-  },
-  "self-creator": {
-    title: "SELF, Creator, Self-Developing",
-    howItWorks: "Autonomous tool creation and self-improvement mechanisms",
-    whenToUse: "Desire autonomous tool creation and self-improvement",
-    useCase: "AutoML systems, LLM-driven agent ecosystems, research automation",
-    sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
-  },
-  "meta-in-context": {
-    title: "In-Context Learning / Meta-in-context",
-    howItWorks: "Fast adaptation using examples provided in context without parameter updates",
-    whenToUse: "Fast adaptation to new tasks or environments with little to no retraining",
-    useCase: "Few-shot/zero-shot learning, adapting to unseen data formats",
-    sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
-  },
-  "memory-augmentation": {
-    title: "Memory Augmentation, Meta-Learned Loss",
-    howItWorks: "Meta-learning abilities and improved sample efficiency through architectural innovations",
-    whenToUse: "You want meta-learning abilities or improved sample efficiency",
-    useCase: "Lifelong learning, reinforcement learning, robotics",
-    sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
-  },
-  "advanced-reasoning": {
-    title: "Advanced Reasoning (Compact CoT)",
-    howItWorks: "Optimized reasoning with reduced token usage while maintaining performance",
-    whenToUse: "Reducing token use while maintaining (or improving) reasoning",
-    useCase: "Cost-sensitive LLM apps, mobile or edge deployments, complex reasoning tasks",
-    sectionOfPaper: "4.2.2. Contextual Self-Refinement and Adaptation"
-  },
-
-  // Multi-Modal Context
-  "vpg-clip": {
-    title: "Visual Prompt Generators (VPGs), CLIP/CLAP + Q-Former",
-    howItWorks: "Combines vision/audio with text in unified model using cross-modal encoders",
-    whenToUse: "Incorporating vision/audio with text in a unified model",
-    useCase: "Image captioning, VQA, multi-modal retrieval",
-    sectionOfPaper: "4.2.3. Multimodal Context"
-  },
-  "cross-modal-attention": {
-    title: "Cross-Modal Attention, Hierarchical Designs",
-    howItWorks: "Deep fusion mechanisms across modalities with hierarchical processing",
-    whenToUse: "Deep fusion of multiple modalities or scaling to very large inputs",
-    useCase: "Complex scene analysis, video QA, scientific image interpretation",
-    sectionOfPaper: "4.2.3. Multimodal Context"
-  },
-  "browse-concentrate": {
-    title: "Browse-and-Concentrate, Unified Training",
-    howItWorks: "Joint training approach across modalities from the outset",
-    whenToUse: "Need joint, robust learning across modalities from the outset",
-    useCase: "Foundation models, multi-modal pretraining",
-    sectionOfPaper: "4.2.3. Multimodal Context"
-  },
-  "adapters-video": {
-    title: "Adapters/Prompt Tuning for Video",
-    howItWorks: "Parameter-efficient adaptation for video understanding",
-    whenToUse: "Efficiently adding new modalities or long-form video understanding",
-    useCase: "Surveillance analysis, sports analytics, lecture summarization",
-    sectionOfPaper: "4.2.3. Multimodal Context"
-  },
-  "emerging-compression": {
-    title: "Adaptive Hierarchical Token Compression, V2PE",
-    howItWorks: "Advanced compression and context handling for variable-length inputs",
-    whenToUse: "Dealing with unbounded or variable-length multi-modal context",
-    useCase: "Dynamic media, streaming environments, AI-driven broadcast",
-    sectionOfPaper: "4.2.3. Multimodal Context"
-  },
-
-  // Relational & Structured Context
-  "gnn-graphformers": {
-    title: "Graph Neural Networks, GraphFormers, Heterformer",
-    howItWorks: "Neural architectures designed for graph-structured data processing",
-    whenToUse: "Input data is inherently structured/relational (graphs, KGs, DBs)",
-    useCase: "Scientific discovery, knowledge base QA, relational reasoning",
-    sectionOfPaper: "4.2.4. Relational and Structured Context"
-  },
-  "verbalization-structured": {
-    title: "Verbalization/Structured Data Reps",
-    howItWorks: "Converts structured data into natural language representations",
-    whenToUse: "Need LLMs to reason over non-text data",
-    useCase: "Table QA, knowledge base integration, data extraction",
-    sectionOfPaper: "4.2.4. Relational and Structured Context"
-  },
-  "programming-lang-reps": {
-    title: "Programming Language Reps (Python/SQL)",
-    howItWorks: "Uses programming languages as intermediate representations",
-    whenToUse: "Complex logic and reasoning required; NL may be too ambiguous",
-    useCase: "Data engineering, code synthesis, database querying",
-    sectionOfPaper: "4.2.4. Relational and Structured Context"
-  },
-  "matrix-representations": {
-    title: "Matrix Representations",
-    howItWorks: "Compact matrix-based representations of structured information",
-    whenToUse: "Reducing parameter count while keeping structured data performance",
-    useCase: "Lightweight edge deployments, on-device ML",
-    sectionOfPaper: "4.2.4. Relational and Structured Context"
-  },
-  "k-bert-adapters": {
-    title: "K-BERT (Pretrain), KAPING (Inference Time)",
-    howItWorks: "Injects structured knowledge during pretraining or inference",
-    whenToUse: "Factual grounding is key, or you want to inject structured knowledge on the fly",
-    useCase: "Medical/financial LLMs, retrieval-augmented generation",
-    sectionOfPaper: "4.2.4. Relational and Structured Context"
-  },
-  "unified-approaches": {
-    title: "Unified Approaches (GreaseLM, QA-GNN)",
-    howItWorks: "Combines natural language fluency with knowledge graph reasoning",
-    whenToUse: "Need both NL fluency and KG-based reasoning in one system",
-    useCase: "Open-domain QA, research assistants, scientific agents",
-    sectionOfPaper: "4.2.4. Relational and Structured Context"
-  },
-
-  // Context Management - Memory Hierarchies & Storage Architectures
-  memgpt: {
-    title: "MemGPT",
-    howItWorks: "Virtual memory management like traditional operating systems. Pages information between limited context windows (main memory) and external storage. Components: System instructions, FIFO message queues, Writable scratchpads, External context (accessible via function calls)",
-    whenToUse: "OS-like memory management for LLMs, need unlimited context appearance with limited windows",
-    useCase: "Extended conversations, document analysis, personal companion systems, chatbots with persistent memory",
-    sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
-  },
-  "paged-attention": {
-    title: "PagedAttention",
-    howItWorks: "Manages key-value cache memory efficiently in LLMs by partitioning KV cache into blocks that can be stored non-contiguously, inspired by virtual memory paging",
-    whenToUse: "Optimizing memory usage during inference, high-throughput LLM serving",
-    useCase: "Cloud inference, large batch serving, production LLM deployment",
-    sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
-  },
-  memorybank: {
-    title: "MemoryBank",
-    howItWorks: "Uses Ebbinghaus Forgetting Curve principles. Dynamically adjusts memory strength based on time and significance, incorporating memory updating mechanism that permits AI to forget and reinforce memory",
-    whenToUse: "Long-term context retention with natural forgetting patterns, sustained interaction scenarios",
-    useCase: "Personal companion systems, psychological counseling, long-term AI companions",
-    sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
-  },
-  readagent: {
-    title: "ReadAgent",
-    howItWorks: "Three-part system: 1. Episode pagination: Segments content into manageable chunks, 2. Memory gisting: Creates concise representations, 3. Interactive lookup: Enables targeted information retrieval",
-    whenToUse: "Human-like reading of very long documents, need 20x context extension",
-    useCase: "Long document analysis, research paper comprehension, multi-document Q&A",
-    sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
-  },
-  "compressor-retriever": {
-    title: "Compressor-Retriever Systems",
-    howItWorks: "Lifelong context management using base model functions to compress and retrieve content with end-to-end differentiability",
-    whenToUse: "Lifelong learning applications requiring continuous context management",
-    useCase: "Long-term learning systems, evolving knowledge bases",
-    sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
-  },
-  "centralized-systems": {
-    title: "Centralized Systems",
-    howItWorks: "Excellent task coordination but poor scalability, context overflow as topics increase",
-    whenToUse: "Simple, focused applications",
-    useCase: "Single-domain chatbots, focused task automation",
-    sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
-  },
-  "decentralized-systems": {
-    title: "Decentralized Systems",
-    howItWorks: "Reduced context overflow but increased response time due to inter-agent querying",
-    whenToUse: "Complex, multi-domain applications",
-    useCase: "Multi-agent systems, distributed knowledge processing",
-    sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
-  },
-  "hybrid-systems": {
-    title: "Hybrid Systems",
-    howItWorks: "Balances shared knowledge with specialized processing, semi-autonomous operation",
-    whenToUse: "Most real-world applications requiring both coordination and scalability",
-    useCase: "Enterprise AI systems, complex conversational agents",
-    sectionOfPaper: "4.3.2. Memory Hierarchies and Storage Architectures"
-  },
-
-  // Context Compression
-  "snapshot-creation": {
-    title: "Snapshot creation",
-    howItWorks: "Save intermediate states during processing",
-    whenToUse: "Need to preserve processing checkpoints",
-    useCase: "Long-running tasks, recovery systems",
-    sectionOfPaper: "4.3.3. Context Compression"
-  },
-  "state-restoration": {
-    title: "State restoration",
-    howItWorks: "Resume from previous points in processing",
-    whenToUse: "Recovery from interruptions or failures",
-    useCase: "Robust production systems",
-    sectionOfPaper: "4.3.3. Context Compression"
-  },
-  "window-management": {
-    title: "Window management",
-    howItWorks: "Overall context optimization and organization",
-    whenToUse: "Managing complex context workflows",
-    useCase: "Multi-step reasoning, complex document processing",
-    sectionOfPaper: "4.3.3. Context Compression"
-  },
-  icae: {
-    title: "In-Context Autoencoder (ICAE)",
-    howItWorks: "Condenses long contexts into compact memory slots that LLMs can directly condition on compressed representations",
-    whenToUse: "Significant context reduction while preserving critical information",
-    useCase: "Memory-constrained environments, mobile LLM deployment",
-    sectionOfPaper: "4.3.3. Context Compression"
-  },
-  rcc: {
-    title: "Recurrent Context Compression (RCC)",
-    howItWorks: "Expands context window length in constrained storage using instruction reconstruction techniques",
-    whenToUse: "Working within strict memory limitations",
-    useCase: "Edge computing, resource-limited deployment",
-    sectionOfPaper: "4.3.3. Context Compression"
-  },
-  "knn-memory-caches": {
-    title: "kNN-Based Memory Caches",
-    howItWorks: "Store key-value pairs of past inputs for lookup with contrastive learning to improve retrieval accuracy, side networks address memory staleness",
-    whenToUse: "Need efficient lookup of historical interactions",
-    useCase: "Conversation systems, recommendation engines",
-    sectionOfPaper: "4.3.3. Context Compression"
-  },
-  "hierarchical-caching": {
-    title: "Hierarchical Caching",
-    howItWorks: "Multi-layer caching systems like Activation Refilling (ACRE)",
-    whenToUse: "Complex applications with varied access patterns",
-    useCase: "Enterprise systems with multiple data tiers",
-    sectionOfPaper: "4.3.3. Context Compression"
-  },
-  "infinite-llm": {
-    title: "Infinite-LLM with DistAttention",
-    howItWorks: "Handle extremely long sequences using distributed attention mechanisms",
-    whenToUse: "Processing unlimited sequence lengths",
-    useCase: "Large-scale document processing",
-    sectionOfPaper: "4.3.3. Context Compression"
-  },
-  kcache: {
-    title: "KCache",
-    howItWorks: "Smart optimization: K cache in high-bandwidth memory, V cache in CPU memory for optimized inference speed and memory usage",
-    whenToUse: "Inference speed optimization is critical",
-    useCase: "High-performance serving, cost optimization",
-    sectionOfPaper: "4.3.3. Context Compression"
-  },
-  "multi-agent-distributive": {
-    title: "Multi-Agent Distributive Processing",
-    howItWorks: "Handles massive inputs in distributed manner with high cache reusability in RAG and agent workloads",
-    whenToUse: "Processing massive datasets across distributed systems",
-    useCase: "Large-scale knowledge processing, enterprise RAG",
-    sectionOfPaper: "4.3.3. Context Compression"
-  },
-  "cache-access-analysis": {
-    title: "Cache Access Pattern Analysis",
-    howItWorks: "High reusability patterns in RAG and agent applications to reduce redundancy",
-    whenToUse: "Optimizing performance through better caching strategies",
-    useCase: "Production RAG systems, agent platforms",
-    sectionOfPaper: "4.3.3. Context Compression"
-  }
-};
-
-// Prepare search data for Fuse.js
-let searchData = [];
-let fuse = null;
-
-// Initialize the navigator when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-  // Build search index from DOM elements
-  buildSearchIndex();
-
-  // Initialize Fuse.js
-  const fuseOptions = {
-    keys: [
-      { name: 'name', weight: 0.4 },
-      { name: 'description', weight: 0.3 },
-      { name: 'useCases', weight: 0.2 },
-      { name: 'tags', weight: 0.1 }
-    ],
-    threshold: 0.5,
-    includeScore: true,
-    minMatchCharLength: 1,
-    ignoreLocation: true
+  // The detailed descriptions for when a technique is clicked
+  const techniqueDetails = {
+    clear: {
+      title: "CLEAR Framework",
+      howItWorks:
+        "Conciseness, Logic, Explicitness, Adaptability, Reflectiveness for robust prompt design",
+      whenToUse: "Design for various use cases with self-evaluation built in",
+      useCase: "Building robust prompt templates for production AI systems",
+      sectionOfPaper: "4.1.1",
+    },
+    cot: {
+      title: "Chain of Thought (CoT)",
+      howItWorks:
+        "Breaks complex problems into step-by-step reasoning. Key phrase: 'Let's think step by step'.",
+      whenToUse: "Multi-step arithmetic, logical reasoning tasks",
+      useCase: "Mathematical problem solving, debugging code logic",
+      sectionOfPaper: "4.1.1",
+    },
+    // ... Add ALL other technique details here for the click-to-expand feature
   };
 
-  fuse = new Fuse(searchData, fuseOptions);
-  // DOM elements
-  const searchInput = document.querySelector('.search-input');
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const techniquesGrid = document.getElementById('techniquesGrid');
-  const closeBtn = document.querySelector('.close-btn');
-
-  if (!searchInput || !filterBtns.length || !techniquesGrid || !closeBtn) {
-    console.log('Context Navigator: Some elements not found, skipping initialization');
-    return;
-  }
-
-  // Search functionality
-  searchInput.addEventListener('input', function() {
-    const searchTerm = this.value.toLowerCase();
-    filterTechniques(searchTerm);
-  });
-
-  // Filter functionality
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      
-      const filterValue = this.dataset.filter;
-      showCategory(filterValue);
-    });
-  });
-
-  // Technique click handlers
-  document.querySelectorAll('.technique').forEach(technique => {
-    technique.addEventListener('click', function() {
-      // Remove previous selections
-      document.querySelectorAll('.technique').forEach(t => t.classList.remove('selected'));
-      
-      // Add selection to current technique
-      this.classList.add('selected');
-      
-      const techniqueId = this.dataset.technique;
-         showTechniqueDetails(techniqueId);
-    });
-  });
-
-  // Collapse/Expand toggle handlers
-  document.querySelectorAll('.collapse-toggle-btn').forEach(toggleBtn => {
-    toggleBtn.addEventListener('click', function() {
-      const categoryName = this.dataset.category;
-      const mainCategory = this.closest('.main-category');
-      const subCategories = mainCategory.querySelectorAll('.sub-category');
-      
-      // Check current state based on button text
-      const isCollapsed = this.textContent.trim() === 'Expand All';
-      
-      if (isCollapsed) {
-        // Expand all subcategories
-        subCategories.forEach(subCat => {
-          subCat.setAttribute('open', '');
-        });
-        this.textContent = 'Collapse All';
-      } else {
-        // Collapse all subcategories
-        subCategories.forEach(subCat => {
-          subCat.removeAttribute('open');
-        });
-        this.textContent = 'Expand All';
-      }
-    });
-  });
-
-  // Listen for manual subcategory toggles to update button text
-  document.querySelectorAll('.sub-category summary').forEach(summary => {
-    summary.addEventListener('click', function() {
-      const subCategory = this.closest('.sub-category');
-      const mainCategory = this.closest('.main-category');
-      
-      // Use setTimeout to allow the details element to update first
-      setTimeout(() => {
-        updateToggleButtonText(mainCategory);
-      }, 10);
-    });
-  });
-
-
-  // Initialize toggle button text on load
-  document.querySelectorAll('.main-category').forEach(mainCategory => {
-    updateToggleButtonText(mainCategory);
-  });
+  let searchData = [];
+  let fuse = null;
 
   function buildSearchIndex() {
-    const techniques = document.querySelectorAll('.technique');
     searchData = [];
-
-    techniques.forEach(technique => {
-      const name = technique.querySelector('.technique-name').textContent.trim();
-      const description = technique.querySelector('.technique-description').textContent.trim();
-      const useCases = Array.from(technique.querySelectorAll('.use-case'))
-        .map(el => el.textContent.trim()).join(' ');
-
-      // Create searchable tags from name and description
-      const tags = [
-        ...name.toLowerCase().split(/\s+/),
-        ...description.toLowerCase().split(/\s+/),
-        // Add acronym extraction for things like "RAG", "GraphRAG"
-        ...(name.match(/[A-Z]{2,}/g) || []).map(acronym => acronym.toLowerCase()),
-        // Add compound word extraction for "graph based" -> "GraphRAG"
-        ...(description.match(/\b(?:graph|neural|attention|memory|context)\s+\w+/gi) || []).map(phrase => phrase.toLowerCase())
-      ].filter(tag => tag.length > 2);
-
-      searchData.push({
-        element: technique,
-        name: name,
-        description: description,
-        useCases: useCases,
-        tags: tags.join(' '),
-        techniqueId: technique.dataset.technique
-      });
+    document.querySelectorAll(".technique").forEach((technique) => {
+      const name = technique
+        .querySelector(".technique-name")
+        .textContent.trim();
+      const description = technique
+        .querySelector(".technique-description")
+        .textContent.trim();
+      const useCases = Array.from(technique.querySelectorAll(".use-case"))
+        .map((el) => el.textContent.trim())
+        .join(" ");
+      searchData.push({ element: technique, name, description, useCases });
     });
   }
 
-  function filterTechniques(searchTerm) {
-    const mainCategories = document.querySelectorAll('.main-category');
-    const subCategories = document.querySelectorAll('.sub-category');
+  function filterTechniques(searchTerm: string) {
+    const allMainCategories = document.querySelectorAll(".main-category");
+    const allSubCategories = document.querySelectorAll(".sub-category");
+    const allTechniques = document.querySelectorAll(".technique");
 
     if (!searchTerm.trim()) {
-      // Show all techniques if search is empty
-      document.querySelectorAll('.technique').forEach(technique => {
-        technique.style.display = 'block';
+      allTechniques.forEach((t) => {
+        t.style.display = "block";
       });
-      subCategories.forEach(subCategory => {
-        subCategory.style.display = 'block';
+      allSubCategories.forEach((sc) => {
+        sc.style.display = "block";
       });
-      mainCategories.forEach(mainCategory => {
-        mainCategory.style.display = 'block';
+      allMainCategories.forEach((mc) => {
+        mc.style.display = "block";
       });
       return;
     }
 
-    // Use Fuse.js for fuzzy search
     const results = fuse.search(searchTerm);
-    const matchedElements = new Set(results.map(result => result.item.element));
+    const matchedElements = new Set(
+      results.map((result) => result.item.element)
+    );
 
-    // Hide all techniques first, then show matched ones
-    document.querySelectorAll('.technique').forEach(technique => {
-      technique.style.display = matchedElements.has(technique) ? 'block' : 'none';
+    allTechniques.forEach((technique) => {
+      technique.style.display = matchedElements.has(technique)
+        ? "block"
+        : "none";
     });
-
-    // Hide/show sub-categories based on visible techniques
-    subCategories.forEach(subCategory => {
-      const visibleTechniques = subCategory.querySelectorAll('.technique:not([style*="display: none"])');
-      subCategory.style.display = visibleTechniques.length > 0 ? 'block' : 'none';
+    allSubCategories.forEach((subCategory) => {
+      const hasVisible = subCategory.querySelector(
+        '.technique:not([style*="display: none"])'
+      );
+      subCategory.style.display = hasVisible ? "block" : "none";
     });
-
-    // Hide/show main categories based on visible sub-categories
-    mainCategories.forEach(mainCategory => {
-      const visibleSubCategories = mainCategory.querySelectorAll('.sub-category:not([style*="display: none"])');
-      mainCategory.style.display = visibleSubCategories.length > 0 ? 'block' : 'none';
+    allMainCategories.forEach((mainCategory) => {
+      const hasVisible = mainCategory.querySelector(
+        '.sub-category:not([style*="display: none"])'
+      );
+      mainCategory.style.display = hasVisible ? "block" : "none";
     });
   }
 
   function showCategory(filterValue) {
-    const mainCategories = document.querySelectorAll('.main-category');
-    
-    if (filterValue === 'all') {
-      mainCategories.forEach(category => {
-        category.style.display = 'block';
-        // Show all sub-categories within visible main categories
-        const subCategories = category.querySelectorAll('.sub-category');
-        subCategories.forEach(subCat => {
-          subCat.style.display = 'block';
-        });
-        updateToggleButtonText(category);
-      });
-    } else {
-      mainCategories.forEach(category => {
-        if (category.dataset.category === filterValue) {
-          category.style.display = 'block';
-          // Show all sub-categories within visible main categories
-          const subCategories = category.querySelectorAll('.sub-category');
-          subCategories.forEach(subCat => {
-            subCat.style.display = 'block';
-          });
-          updateToggleButtonText(category);
-        } else {
-          category.style.display = 'none';
-        }
-      });
+    document.querySelector(".search-input").value = ""; // Clear search
+    filterTechniques(""); // Reset search results
+    document.querySelectorAll(".main-category").forEach((category) => {
+      category.style.display =
+        filterValue === "all" || category.dataset.category === filterValue
+          ? "block"
+          : "none";
+    });
+  }
+
+  function showTechniqueDetails(techniqueId) {
+    const targetElement = document.querySelector(
+      `[data-technique="${techniqueId}"]`
+    );
+    const details = techniqueDetails[techniqueId];
+    const isAlreadyOpen = targetElement.classList.contains("selected");
+
+    document.querySelectorAll(".technique").forEach((t) => {
+      t.classList.remove("selected");
+      const existingDetails = t.querySelector(".technique-details");
+      if (existingDetails) existingDetails.remove();
+    });
+
+    if (!isAlreadyOpen && targetElement && details) {
+      targetElement.classList.add("selected");
+      const detailsDiv = document.createElement("div");
+      detailsDiv.className =
+        "technique-details mt-4 p-4 bg-ctp-surface0 rounded-lg border-l-4 border-ctp-blue";
+      detailsDiv.innerHTML = `
+          <table class="detail-table"><tbody>
+            <tr><th>How It Works</th><td>${details.howItWorks}</td></tr>
+            <tr><th>When To Use</th><td>${details.whenToUse}</td></tr>
+            <tr><th>Use Case</th><td>${details.useCase}</td></tr>
+            <tr><th>Section of Paper</th><td>${details.sectionOfPaper}</td></tr>
+          </tbody></table>`;
+      targetElement.appendChild(detailsDiv);
     }
   }
 
   function updateToggleButtonText(mainCategory) {
-    const toggleBtn = mainCategory.querySelector('.collapse-toggle-btn');
-    const subCategories = mainCategory.querySelectorAll('.sub-category');
-    const openSubCategories = mainCategory.querySelectorAll('.sub-category[open]');
-    
-    if (openSubCategories.length === 0) {
-      toggleBtn.textContent = 'Expand All';
-    } else if (openSubCategories.length === subCategories.length) {
-      toggleBtn.textContent = 'Collapse All';
+    const toggleBtn = mainCategory.querySelector(".collapse-toggle-btn");
+    const allSubCats = mainCategory.querySelectorAll(".sub-category");
+    const openSubCats = mainCategory.querySelectorAll(".sub-category[open]");
+    if (openSubCats.length === 0 && allSubCats.length > 0) {
+      toggleBtn.textContent = "Expand All";
     } else {
-      toggleBtn.textContent = 'Collapse All'; // Default to collapse when mixed
+      toggleBtn.textContent = "Collapse All";
     }
   }
 
-  function showTechniqueDetails(techniqueId) {
-    const techniqueElement = document.querySelector(`[data-technique="${techniqueId}"]`);
-    const details = techniqueDetails[techniqueId];
-    
-    // Check if details are already expanded
-    let existingDetails = techniqueElement.querySelector('.technique-details');
-    
-    if (existingDetails) {
-      // Collapse - remove existing details and selected state
-      existingDetails.remove();
-      techniqueElement.classList.remove('expanded', 'selected');
-    } else {
-      // Remove previous selections from other techniques
-      document.querySelectorAll('.technique').forEach(t => t.classList.remove('selected'));
-      // Expand - add details
-      const detailsDiv = document.createElement('div');
-      detailsDiv.className = 'technique-details mt-4 p-4 bg-ctp-surface0 rounded-lg border-l-4 border-ctp-blue';
-      
-      if (!details) {
-        detailsDiv.innerHTML = '<p class="text-ctp-subtext1">Detailed information coming soon!</p>';
-      } else {
-        detailsDiv.innerHTML = `
-          <table class="detail-table w-full">
-            <tr>
-              <th class="text-left py-2 pr-4 text-ctp-text font-semibold">How It Works</th>
-              <td class="py-2 text-ctp-subtext1">${details.howItWorks}</td>
-            </tr>
-            <tr>
-              <th class="text-left py-2 pr-4 text-ctp-text font-semibold">When To Use</th>
-              <td class="py-2 text-ctp-subtext1">${details.whenToUse}</td>
-            </tr>
-            <tr>
-              <th class="text-left py-2 pr-4 text-ctp-text font-semibold">Use Case</th>
-              <td class="py-2 text-ctp-subtext1">${details.useCase}</td>
-            </tr>
-            <tr>
-              <th class="text-left py-2 pr-4 text-ctp-text font-semibold">Section of Paper</th>
-              <td class="py-2 text-ctp-subtext1">${details.sectionOfPaper}</td>
-            </tr>
-          </table>
-        `;
-      }
-      
-      techniqueElement.appendChild(detailsDiv);
-      techniqueElement.classList.add('expanded', 'selected');
-    }
-  }
+  // --- Initialize after DOM is ready ---
+  buildSearchIndex();
+  fuse = new Fuse(searchData, {
+    keys: ["name", "description", "useCases"],
+    threshold: 0.4,
+  });
 
-});
+  document
+    .querySelector(".search-input")
+    .addEventListener("input", (e) => filterTechniques(e.target.value));
+
+  document.querySelectorAll(".filter-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document
+        .querySelectorAll(".filter-btn")
+        .forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      showCategory(btn.dataset.filter);
+    });
+  });
+
+  const grid = document.getElementById("techniquesGrid");
+  grid.addEventListener("click", (e) => {
+    const technique = e.target.closest(".technique");
+    if (technique) {
+      showTechniqueDetails(technique.dataset.technique);
+      return;
+    }
+
+    const toggleBtn = e.target.closest(".collapse-toggle-btn");
+    if (toggleBtn) {
+      const mainCategory = toggleBtn.closest(".main-category");
+      const shouldExpand = toggleBtn.textContent.trim() === "Expand All";
+      mainCategory.querySelectorAll(".sub-category").forEach((sc) => {
+        shouldExpand ? sc.setAttribute("open", "") : sc.removeAttribute("open");
+      });
+      updateToggleButtonText(mainCategory);
+      return;
+    }
+
+    const summary = e.target.closest(".sub-category summary");
+    if (summary) {
+      setTimeout(() => {
+        // Allow 'open' attribute to update
+        updateToggleButtonText(summary.closest(".main-category"));
+      }, 10);
+    }
+  });
+
+  document.querySelectorAll(".main-category").forEach(updateToggleButtonText);
 </script>

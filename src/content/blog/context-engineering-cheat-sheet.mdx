@@ -1,5 +1,5 @@
 ---
-title: "A Survey of Context Engineering for Large Language Models Cheat Sheet"
+title: "Context Engineering Cheat Sheet"
 date: "2025-01-24"
 authors: "Alex Lavaee, Norin Lavaee"
 description: "An interactive cheat sheet covering context engineering techniques for LLMs including retrieval, processing, management, and dynamic assembly strategies."
@@ -7,13 +7,34 @@ description: "An interactive cheat sheet covering context engineering techniques
 
 import ContextNavigator from "../../components/blog/context-engineering-cheat-sheet/ContextNavigator.astro";
 
-When building production ML systems, you've likely hit the bottlenecks where your models struggle with domain-specific tasks, real-time information access, and personalized responses. In addition, comprehensive dataset creation costs to help alleviate these problems are steep and can be difficult to obtain depending on the use case. Context engineering, or the systematic application of context retrieval, context processing, generation, and management techniques, addresses this by providing models with targeted information at inference time. This helps to eliminate the need for massive specialized training datasets.
+### A More Effective Way to Build Smarter Language Models
 
-Based on "A Survey of Context Engineering for Large Language Models" [\[1\]](#resources), we've developed a Context Engineering Navigator that allows you to search and explore the foundational methods from the paper's theoretical framework. This post covers the core components such as context retrieval and generation strategies, context processing methodologies, and context management systems that enable models to access personalized, current information without continuous retraining overhead.
+If you've built production machine learning (ML) systems, you've likely run into a few common walls: your model struggles with domain-specific tasks, can't access real-time information, or fails to deliver personalized responses. The traditional solution—creating massive, specialized datasets—is often incredibly expensive and time-consuming.
 
-Context engineering approaches will inevitably evolve with new model architectures, but the fundamental principle of efficiently supplying models with relevant external information remains critical for scaling AI systems. Instead of waiting years for comprehensive datasets to emerge, context engineering delivers immediate performance improvements across specialized domains and dynamic information requirements.
+**Context engineering** offers a powerful alternative. It’s the process of finding, preparing, and managing the right information to give your model at the exact moment it's needed (at inference time). This approach provides your model with targeted, relevant knowledge, drastically reducing the need for costly retraining.
 
-Reference this technical guide to identify which context engineering methods suit your specific implementation needs. You can select a category between **All Categories**, **Context Retrieval & Generation**, **Context Processing**, and **Context Management**, then explore the different frameworks and methods in detail by clicking on specific items to learn how they work, when to use them, and search your specific use case to identify which context engineering methods to implement. At the end, we've also included additional resources for context engineering that we've found most effective when deploying these techniques in real-world systems.
+---
+
+### Introducing the Context Engineering Navigator
+
+Inspired by the foundational paper, "A Survey of Context Engineering for Large Language Models," we developed the **Context Engineering Navigator**. This interactive tool allows you to search and explore the core methods from the paper's framework, helping you put theory into practice.
+
+Our Navigator breaks down the key components of context engineering, including:
+* **Context Retrieval & Generation:** Strategies for finding and creating relevant information.
+* **Context Processing:** Methodologies for cleaning, condensing, and structuring that information.
+* **Context Management:** Systems for efficiently storing and handling context.
+
+The world of AI will continue to evolve, but the principle of supplying models with relevant, external information will always be critical. Instead of waiting years for the perfect dataset, you can use context engineering to get immediate performance boosts for your specialized and dynamic applications.
+
+---
+
+### Find the Right Methods for Your Project
+
+Ready to dive in? Use our guide to pinpoint the context engineering methods that best fit your needs.
+
+You can filter by a category (**All Categories**, **Context Retrieval & Generation**, **Context Processing**, or **Context Management**) and click on any method to learn how it works and when to use it. You can even search for your specific use case to see which techniques we recommend.
+
+Finally, we've included a list of additional resources that we've found most effective for deploying these techniques in real-world systems.
 
 <ContextNavigator />
 
