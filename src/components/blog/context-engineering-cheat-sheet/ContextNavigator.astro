@@ -1,0 +1,547 @@
+---
+// Server-side Frontmatter (runs at build time)
+import contextData from "./data/contextNavigator.json";
+---
+
+<div class="context-navigator mt-8 mb-8">
+  <div class="max-w-7xl mx-auto px-5">
+    <header class="text-center mb-10">
+      <h1 class="text-4xl font-bold text-ctp-text mb-3">
+        Context Engineering Navigator
+      </h1>
+      <p class="text-lg text-ctp-subtext1">
+        Interactive guide to context engineering techniques for LLMs
+      </p>
+    </header>
+
+    <div class="search-container mb-8 flex justify-center gap-2">
+      <input
+        type="text"
+        class="search-input px-5 py-3 text-base border-2 border-ctp-surface0 bg-ctp-mantle text-ctp-text rounded-full w-full max-w-md focus:border-ctp-blue focus:outline-none transition-colors duration-200"
+        placeholder="Search techniques, use cases, or keywords..."
+      />
+    </div>
+
+    <div class="filter-buttons flex gap-3 flex-wrap justify-center mb-8">
+      <button
+        class="filter-btn active px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5"
+        data-filter="all"
+      >
+        All Categories
+      </button>
+      {
+        contextData.categories.map((category) => (
+          <button
+            class="filter-btn px-4 py-2 border-2 border-ctp-surface1 bg-ctp-surface0 text-ctp-text rounded-2xl cursor-pointer transition-all duration-300 font-medium hover:bg-ctp-surface1 hover:border-ctp-blue hover:text-ctp-text hover:-translate-y-0.5"
+            data-filter={category.id}
+          >
+            {category.title}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="main-grid flex flex-col gap-10 mb-10" id="techniquesGrid">
+      {
+        contextData.categories.map((category) => {
+          const accent = category.accent ?? "blue";
+          return (
+            <div
+              class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300"
+              data-category={category.id}
+              data-accent={accent}
+            >
+              <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 pb-4">
+                <div class="flex items-center gap-4">
+                  <div class="w-8 h-8 rounded-full accent-dot" />
+                  {category.title}
+                </div>
+                <button
+                  class="collapse-toggle-btn px-3 py-1 text-sm font-medium border rounded-lg transition-all duration-200 accent-button"
+                  data-category={category.id}
+                >
+                  Collapse All
+                </button>
+              </div>
+
+              {category.subcategories.map((subcategory) => (
+                <details
+                  class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  data-subcategory={subcategory.id}
+                  open
+                >
+                  <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
+                    <div class="w-5 h-5 rounded-full accent-dot" />
+                    {subcategory.title}
+                  </summary>
+
+                  {subcategory.subsections.map((subsection) => (
+                    <>
+                      <div class="subsection-title text-lg font-semibold mt-5 mb-4 text-ctp-subtext1 border-l-3 border-ctp-overlay0 pl-3">
+                        {subsection.title}
+                      </div>
+                      <div class="technique-list space-y-3">
+                        {subsection.techniques.map((technique) => (
+                          <div
+                            class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:translate-x-1"
+                            data-technique={technique.id}
+                          >
+                            <div class="technique-name font-semibold accent-text mb-1">
+                              {technique.name}
+                            </div>
+                            <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">
+                              {technique.description}
+                            </div>
+                            {technique.useCases.map((uc) => (
+                              <span class="use-case inline-block border px-2 py-1 rounded-xl text-xs mt-2 mr-2">
+                                {uc}
+                              </span>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  ))}
+                </details>
+              ))}
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  /* All your previous styles go here */
+  .main-category {
+    --accent-color: var(--catppuccin-color-blue);
+    --accent-color-muted: rgba(137, 180, 250, 0.18);
+    --accent-color-glow: rgba(137, 180, 250, 0.3);
+  }
+
+  .main-category[data-accent="green"] {
+    --accent-color: var(--catppuccin-color-green);
+    --accent-color-muted: rgba(166, 227, 161, 0.18);
+    --accent-color-glow: rgba(166, 227, 161, 0.28);
+  }
+
+  .main-category[data-accent="peach"] {
+    --accent-color: var(--catppuccin-color-peach);
+    --accent-color-muted: rgba(254, 100, 11, 0.18);
+    --accent-color-glow: rgba(254, 100, 11, 0.28);
+  }
+
+  @supports (color: color-mix(in srgb, white, black)) {
+    .main-category {
+      --accent-color-muted: color-mix(
+        in srgb,
+        var(--accent-color) 16%,
+        transparent
+      );
+      --accent-color-glow: color-mix(
+        in srgb,
+        var(--accent-color) 32%,
+        transparent
+      );
+    }
+  }
+
+  .main-category-title {
+    border-color: var(--accent-color);
+  }
+
+  .accent-dot {
+    background-color: var(--accent-color);
+  }
+
+  .accent-text {
+    color: var(--accent-color);
+  }
+
+  .accent-button {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    background-color: transparent;
+  }
+
+  .accent-button:hover {
+    background-color: var(--accent-color-muted);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+  }
+
+  .sub-category {
+    border-left-color: var(--accent-color);
+  }
+
+  .technique:hover .technique-name,
+  .technique.selected .technique-name {
+    color: var(--accent-color);
+  }
+
+  .technique:hover .technique-description,
+  .technique.selected .technique-description {
+    color: var(--ctp-text);
+  }
+
+  .main-category .technique:hover,
+  .main-category .technique.selected {
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 12px var(--accent-color-glow);
+  }
+
+  .technique:hover .use-case,
+  .technique.selected .use-case {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background-color: var(--accent-color-muted);
+  }
+
+  .use-case {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background-color: var(--accent-color-muted);
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .technique-details {
+    border-left-color: var(--accent-color);
+  }
+
+  .technique.selected {
+    background-color: var(--ctp-surface1);
+    transform: translateX(4px);
+  }
+  .detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.25rem;
+  }
+  .detail-table th,
+  .detail-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--ctp-surface0, #45475a);
+  }
+  .detail-table th {
+    background-color: var(--ctp-mantle, #181825);
+    font-weight: 600;
+    color: var(--ctp-text, #cdd6f4);
+    width: 25%;
+  }
+  .detail-table td {
+    vertical-align: top;
+    color: var(--ctp-subtext1, #bac2de);
+  }
+  .sub-category summary {
+    list-style: none;
+    position: relative;
+  }
+  .sub-category summary::-webkit-details-marker {
+    display: none;
+  }
+  .sub-category summary::before {
+    content: "▼";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.875rem;
+    color: var(--accent-color);
+    transition: transform 0.2s ease;
+  }
+  .sub-category[open] summary::before {
+    transform: translateY(-50%) rotate(180deg);
+  }
+  /* ... etc ... */
+</style>
+
+<!-- Load Fuse.js from CDN -->
+<script
+  src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"
+  crossorigin="anonymous"
+  onload="console.log('Fuse.js loaded successfully')"
+  onerror="console.error('Failed to load Fuse.js')"></script>
+
+<script define:vars={{ contextData }}>
+  // Client-side script (runs in the browser)
+
+  // Build technique details from JSON data
+  let techniqueDetails = {};
+
+  function buildTechniqueDetails(data) {
+    data.categories.forEach((category) => {
+      category.subcategories.forEach((subcategory) => {
+        subcategory.subsections.forEach((subsection) => {
+          subsection.techniques.forEach((technique) => {
+            if (technique.techniqueDetails) {
+              techniqueDetails[technique.id] = technique.techniqueDetails;
+            }
+          });
+        });
+      });
+    });
+  }
+
+  let searchData = [];
+  let fuse = null;
+
+  function buildSearchIndex() {
+    searchData = [];
+    document.querySelectorAll(".technique").forEach((technique) => {
+      const techniqueId = technique.dataset.technique;
+      const name = technique
+        .querySelector(".technique-name")
+        .textContent.trim();
+      const description = technique
+        .querySelector(".technique-description")
+        .textContent.trim();
+      const useCases = Array.from(technique.querySelectorAll(".use-case"))
+        .map((el) => el.textContent.trim())
+        .join(" ");
+
+      // Get additional data from technique details if available
+      let additionalData = "";
+      const details = techniqueDetails[techniqueId];
+      if (details) {
+        additionalData = [
+          details.howItWorks || "",
+          details.whenToUse || "",
+          details.useCase || "",
+          details.sectionOfPaper || "",
+        ].join(" ");
+      }
+
+      // Get category and subcategory information for broader context
+      const subCategory = technique.closest(".sub-category");
+      const mainCategory = technique.closest(".main-category");
+      const categoryTitle =
+        mainCategory
+          ?.querySelector(".main-category-title")
+          ?.textContent?.trim() || "";
+      const subCategoryTitle =
+        subCategory?.querySelector(".category-title")?.textContent?.trim() ||
+        "";
+
+      searchData.push({
+        element: technique,
+        name,
+        description,
+        useCases,
+        additionalData,
+        categoryTitle,
+        subCategoryTitle,
+      });
+    });
+  }
+
+  function filterTechniques(searchTerm) {
+    const allMainCategories = document.querySelectorAll(".main-category");
+    const allSubCategories = document.querySelectorAll(".sub-category");
+    const allTechniques = document.querySelectorAll(".technique");
+
+    if (!searchTerm.trim()) {
+      allTechniques.forEach((t) => {
+        t.style.display = "block";
+      });
+      allSubCategories.forEach((sc) => {
+        sc.style.display = "block";
+      });
+      allMainCategories.forEach((mc) => {
+        mc.style.display = "block";
+      });
+      return;
+    }
+
+    let matchedElements = new Set();
+
+    const results = fuse.search(searchTerm);
+    results.forEach((result) => {
+      matchedElements.add(result.item.element);
+    });
+
+    allTechniques.forEach((technique) => {
+      technique.style.display = matchedElements.has(technique)
+        ? "block"
+        : "none";
+    });
+    allSubCategories.forEach((subCategory) => {
+      const hasVisible = subCategory.querySelector(
+        '.technique:not([style*="display: none"])'
+      );
+      subCategory.style.display = hasVisible ? "block" : "none";
+    });
+    allMainCategories.forEach((mainCategory) => {
+      const hasVisible = mainCategory.querySelector(
+        '.sub-category:not([style*="display: none"])'
+      );
+      mainCategory.style.display = hasVisible ? "block" : "none";
+    });
+  }
+
+  function showCategory(filterValue) {
+    document.querySelector(".search-input").value = ""; // Clear search
+    filterTechniques(""); // Reset search results
+    document.querySelectorAll(".main-category").forEach((category) => {
+      category.style.display =
+        filterValue === "all" || category.dataset.category === filterValue
+          ? "block"
+          : "none";
+    });
+  }
+
+  function showTechniqueDetails(techniqueId) {
+    const targetElement = document.querySelector(
+      `[data-technique="${techniqueId}"]`
+    );
+    const details = techniqueDetails[techniqueId];
+    const isAlreadyOpen = targetElement.classList.contains("selected");
+
+    document.querySelectorAll(".technique").forEach((t) => {
+      t.classList.remove("selected");
+      const existingDetails = t.querySelector(".technique-details");
+      if (existingDetails) existingDetails.remove();
+    });
+
+    if (!isAlreadyOpen && targetElement && details) {
+      targetElement.classList.add("selected");
+      const detailsDiv = document.createElement("div");
+      detailsDiv.className =
+        "technique-details mt-4 p-4 bg-ctp-surface0 rounded-lg border-l-4";
+      detailsDiv.innerHTML = `
+          <table class="detail-table"><tbody>
+            <tr><th>How It Works</th><td>${details.howItWorks}</td></tr>
+            <tr><th>When To Use</th><td>${details.whenToUse}</td></tr>
+            <tr><th>Use Case</th><td>${details.useCase}</td></tr>
+            <tr><th>Section of Paper</th><td>${details.sectionOfPaper}</td></tr>
+          </tbody></table>`;
+      targetElement.appendChild(detailsDiv);
+    }
+  }
+
+  function updateToggleButtonText(mainCategory) {
+    const toggleBtn = mainCategory.querySelector(".collapse-toggle-btn");
+    const allSubCats = mainCategory.querySelectorAll(".sub-category");
+    const openSubCats = mainCategory.querySelectorAll(".sub-category[open]");
+    if (openSubCats.length === 0 && allSubCats.length > 0) {
+      toggleBtn.textContent = "Expand All";
+    } else {
+      toggleBtn.textContent = "Collapse All";
+    }
+  }
+
+  // --- Initialize after DOM is ready ---
+  function initializeNavigator() {
+    buildTechniqueDetails(contextData);
+    buildSearchIndex();
+
+    // Wait for Fuse.js to be available
+    const initializeFuse = () => {
+      if (typeof Fuse !== "undefined") {
+        fuse = new Fuse(searchData, {
+          keys: [
+            {
+              name: "name",
+              weight: 0.3,
+            },
+            {
+              name: "description",
+              weight: 0.25,
+            },
+            {
+              name: "useCases",
+              weight: 0.2,
+            },
+            {
+              name: "additionalData",
+              weight: 0.15,
+            },
+            {
+              name: "categoryTitle",
+              weight: 0.05,
+            },
+            {
+              name: "subCategoryTitle",
+              weight: 0.05,
+            },
+          ],
+          threshold: 0.4,
+          includeScore: true,
+          ignoreLocation: true,
+          shouldSort: true,
+          minMatchCharLength: 2,
+          findAllMatches: true,
+          ignoreFieldNorm: false,
+        });
+        console.log("Fuse.js search initialized successfully");
+      } else {
+        console.log("Fuse.js not available, using fallback search");
+      }
+    };
+
+    // Try to initialize Fuse immediately, or wait for it to load
+    if (typeof Fuse !== "undefined") {
+      initializeFuse();
+    } else {
+      // Wait a bit for Fuse.js to load
+      setTimeout(initializeFuse, 100);
+    }
+
+    document
+      .querySelector(".search-input")
+      .addEventListener("input", (e) => filterTechniques(e.target.value));
+
+    document.querySelectorAll(".filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document
+          .querySelectorAll(".filter-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        showCategory(btn.dataset.filter);
+      });
+    });
+
+    const grid = document.getElementById("techniquesGrid");
+    grid.addEventListener("click", (e) => {
+      const technique = e.target.closest(".technique");
+      if (technique) {
+        showTechniqueDetails(technique.dataset.technique);
+        return;
+      }
+
+      const toggleBtn = e.target.closest(".collapse-toggle-btn");
+      if (toggleBtn) {
+        const mainCategory = toggleBtn.closest(".main-category");
+        const shouldExpand = toggleBtn.textContent.trim() === "Expand All";
+        mainCategory.querySelectorAll(".sub-category").forEach((sc) => {
+          shouldExpand
+            ? sc.setAttribute("open", "")
+            : sc.removeAttribute("open");
+        });
+        updateToggleButtonText(mainCategory);
+        return;
+      }
+
+      const summary = e.target.closest(".sub-category summary");
+      if (summary) {
+        setTimeout(() => {
+          // Allow 'open' attribute to update
+          updateToggleButtonText(summary.closest(".main-category"));
+        }, 10);
+      }
+    });
+
+    document.querySelectorAll(".main-category").forEach(updateToggleButtonText);
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeNavigator);
+  } else {
+    initializeNavigator();
+  }
+</script>

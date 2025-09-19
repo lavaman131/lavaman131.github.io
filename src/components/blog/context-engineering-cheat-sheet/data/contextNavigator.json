@@ -1,0 +1,1546 @@
+{
+  "categories": [
+    {
+      "id": "retrieval",
+      "accent": "green",
+      "title": "Context Retrieval & Generation",
+      "subcategories": [
+        {
+          "id": "prompt-engineering",
+          "title": "Prompt Engineering & Context Generation",
+          "subsections": [
+            {
+              "title": "Frameworks & Chain-of-Thought Foundations",
+              "techniques": [
+                {
+                  "id": "clear",
+                  "name": "CLEAR Framework",
+                  "description": "Conciseness, Logic, Explicitness, Adaptability, Reflectiveness for robust prompt design",
+                  "useCases": ["Prompt templates"],
+                  "techniqueDetails": {
+                    "howItWorks": "CLEAR stands for Conciseness: Keep instructions focused and direct, Logic: Structure reasoning flow clearly, Explicitness: State requirements precisely, Adaptability: Design for various use cases, Reflectiveness: Build in self-evaluation",
+                    "whenToUse": "Design for various use cases with self-evaluation built in",
+                    "useCase": "Building robust prompt templates for production AI systems",
+                    "sectionOfPaper": "4.1.1. Prompt Engineering and Context Generation"
+                  }
+                },
+                {
+                  "id": "cot",
+                  "name": "Chain of Thought (CoT)",
+                  "description": "Step-by-step reasoning with \"Let's think step by step\"",
+                  "useCases": [
+                    "Mathematical problem solving",
+                    "Debugging code logic"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Breaks complex problems into step-by-step reasoning. Key phrase: 'Let's think step by step'. Significantly improves accuracy on complex problems",
+                    "whenToUse": "Multi-step arithmetic, logical reasoning tasks",
+                    "useCase": "Mathematical problem solving, debugging code logic",
+                    "sectionOfPaper": "4.1.1. Prompt Engineering and Context Generation"
+                  }
+                },
+                {
+                  "id": "tot",
+                  "name": "Tree of Thoughts (ToT)",
+                  "description": "Hierarchical reasoning with exploration and backtracking",
+                  "useCases": [
+                    "Strategic planning",
+                    "Chess moves",
+                    "Complex optimization"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Creates hierarchical reasoning with exploration and backtracking. Can explore multiple paths and backtrack when needed",
+                    "whenToUse": "Game optimization, complex decision trees",
+                    "useCase": "Strategic planning, chess moves, complex optimization",
+                    "sectionOfPaper": "4.1.1. Prompt Engineering and Context Generation"
+                  }
+                },
+                {
+                  "id": "got",
+                  "name": "Graph of Thoughts (GoT)",
+                  "description": "Interconnected reasoning graphs with dependencies",
+                  "useCases": [
+                    "Software architecture design",
+                    "Project management"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Models reasoning as interconnected graphs (thoughts = vertices, dependencies = edges). Better quality than ToT, lower computational cost",
+                    "whenToUse": "Complex multi-dependency problems",
+                    "useCase": "Software architecture design, project management",
+                    "sectionOfPaper": "4.1.1. Prompt Engineering and Context Generation"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Learning Strategies",
+              "techniques": [
+                {
+                  "id": "zero-shot",
+                  "name": "Zero-shot",
+                  "description": "No examples, direct instruction",
+                  "useCases": ["Rapid prototyping", "Model evaluation"],
+                  "techniqueDetails": {
+                    "howItWorks": "No examples, direct instruction",
+                    "whenToUse": "Quick testing of model capabilities without examples",
+                    "useCase": "Rapid prototyping, model evaluation",
+                    "sectionOfPaper": "4.1.1. Prompt Engineering and Context Generation"
+                  }
+                },
+                {
+                  "id": "few-shot",
+                  "name": "Few-shot",
+                  "description": "2-5 demonstration examples for task learning",
+                  "useCases": [
+                    "Classification tasks",
+                    "Content generation with examples"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "2-5 demonstration examples. Performance heavily depends on example selection and ordering",
+                    "whenToUse": "Limited training data available, domain-specific tasks",
+                    "useCase": "Classification tasks, content generation with examples",
+                    "sectionOfPaper": "4.1.1. Prompt Engineering and Context Generation"
+                  }
+                },
+                {
+                  "id": "in-context-learning",
+                  "name": "In-context learning",
+                  "description": "Performance heavily depends on example selection and ordering",
+                  "useCases": ["Adaptive AI systems", "Personalized responses"],
+                  "techniqueDetails": {
+                    "howItWorks": "Performance heavily depends on example selection and ordering",
+                    "whenToUse": "Dynamic adaptation to new tasks without retraining",
+                    "useCase": "Adaptive AI systems, personalized responses",
+                    "sectionOfPaper": "4.1.1. Prompt Engineering and Context Generation"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "knowledge-retrieval",
+          "title": "External Knowledge Retrieval",
+          "subsections": [
+            {
+              "title": "Retrieval-Augmented Generation Fundamentals",
+              "techniques": [
+                {
+                  "id": "flashrag",
+                  "name": "FlashRAG",
+                  "description": "Comprehensive evaluation and modular RAG implementation",
+                  "useCases": ["Rapid prototyping of retrieval systems"],
+                  "techniqueDetails": {
+                    "howItWorks": "Comprehensive evaluation and modular RAG implementation",
+                    "whenToUse": "Good starting point for RAG experimentation",
+                    "useCase": "Rapid prototyping of retrieval systems",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Advanced Retrieval Strategies",
+              "techniques": [
+                {
+                  "id": "kragen",
+                  "name": "KRAGEN",
+                  "description": "Integrates Knowledge Graphs with advanced prompting. Breaks down complex problems into smaller sub-problems retrieves relevant information through RAG, and consolidates the results for a more accurate and transparent response",
+                  "useCases": [
+                    "Enterprise knowledge bases",
+                    "Complex domain-specific queries"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Integrates Knowledge Graphs and advanced prompting. Breaks down complex problems into smaller sub-problems retrieves relevant information through RAG, and consolidates the results for a more accurate and transparent response",
+                    "whenToUse": "Especially useful for enterprise-grade RAG where there's the need for fine control, reliability, and easy experimentation",
+                    "useCase": "Enterprise knowledge bases, complex domain-specific queries",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                },
+                {
+                  "id": "composerag",
+                  "name": "ComposeRAG",
+                  "description": "Uses the LLM to plan, decompose, and orchestrate retrievals. Breaks down a user's query into steps, retrieving relevant information for each step (from one or more sources) and then stitches the response together for a final coherent response",
+                  "useCases": [
+                    "Complex research queries",
+                    "Investigative journalism"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Uses the LLM to plan, decompose, and orchestrate retrievals. Breaks down a user's query into steps, retrieving relevant information for each step (from one or more sources) and then stitches the response together for a final coherent response",
+                    "whenToUse": "Great for multi-hop or compositional questions",
+                    "useCase": "Complex research queries, investigative journalism",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Adaptive Retrieval Mechanisms",
+              "techniques": [
+                {
+                  "id": "self-rag",
+                  "name": "Self-RAG",
+                  "description": "Model decides when to retrieve information dynamically. Uses special tokens to control retrieval timing and quality assessment",
+                  "useCases": [
+                    "Conversational AI",
+                    "Adapts retrieval based on query complexity"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Model decides when to retrieve information dynamically. Uses special tokens to control retrieval timing and quality assessment",
+                    "whenToUse": "Scenarios where not every query needs external knowledge",
+                    "useCase": "Conversational AI that adapts retrieval based on query complexity",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                },
+                {
+                  "id": "raptor",
+                  "name": "RAPTOR",
+                  "description": "Processes documents hierarchically using recursive clustering and summarization, constructing tree with differing levels of summarization from bottom up",
+                  "useCases": [
+                    "Research papers",
+                    "Legal documents",
+                    "Comprehensive reports",
+                    "Complex PDFs"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Processes documents hierarchically using recursive clustering and summarization, constructing tree with differing levels of summarization from bottom up",
+                    "whenToUse": "Long-context documents, multi-hop reasoning tasks, complex queries requiring broad context",
+                    "useCase": "Research papers, legal documents, comprehensive reports, complex PDFs",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                },
+                {
+                  "id": "hipporag",
+                  "name": "HippoRAG",
+                  "description": "Memory-inspired retrieval architecture that synergistically orchestrates LLMs, knowledge graphs, and the Personalized PageRank algorithm to mimic the different roles of neocortex and hippocampus in human memory",
+                  "useCases": [
+                    "Scientific literature reviews",
+                    "Legal case briefings",
+                    "Medical diagnosis",
+                    "Synthesis of information from various sources"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Memory-inspired retrieval architecture that synergistically orchestrates LLMs, knowledge graphs, and the Personalized PageRank algorithm to mimic the different roles of neocortex and hippocampus in human memory",
+                    "whenToUse": "Multi-hop question answering, continual knowledge integration, connecting facts across multiple sources",
+                    "useCase": "Scientific literature reviews, legal case briefings, medical diagnosis requiring synthesis of information from various sources",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Knowledge Graph Integration and Structured Retrieval",
+              "techniques": [
+                {
+                  "id": "kaping",
+                  "name": "KAPING",
+                  "description": "Retrieves facts using semantic similarity combining semantic network structure with information content of concepts",
+                  "useCases": [
+                    "Document classification",
+                    "Content recommendation systems",
+                    "Knowledge graph applications"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Retrieves facts using semantic similarity combining semantic network structure with information content of concepts",
+                    "whenToUse": "Text classification, question answering, similarity-based search and recommendation",
+                    "useCase": "Document classification, content recommendation systems, knowledge graph applications",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                },
+                {
+                  "id": "karpa",
+                  "name": "KARPA",
+                  "description": "Training-free KG adaptation with pre-planning, semantic matching, and relation path reasoning",
+                  "useCases": [
+                    "Real-time knowledge integration",
+                    "Dynamic query processing"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Training-free KG adaptation with pre-planning, semantic matching, and relation path reasoning",
+                    "whenToUse": "Complex knowledge graph reasoning without training overhead",
+                    "useCase": "Real-time knowledge integration, dynamic query processing",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                },
+                {
+                  "id": "think-on-graph",
+                  "name": "Think-on-Graph",
+                  "description": "Sequential reasoning over knowledge graphs to locate relevant triples, conduct exploration to retrieve related information from external databases while generating multiple reasoning paths",
+                  "useCases": [
+                    "Complex fact verification",
+                    "Multi-step logical inference"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Sequential reasoning over knowledge graphs to locate relevant triples, conduct exploration to retrieve related information from external databases while generating multiple reasoning paths",
+                    "whenToUse": "Multi-path reasoning over structured knowledge",
+                    "useCase": "Complex fact verification, multi-step logical inference",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                },
+                {
+                  "id": "structgpt",
+                  "name": "StructGPT",
+                  "description": "Iterative reading and reasoning approach that constructs specialized functions to collect relevant evidence from structured data sources",
+                  "useCases": ["Database querying", "Structured data analysis"],
+                  "techniqueDetails": {
+                    "howItWorks": "Iterative reading and reasoning approach that constructs specialized functions to collect relevant evidence from structured data sources",
+                    "whenToUse": "Working with structured databases and knowledge bases",
+                    "useCase": "Database querying, structured data analysis",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Agentic and Modular Retrieval Systems",
+              "techniques": [
+                {
+                  "id": "agenticrag",
+                  "name": "AgenticRAG",
+                  "description": "Embeds autonomous AI agents into the RAG pipeline using agentic design patterns (reflection, planning, tool use, multi-agent collaboration) to dynamically manage retrieval strategies",
+                  "useCases": [
+                    "Multi-agent collaborative reasoning",
+                    "Personal assistants",
+                    "Adaptive question answering systems",
+                    "Access to various data sources (emails, docs, web search)"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Embeds autonomous AI agents into the RAG pipeline using agentic design patterns (reflection, planning, tool use, multi-agent collaboration) to dynamically manage retrieval strategies",
+                    "whenToUse": "Complex multi-step reasoning, multi-domain tasks requiring dynamic retrieval decisions",
+                    "useCase": "Multi-agent collaborative reasoning, personal assistants that need to access various data sources",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                },
+                {
+                  "id": "graph-enhanced-rag",
+                  "name": "Graph Enhanced RAG Systems",
+                  "description": "Incorporates knowledge graphs into RAG to capture structured relationships between entities, enabling multi-hop reasoning and deeper contextual retrieval using graph traversal and Cypher queries alongside vector similarity search (e.g. Microsoft's GraphRAG)",
+                  "useCases": [
+                    "Enterprise knowledge bases with complex relationships",
+                    "Legal document analysis",
+                    "Scientific literature review",
+                    "Recommendation systems with rich entity relationships"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Incorporates knowledge graphs into RAG to capture structured relationships between entities, enabling multi-hop reasoning and deeper contextual retrieval using graph traversal and Cypher queries alongside vector similarity search",
+                    "whenToUse": "Complex queries requiring multi-hop reasoning, scenarios needing both semantic understanding and symbolic reasoning",
+                    "useCase": "Enterprise knowledge bases with complex relationships, legal document analysis, scientific literature review",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                },
+                {
+                  "id": "real-time-rag",
+                  "name": "Real Time RAG",
+                  "description": "Processes streaming data in real-time by constructing evolving knowledge graphs that capture scene-object-entity relationships as data arrives, using lightweight models and dynamic priority-based knowledge extraction",
+                  "useCases": [
+                    "News monitoring",
+                    "Market analysis",
+                    "Intelligent transportation systems",
+                    "Healthcare monitoring",
+                    "Satellite remote sensing",
+                    "Financial trading systems"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Processes streaming data in real-time by constructing evolving knowledge graphs that capture scene-object-entity relationships as data arrives, using lightweight models and dynamic priority-based knowledge extraction",
+                    "whenToUse": "Live data processing needs, streaming applications requiring immediate responses, scenarios with constantly changing information",
+                    "useCase": "News monitoring, market analysis, intelligent transportation systems, healthcare monitoring",
+                    "sectionOfPaper": "4.1.2. External Knowledge Retrieval"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "dynamic-context-assembly",
+          "title": "Dynamic Context Assembly",
+          "subsections": [
+            {
+              "title": "Assembly Functions and Orchestration Mechanisms",
+              "techniques": [
+                {
+                  "id": "template-based-formatting",
+                  "name": "Template-based formatting",
+                  "description": "Consistent structure for context assembly",
+                  "useCases": ["API responses", "Report generation"],
+                  "techniqueDetails": {
+                    "howItWorks": "Consistent structure for context assembly",
+                    "whenToUse": "Need for standardized output formats",
+                    "useCase": "API responses, report generation",
+                    "sectionOfPaper": "4.1.3. Dynamic Context Assembly"
+                  }
+                },
+                {
+                  "id": "priority-based-selection",
+                  "name": "Priority-based selection",
+                  "description": "Most important info first in context assembly",
+                  "useCases": ["Mobile apps", "Real-time systems"],
+                  "techniqueDetails": {
+                    "howItWorks": "Most important info first in context assembly",
+                    "whenToUse": "Resource-constrained environments",
+                    "useCase": "Mobile apps, real-time systems",
+                    "sectionOfPaper": "4.1.3. Dynamic Context Assembly"
+                  }
+                },
+                {
+                  "id": "adaptive-composition",
+                  "name": "Adaptive composition",
+                  "description": "Adjusts to task requirements and model capabilities",
+                  "useCases": [
+                    "Multi-domain applications",
+                    "Scalable AI systems"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Adjusts to task requirements and model capabilities",
+                    "whenToUse": "Varying task complexity and resource constraints",
+                    "useCase": "Multi-domain applications, scalable AI systems",
+                    "sectionOfPaper": "4.1.3. Dynamic Context Assembly"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Multi-Component Integration Strategies",
+              "techniques": [
+                {
+                  "id": "multi-component-integration",
+                  "name": "Multi-Component Integration",
+                  "description": "Combines text, structured knowledge, temporal data, and external tools while maintaining coherent semantic relationships",
+                  "useCases": [
+                    "Enterprise AI systems",
+                    "Comprehensive analytics platforms"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Combines text, structured knowledge, temporal data, and external tools while maintaining coherent semantic relationships",
+                    "whenToUse": "Complex applications requiring diverse data types",
+                    "useCase": "Enterprise AI systems, comprehensive analytics platforms",
+                    "sectionOfPaper": "4.1.3. Dynamic Context Assembly"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Automated Assembly Optimizations - Automated Prompt Engineering",
+              "techniques": [
+                {
+                  "id": "ape",
+                  "name": "Automatic Prompt Engineer (APE)",
+                  "description": "Uses search algorithms to find optimal prompts automatically. Treats instruction as 'program,' optimized by searching over pool of instruction candidates proposed by LLM to maximize chosen score function",
+                  "useCases": [
+                    "Production systems needing optimal prompts",
+                    "AI Content generation",
+                    "AI-powered chatbots"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Uses search algorithms to find optimal prompts automatically. Treats instruction as 'program,' optimized by searching over pool of instruction candidates proposed by LLM to maximize chosen score function",
+                    "whenToUse": "Automated prompt optimization at scale, reducing development time by 60-80% for complex tasks",
+                    "useCase": "Production systems requiring optimal prompts, content generation, AI-powered chatbots",
+                    "sectionOfPaper": "4.1.3. Dynamic Context Assembly"
+                  }
+                },
+                {
+                  "id": "lm-bff",
+                  "name": "LM-BFF",
+                  "description": "Has automated pipelines that combine prompt-based fine-tuning with dynamic demonstrations. Suite of simple techniques for fine-tuning pre-trained language models on small number of annotated examples",
+                  "useCases": [
+                    "Entity extraction",
+                    "Classification tasks",
+                    "Domain adaptation with limited examples"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Has automated pipelines that combine prompt-based fine-tuning with dynamic demonstrations. Suite of simple techniques for fine-tuning pre-trained language models on small number of annotated examples",
+                    "whenToUse": "Few-shot learning scenarios with limited training data, when you need better performance than standard fine-tuning",
+                    "useCase": "Entity extraction, classification tasks, domain adaptation with limited examples",
+                    "sectionOfPaper": "4.1.3. Dynamic Context Assembly"
+                  }
+                },
+                {
+                  "id": "promptbreeder",
+                  "name": "Promptbreeder",
+                  "description": "Self-Referential Evolutionary Systems where LLMs improve their own task-prompts and mutation-prompts through 'natural selection' analogies. Evolves and adapts prompts for given domain using evolutionary algorithm",
+                  "useCases": [
+                    "Autonomous AI systems",
+                    "Continuous learning applications",
+                    "Domain-specific optimization"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Self-Referential Evolutionary Systems where LLMs improve their own task-prompts and mutation-prompts through 'natural selection' analogies. Evolves and adapts prompts for given domain using evolutionary algorithm",
+                    "whenToUse": "Self-improving prompt systems, scenarios requiring continuous adaptation and optimization",
+                    "useCase": "Autonomous AI systems, continuous learning applications, domain-specific optimization",
+                    "sectionOfPaper": "4.1.3. Dynamic Context Assembly"
+                  }
+                },
+                {
+                  "id": "self-refine-asm",
+                  "name": "Self-Refine",
+                  "description": "Generate → Critique → Revise → Repeat, 20% performance improvement with GPT-4",
+                  "useCases": [
+                    "Content creation",
+                    "Code review",
+                    "Creative writing"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Generate → Critique → Revise → Repeat, 20% performance improvement with GPT-4",
+                    "whenToUse": "Tasks where iterative improvement is valuable",
+                    "useCase": "Content creation, code review, creative writing",
+                    "sectionOfPaper": "4.1.3. Dynamic Context Assembly"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Tool Integration Frameworks",
+              "techniques": [
+                {
+                  "id": "langchain",
+                  "name": "Langchain",
+                  "description": "Sequential processing chains, agents, web browsing capabilities. Provides building blocks for AI applications with extensive integrations",
+                  "useCases": [
+                    "Chatbots",
+                    "Data retrieval and processing",
+                    "Internal knowlege management",
+                    "RAG applications"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Sequential processing chains, agents, web browsing capabilities. Provides building blocks for AI applications with extensive integrations",
+                    "whenToUse": "Building complex AI workflows, chaining multiple LLM calls together, RAG applications",
+                    "useCase": "Chatbots, data retrieval and processing, internal knowledge management, API usage",
+                    "sectionOfPaper": "4.1.3. Dynamic Context Assembly"
+                  }
+                },
+                {
+                  "id": "autogpt-autogen",
+                  "name": "AutoGPT/AutoGen",
+                  "description": "Complex AI agent development with user-friendly interfaces. Multi-agent conversation orchestration with event-driven architecture",
+                  "useCases": [
+                    "Code generation",
+                    "Personalized content creation at scale",
+                    "Automated workflows",
+                    "Research tasks"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Complex AI agent development with user-friendly interfaces. Multi-agent conversation orchestration with event-driven architecture",
+                    "whenToUse": "Multi-agent systems requiring collaboration, autonomous task execution, complex agent dynamics",
+                    "useCase": "Code generation, personalized content creation at scale, automated workflows, research tasks",
+                    "sectionOfPaper": "4.1.3. Dynamic Context Assembly"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "processing",
+      "title": "Context Processing",
+      "subcategories": [
+        {
+          "id": "long-context",
+          "title": "Long Context Processing",
+          "subsections": [
+            {
+              "title": "Ultra-long Sequence Context Processing",
+              "techniques": [
+                {
+                  "id": "transformer",
+                  "name": "Standard Transformer (Self-Attention, O²)",
+                  "description": "Baseline self-attention with quadratic complexity",
+                  "useCases": [
+                    "General LLM Tasks",
+                    "Question answering",
+                    "Summarization"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Baseline for most LLMs; uses self-attention mechanism with quadratic computational complexity",
+                    "whenToUse": "Use for moderate-length sequences (<8k tokens)",
+                    "useCase": "General LLM tasks, question answering, summarization",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Architectural Innovations for Long Context",
+              "techniques": [
+                {
+                  "id": "ssm",
+                  "name": "State Space Models (SSMs, e.g. Mamba)",
+                  "description": "Linear complexity with constant memory through hidden states",
+                  "useCases": [
+                    "Real-time language modeling",
+                    "Streaming data",
+                    "Online inference with constant memory"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Linear computational complexity and constant memory through fixed-size hidden states",
+                    "whenToUse": "Need efficient, scalable long-context modeling with fixed memory",
+                    "useCase": "Real-time language modeling, streaming data, online inference with constant memory",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "dilated-attention",
+                  "name": "Dilated Attention (e.g. LongNet)",
+                  "description": "Exponentially expanding attention fields",
+                  "useCases": [
+                    "Genomics",
+                    "Legal/financial document analysis",
+                    "Logs"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Uses exponentially expanding attentive fields as token distance grows leading to linear computational complexity while maintaining logarithmic dependency between tokens",
+                    "whenToUse": "Scaling to very long sequences while maintaining efficient computation",
+                    "useCase": "Genomics, legal/financial document analysis, logs",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "toeplitz-neural-networks",
+                  "name": "Toeplitz Neural Networks",
+                  "description": "Model sequences with relative position encoded Toeplitz matrices reducing space time complexity to log linear",
+                  "useCases": [
+                    "Code generation",
+                    "Document QA",
+                    "Long sequence forecasting"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Model sequences with relative position encoded Toeplitz matrices reducing space time complexity to log linear",
+                    "whenToUse": "Need to extrapolate far beyond training context length (e.g., from 512 to 14k tokens)",
+                    "useCase": "Code generation, document QA, long sequence forecasting",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "linear-attention",
+                  "name": "Linear Attention",
+                  "description": "Expresses self attention as linear dot products of kernel feature maps",
+                  "useCases": [
+                    "Scientific papers",
+                    "Book summarization",
+                    "Historical document analysis"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Expresses self attention as linear dot products of kernel feature maps",
+                    "whenToUse": "Processing extremely long contexts (10k–100k+ tokens) with strict speed/memory requirements",
+                    "useCase": "Scientific papers, whole-book summarization, historical document analysis",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "non-attention-llms",
+                  "name": "Non-attention LLMs (Recursive memory)",
+                  "description": "Uses recursive memory transformers, breaking long sequences into chunks. Model keeps a summary ('memory') of each chunk. As model moves through sequence it recursively updates and uses this memory",
+                  "useCases": [
+                    "Chatbots with persistent and growing context",
+                    "Logging agents"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Uses recursive memory transformers, breaking long sequences into chunks. Model keeps a summary ('memory') of each chunk. As model moves through sequence it recursively updates and uses this memory",
+                    "whenToUse": "Hard limitations on quadratic scaling like massive input sizes, real-time constraints",
+                    "useCase": "Chatbots with persistent, ever-growing context, logging agents",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Position Interpolation & Context Extension",
+              "techniques": [
+                {
+                  "id": "ntk-yarn",
+                  "name": "NTK/YaRN",
+                  "description": "Neural Tangent Kernel uses NTK interpolation for positional encodings, linear interpolation for stretching position indices, and attention distribution correction tweaks attention mechanism",
+                  "useCases": [
+                    "Fine-tuning LLMs to process longer docs for specialized tasks"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Neural Tangent Kernel uses NTK interpolation for positional encodings, linear interpolation for stretching position indices, and attention distribution correction tweaks attention mechanism",
+                    "whenToUse": "Extending pretrained models to longer sequences with stability",
+                    "useCase": "Fine-tuning LLMs to process longer documents for specialized tasks",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "longrope",
+                  "name": "LongRoPE",
+                  "description": "Identifies effective rescale factors for RoPE's rotation angles for each RoPE dimension based on token positions. Uses evolutionary search algorithm with progressive extension strategy to achieve 2048k context window",
+                  "useCases": [
+                    "Rapidly adapting LLMs to massive token windows (256k–2M tokens)",
+                    "Patent or scientific literature mining",
+                    "Big data retrieval"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Identifies effective rescale factors for RoPE's rotation angles for each RoPE dimension based on token positions. Uses evolutionary search algorithm with progressive extension strategy to achieve 2048k context window",
+                    "whenToUse": "Rapidly adapting LLMs to massive token windows (256k–2M tokens)",
+                    "useCase": "Patent or scientific literature mining, big data retrieval",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "pose",
+                  "name": "PoSE",
+                  "description": "Positional Skip-wisE training decouples train length from target context by dividing original context window into chunks with distinct skipping bias terms to manipulate position indices during training",
+                  "useCases": [
+                    "Data curation",
+                    "Codebase analysis",
+                    "Long meeting transcripts"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Positional Skip-wisE training decouples train length from target context by dividing original context window into chunks with distinct skipping bias terms to manipulate position indices during training",
+                    "whenToUse": "Pushing sequence length limits during training or inference efficiently without full-length fine-tuning",
+                    "useCase": "Data curation, codebase analysis, long meeting transcripts",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "self-extend",
+                  "name": "Self-Extend (bi-level/grouped/neighbor attention)",
+                  "description": "Constructs bi-level attention: grouped attention for distant tokens using FLOOR operation and neighbor attention for adjacent tokens within specified range",
+                  "useCases": ["Plug-and-play context extension"],
+                  "techniqueDetails": {
+                    "howItWorks": "Constructs bi-level attention: grouped attention for distant tokens using FLOOR operation and neighbor attention for adjacent tokens within specified range",
+                    "whenToUse": "Need long-context processing without expensive re-training",
+                    "useCase": "Plug-and-play context extension in deployed systems",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Optimization Techniques for Efficient Processing",
+              "techniques": [
+                {
+                  "id": "gqa",
+                  "name": "Grouped Query Attention (GQA)",
+                  "description": "Optimizes multi-head attention by sharing key and value projections across multiple query heads, reducing memory bandwidth requirements",
+                  "useCases": ["Scaling up LLM Inference for cost savings"],
+                  "techniqueDetails": {
+                    "howItWorks": "Optimizes multi-head attention by sharing key and value projections across multiple query heads, reducing memory bandwidth requirements",
+                    "whenToUse": "Balancing efficiency and flexibility in attention mechanisms",
+                    "useCase": "Scaling up LLM inference for cost savings",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "flash-attention",
+                  "name": "FlashAttention 1/2",
+                  "description": "Memory-efficient attention algorithm that fuses operations and uses tiling to reduce memory accesses while maintaining exact attention computation",
+                  "useCases": [
+                    "Cloud inference",
+                    "Large batch serving",
+                    "Distributed training"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Memory-efficient attention algorithm that fuses operations and uses tiling to reduce memory accesses while maintaining exact attention computation",
+                    "whenToUse": "Training/inference of large LLMs on GPUs and want linear memory scaling",
+                    "useCase": "Cloud inference, large batch serving, distributed training",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "ring-attention",
+                  "name": "Ring Attention",
+                  "description": "Distributes attention computation across multiple devices using ring communication pattern",
+                  "useCases": ["Multi-GPU or TPU setups"],
+                  "techniqueDetails": {
+                    "howItWorks": "Distributes attention computation across multiple devices using ring communication pattern",
+                    "whenToUse": "Distributing computation across multiple devices or nodes",
+                    "useCase": "Multi-GPU or TPU setups; scaling beyond single device limits",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "sparse-attention",
+                  "name": "Sparse Attention (LongLoRA, SinkLoRA)",
+                  "description": "Selectively attends to subset of tokens based on patterns or learned importance",
+                  "useCases": ["RAG", "Selective context retrieval"],
+                  "techniqueDetails": {
+                    "howItWorks": "Selectively attends to subset of tokens based on patterns or learned importance",
+                    "whenToUse": "Only a small subset of the context is relevant and want to reduce unnecessary computation",
+                    "useCase": "Retrieval-augmented generation, selective context retrieval",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "efficient-selective-attention",
+                  "name": "Efficient Selective Attention",
+                  "description": "Dynamically selects important tokens for attention computation",
+                  "useCases": ["Large codebases", "Multi-document Q&A"],
+                  "techniqueDetails": {
+                    "howItWorks": "Dynamically selects important tokens for attention computation",
+                    "whenToUse": "Need fine-grained focus on important tokens in huge input",
+                    "useCase": "Large codebases, multi-document Q&A",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "bigbird",
+                  "name": "BigBird",
+                  "description": "Combines local, global, and random attention patterns in sparse attention mechanism",
+                  "useCases": [
+                    "Biomedical data mining",
+                    "Knowledge bases",
+                    "Graph-structured documents"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Combines local, global, and random attention patterns in sparse attention mechanism",
+                    "whenToUse": "Balancing local/global/random attention for long documents with graph-like dependencies",
+                    "useCase": "Biomedical data mining, graph-structured documents, knowledge bases",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Memory Management & Context Compression",
+              "techniques": [
+                {
+                  "id": "rolling-buffer-cache",
+                  "name": "Rolling Buffer Cache",
+                  "description": "Maintains fixed-size cache with sliding window mechanism for token storage",
+                  "useCases": [
+                    "Real-time applications with fixed compute or memory budget"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Maintains fixed-size cache with sliding window mechanism for token storage",
+                    "whenToUse": "Managing limited memory resources in inference/deployment",
+                    "useCase": "Real-time applications with fixed compute/memory budget",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "streaming-llm",
+                  "name": "Streaming LLM",
+                  "description": "Processes continuous input streams with memory-efficient caching mechanisms",
+                  "useCases": [
+                    "Live chat moderation",
+                    "Streaming summarization"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Processes continuous input streams with memory-efficient caching mechanisms",
+                    "whenToUse": "Need continuous, real-time input processing with memory conservation",
+                    "useCase": "Live chat moderation, streaming summarization",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "infini-attention",
+                  "name": "Infini-attention",
+                  "description": "Combines compressive memory with local attention in single model block",
+                  "useCases": [
+                    "Retrieval-based LLMs",
+                    "Systems requiring both detail and recall"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Combines compressive memory with local attention in single model block",
+                    "whenToUse": "Merging long-term and local memory in a single model block",
+                    "useCase": "Retrieval-based LLMs, systems requiring both detail and recall",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "heavy-hitter-oracle",
+                  "name": "Heavy Hitter Oracle",
+                  "description": "Identifies and prioritizes most important tokens/context for attention",
+                  "useCases": [
+                    "LLM API deployment",
+                    "Latency-sensitive applications"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Identifies and prioritizes most important tokens/context for attention",
+                    "whenToUse": "Prioritizing high-value context, maximizing throughput/latency",
+                    "useCase": "LLM API deployment, latency-sensitive applications",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                },
+                {
+                  "id": "qwenlong-cprs",
+                  "name": "QwenLong-CPRS, InfLLM",
+                  "description": "Multi-granularity memory management with compression techniques",
+                  "useCases": [
+                    "Legal/medical archives",
+                    "Multi-chapter document analysis"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Multi-granularity memory management with compression techniques",
+                    "whenToUse": "Extreme long-context requirements; multi-granularity memory management",
+                    "useCase": "Legal/medical archives, multi-chapter document analysis",
+                    "sectionOfPaper": "4.2.1. Long Context Processing"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "self-refinement-adaptation",
+          "title": "Contextual Self-Refinement and Adaptation",
+          "subsections": [
+            {
+              "title": "Foundational Self-Refinement Frameworks",
+              "techniques": [
+                {
+                  "id": "self-refine",
+                  "name": "Self-Refine",
+                  "description": "Generate → Critique → Revise → Repeat iterative process for output improvement",
+                  "useCases": [
+                    "Automated writing assistants",
+                    "Code review bots"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Generate → Critique → Revise → Repeat iterative process for output improvement",
+                    "whenToUse": "You want iterative output improvement and error correction",
+                    "useCase": "Automated writing assistants, code review bots",
+                    "sectionOfPaper": "4.2.2. Contextual Self-Refinement and Adaptation"
+                  }
+                },
+                {
+                  "id": "reflexion",
+                  "name": "Reflexion",
+                  "description": "Uses self-feedback and reflection mechanisms to improve task performance over time",
+                  "useCases": [
+                    "Interactive agents",
+                    "Multi-turn dialogue",
+                    "Strategic planning"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Uses self-feedback and reflection mechanisms to improve task performance over time",
+                    "whenToUse": "Need 'reflection' or self-feedback to improve task performance over time",
+                    "useCase": "Interactive agents, multi-turn dialog, strategic planning",
+                    "sectionOfPaper": "4.2.2. Contextual Self-Refinement and Adaptation"
+                  }
+                },
+                {
+                  "id": "n-critics",
+                  "name": "N-CRITICS, A2R, ISR-LLM",
+                  "description": "Multiple critic models provide multi-dimensional evaluation and refinement",
+                  "useCases": [
+                    "Scientific writing",
+                    "Factual report generation",
+                    "Compliance documentation"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Multiple critic models provide multi-dimensional evaluation and refinement",
+                    "whenToUse": "High accuracy is critical; want multi-dimensional evaluation/refinement",
+                    "useCase": "Scientific writing, factual report generation, compliance documentation",
+                    "sectionOfPaper": "4.2.2. Contextual Self-Refinement and Adaptation"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Meta-Learning and Autonomous Evolution",
+              "techniques": [
+                {
+                  "id": "self-creator",
+                  "name": "SELF, Creator, Self-Developing",
+                  "description": "Autonomous tool creation and self-improvement mechanisms",
+                  "useCases": [
+                    "AutoML systems",
+                    "LLM-driven agent ecosystems",
+                    "Research automation"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Autonomous tool creation and self-improvement mechanisms",
+                    "whenToUse": "Desire autonomous tool creation and self-improvement",
+                    "useCase": "AutoML systems, LLM-driven agent ecosystems, research automation",
+                    "sectionOfPaper": "4.2.2. Contextual Self-Refinement and Adaptation"
+                  }
+                },
+                {
+                  "id": "meta-in-context",
+                  "name": "In-Context Learning / Meta-in-context",
+                  "description": "Fast adaptation using examples provided in context without parameter updates",
+                  "useCases": [
+                    "Few-shot/zero-shot learning",
+                    "Adapting to unseen data formats"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Fast adaptation using examples provided in context without parameter updates",
+                    "whenToUse": "Fast adaptation to new tasks or environments with little to no retraining",
+                    "useCase": "Few-shot/zero-shot learning, adapting to unseen data formats",
+                    "sectionOfPaper": "4.2.2. Contextual Self-Refinement and Adaptation"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Memory-Augmented Adaptation Frameworks",
+              "techniques": [
+                {
+                  "id": "memory-augmentation",
+                  "name": "Memory Augmentation, Meta-Learned Loss",
+                  "description": "Meta-learning abilities and improved sample efficiency through architectural innovations",
+                  "useCases": [
+                    "Lifelong learning",
+                    "Reinforcement learning",
+                    "Robotics"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Meta-learning abilities and improved sample efficiency through architectural innovations",
+                    "whenToUse": "You want meta-learning abilities or improved sample efficiency",
+                    "useCase": "Lifelong learning, reinforcement learning, robotics",
+                    "sectionOfPaper": "4.2.2. Contextual Self-Refinement and Adaptation"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Long Chain-of-Thought and Advanced Reasoning",
+              "techniques": [
+                {
+                  "id": "advanced-reasoning",
+                  "name": "Advanced Reasoning (Compact CoT)",
+                  "description": "Optimized reasoning with reduced token usage while maintaining performance",
+                  "useCases": [
+                    "Cost-sensitive LLM apps",
+                    "Mobile or edge deployments",
+                    "Complex reasoning tasks"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Optimized reasoning with reduced token usage while maintaining performance",
+                    "whenToUse": "Reducing token use while maintaining (or improving) reasoning",
+                    "useCase": "Cost-sensitive LLM apps, mobile or edge deployments, complex reasoning tasks",
+                    "sectionOfPaper": "4.2.2. Contextual Self-Refinement and Adaptation"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "multimodal-context",
+          "title": "Multi-Modal Context",
+          "subsections": [
+            {
+              "title": "Foundational Techniques",
+              "techniques": [
+                {
+                  "id": "vpg-clip",
+                  "name": "Visual Prompt Generators (VPGs), CLIP/CLAP + Q-Former",
+                  "description": "Combines vision/audio with text in unified model using cross-modal encoders",
+                  "useCases": [
+                    "Image captioning",
+                    "VQA",
+                    "multi-modal retrieval"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Combines vision/audio with text in unified model using cross-modal encoders",
+                    "whenToUse": "Incorporating vision/audio with text in a unified model",
+                    "useCase": "Image captioning, VQA, multi-modal retrieval",
+                    "sectionOfPaper": "4.2.3. Multimodal Context"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Advanced Integration Strategies",
+              "techniques": [
+                {
+                  "id": "cross-modal-attention",
+                  "name": "Cross-Modal Attention, Hierarchical Designs",
+                  "description": "Deep fusion mechanisms across modalities with hierarchical processing",
+                  "useCases": [
+                    "Complex scene analysis",
+                    "Video QA",
+                    "Scientific image interpretation"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Deep fusion mechanisms across modalities with hierarchical processing",
+                    "whenToUse": "Deep fusion of multiple modalities or scaling to very large inputs",
+                    "useCase": "Complex scene analysis, video QA, scientific image interpretation",
+                    "sectionOfPaper": "4.2.3. Multimodal Context"
+                  }
+                },
+                {
+                  "id": "browse-concentrate",
+                  "name": "Browse-and-Concentrate, Unified Training",
+                  "description": "Joint training approach across modalities from the outset",
+                  "useCases": ["Foundation models", "Multi-modal pretraining"],
+                  "techniqueDetails": {
+                    "howItWorks": "Joint training approach across modalities from the outset",
+                    "whenToUse": "Need joint, robust learning across modalities from the outset",
+                    "useCase": "Foundation models, multi-modal pretraining",
+                    "sectionOfPaper": "4.2.3. Multimodal Context"
+                  }
+                },
+                {
+                  "id": "adapters-video",
+                  "name": "Adapters/Prompt Tuning for Video",
+                  "description": "Parameter-efficient adaptation for video understanding",
+                  "useCases": [
+                    "Surveillance analysis",
+                    "Sports analytics",
+                    "Lecture summarization"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Parameter-efficient adaptation for video understanding",
+                    "whenToUse": "Efficiently adding new modalities or long-form video understanding",
+                    "useCase": "Surveillance analysis, sports analytics, lecture summarization",
+                    "sectionOfPaper": "4.2.3. Multimodal Context"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Emerging Applications",
+              "techniques": [
+                {
+                  "id": "emerging-compression",
+                  "name": "Adaptive Hierarchical Token Compression, V2PE",
+                  "description": "Advanced compression and context handling for variable-length inputs",
+                  "useCases": [
+                    "Dynamic media",
+                    "Streaming environments",
+                    "AI-driven broadcast"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Advanced compression and context handling for variable-length inputs",
+                    "whenToUse": "Dealing with unbounded or variable-length multi-modal context",
+                    "useCase": "Dynamic media, streaming environments, AI-driven broadcast",
+                    "sectionOfPaper": "4.2.3. Multimodal Context"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "relational-structured",
+          "title": "Relational & Structured Context",
+          "subsections": [
+            {
+              "title": "Knowledge Graph Embeddings and Neural Integration",
+              "techniques": [
+                {
+                  "id": "gnn-graphformers",
+                  "name": "Graph Neural Networks, GraphFormers, Heterformer",
+                  "description": "Neural architectures designed for graph-structured data processing",
+                  "useCases": [
+                    "Scientific discovery",
+                    "Knowledge base QA",
+                    "Relational Reasoning"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Neural architectures designed for graph-structured data processing",
+                    "whenToUse": "Input data is inherently structured/relational (graphs, KGs, DBs)",
+                    "useCase": "Scientific discovery, knowledge base QA, relational reasoning",
+                    "sectionOfPaper": "4.2.4. Relational and Structured Context"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Verbalization & Structured Data Representations",
+              "techniques": [
+                {
+                  "id": "verbalization-structured",
+                  "name": "Verbalization/Structured Data Reps",
+                  "description": "Converts structured data into natural language representations",
+                  "useCases": [
+                    "Table QA",
+                    "Knowledge base integration",
+                    "Data extraction"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Converts structured data into natural language representations",
+                    "whenToUse": "Need LLMs to reason over non-text data",
+                    "useCase": "Table QA, knowledge base integration, data extraction",
+                    "sectionOfPaper": "4.2.4. Relational and Structured Context"
+                  }
+                },
+                {
+                  "id": "programming-lang-reps",
+                  "name": "Programming Language Reps (Python/SQL)",
+                  "description": "Uses programming languages as intermediate representations",
+                  "useCases": [
+                    "Data engineering",
+                    "Code synthesis",
+                    "Database querying"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Uses programming languages as intermediate representations",
+                    "whenToUse": "Complex logic and reasoning required; NL may be too ambiguous",
+                    "useCase": "Data engineering, code synthesis, database querying",
+                    "sectionOfPaper": "4.2.4. Relational and Structured Context"
+                  }
+                },
+                {
+                  "id": "matrix-representations",
+                  "name": "Matrix Representations",
+                  "description": "Compact matrix-based representations of structured information",
+                  "useCases": ["Lightweight edge deployments", "On-device ML"],
+                  "techniqueDetails": {
+                    "howItWorks": "Compact matrix-based representations of structured information",
+                    "whenToUse": "Reducing parameter count while keeping structured data performance",
+                    "useCase": "Lightweight edge deployments, on-device ML",
+                    "sectionOfPaper": "4.2.4. Relational and Structured Context"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Integration Frameworks & Synergized Approaches",
+              "techniques": [
+                {
+                  "id": "k-bert-adapters",
+                  "name": "K-BERT (Pretrain), KAPING (Inference Time)",
+                  "description": "Injects structured knowledge during pretraining or inference",
+                  "useCases": ["Medical/financial LLMs", "RAG"],
+                  "techniqueDetails": {
+                    "howItWorks": "Injects structured knowledge during pretraining or inference",
+                    "whenToUse": "Factual grounding is key, or you want to inject structured knowledge on the fly",
+                    "useCase": "Medical/financial LLMs, retrieval-augmented generation",
+                    "sectionOfPaper": "4.2.4. Relational and Structured Context"
+                  }
+                },
+                {
+                  "id": "unified-approaches",
+                  "name": "Unified Approaches (GreaseLM, QA-GNN)",
+                  "description": "Combines natural language fluency with knowledge graph reasoning",
+                  "useCases": [
+                    "Open-domain QA",
+                    "Research assistants",
+                    "Scientific agents"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Combines natural language fluency with knowledge graph reasoning",
+                    "whenToUse": "Need both NL fluency and KG-based reasoning in one system",
+                    "useCase": "Open-domain QA, research assistants, scientific agents",
+                    "sectionOfPaper": "4.2.4. Relational and Structured Context"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "management",
+      "accent": "peach",
+      "title": "Context Management",
+      "subcategories": [
+        {
+          "id": "memory-hierarchies",
+          "title": "Memory Hierarchies & Storage Architectures",
+          "subsections": [
+            {
+              "title": "Virtual Memory Systems",
+              "techniques": [
+                {
+                  "id": "memgpt",
+                  "name": "MemGPT",
+                  "description": "Virtual memory management like OS systems",
+                  "useCases": [
+                    "Extended conversations",
+                    "Document analysis",
+                    "Personal companion systems",
+                    "Chatbots with persistent memory"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Virtual memory management like traditional operating systems. Pages information between limited context windows (main memory) and external storage. Components: System instructions, FIFO message queues, Writable scratchpads, External context (accessible via function calls)",
+                    "whenToUse": "OS-like memory management for LLMs, need unlimited context appearance with limited windows",
+                    "useCase": "Extended conversations, document analysis, personal companion systems, chatbots with persistent memory",
+                    "sectionOfPaper": "4.3.2. Memory Hierarchies and Storage Architectures"
+                  }
+                },
+                {
+                  "id": "paged-attention",
+                  "name": "PagedAttention",
+                  "description": "Efficient KV cache memory management with non-contiguous blocks",
+                  "useCases": [
+                    "Cloud inference",
+                    "Large batch serving",
+                    "Production LLM deployment"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Manages key-value cache memory efficiently in LLMs by partitioning KV cache into blocks that can be stored non-contiguously, inspired by virtual memory paging",
+                    "whenToUse": "Optimizing memory usage during inference, high-throughput LLM serving",
+                    "useCase": "Cloud inference, large batch serving, production LLM deployment",
+                    "sectionOfPaper": "4.3.2. Memory Hierarchies and Storage Architectures"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Dynamic Memory Organizations",
+              "techniques": [
+                {
+                  "id": "memorybank",
+                  "name": "MemoryBank",
+                  "description": "Uses Ebbinghaus Forgetting Curve principles with dynamic memory strength adjustment",
+                  "useCases": [
+                    "Personal companion systems",
+                    "Psychological counseling",
+                    "Long-term AI companions"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Uses Ebbinghaus Forgetting Curve principles. Dynamically adjusts memory strength based on time and significance, incorporating memory updating mechanism that permits AI to forget and reinforce memory",
+                    "whenToUse": "Long-term context retention with natural forgetting patterns, sustained interaction scenarios",
+                    "useCase": "Personal companion systems, psychological counseling, long-term AI companions",
+                    "sectionOfPaper": "4.3.2. Memory Hierarchies and Storage Architectures"
+                  }
+                },
+                {
+                  "id": "readagent",
+                  "name": "ReadAgent",
+                  "description": "Episode pagination, memory gisting, and interactive lookup for human-like reading",
+                  "useCases": [
+                    "Long document analysis",
+                    "Research paper comprehension",
+                    "Multi-document Q&A"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Three-part system: 1. Episode pagination: Segments content into manageable chunks, 2. Memory gisting: Creates concise representations, 3. Interactive lookup: Enables targeted information retrieval",
+                    "whenToUse": "Human-like reading of very long documents, need 20x context extension",
+                    "useCase": "Long document analysis, research paper comprehension, multi-document Q&A",
+                    "sectionOfPaper": "4.3.2. Memory Hierarchies and Storage Architectures"
+                  }
+                },
+                {
+                  "id": "compressor-retriever",
+                  "name": "Compressor-Retriever Systems",
+                  "description": "Lifelong context management using base model functions to compress and retrieve content with end-to-end differentiability",
+                  "useCases": [
+                    "Long-term learning systems",
+                    "Evolving knowledge bases"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Lifelong context management using base model functions to compress and retrieve content with end-to-end differentiability",
+                    "whenToUse": "Lifelong learning applications requiring continuous context management",
+                    "useCase": "Long-term learning systems, evolving knowledge bases",
+                    "sectionOfPaper": "4.3.2. Memory Hierarchies and Storage Architectures"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "System Configurations",
+              "techniques": [
+                {
+                  "id": "centralized-systems",
+                  "name": "Centralized Systems",
+                  "description": "Excellent task coordination but poor scalability, context overflow as topics increase",
+                  "useCases": [
+                    "Single-domain chatbots",
+                    "Focused task automation"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Excellent task coordination but poor scalability, context overflow as topics increase",
+                    "whenToUse": "Simple, focused applications",
+                    "useCase": "Single-domain chatbots, focused task automation",
+                    "sectionOfPaper": "4.3.2. Memory Hierarchies and Storage Architectures"
+                  }
+                },
+                {
+                  "id": "decentralized-systems",
+                  "name": "Decentralized Systems",
+                  "description": "Reduced context overflow but increased response time due to inter-agent querying",
+                  "useCases": [
+                    "Multi-agent systems",
+                    "Distributed knowledge processing"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Reduced context overflow but increased response time due to inter-agent querying",
+                    "whenToUse": "Complex, multi-domain applications",
+                    "useCase": "Multi-agent systems, distributed knowledge processing",
+                    "sectionOfPaper": "4.3.2. Memory Hierarchies and Storage Architectures"
+                  }
+                },
+                {
+                  "id": "hybrid-systems",
+                  "name": "Hybrid Systems",
+                  "description": "Balances shared knowledge with specialized processing, semi-autonomous operation",
+                  "useCases": [
+                    "Enterprise AI systems",
+                    "Complex conversational agents"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Balances shared knowledge with specialized processing, semi-autonomous operation",
+                    "whenToUse": "Most real-world applications requiring both coordination and scalability",
+                    "useCase": "Enterprise AI systems, complex conversational agents",
+                    "sectionOfPaper": "4.3.2. Memory Hierarchies and Storage Architectures"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "context-compression",
+          "title": "Context Compression",
+          "subsections": [
+            {
+              "title": "Context Manager Components",
+              "techniques": [
+                {
+                  "id": "snapshot-creation",
+                  "name": "Snapshot creation",
+                  "description": "Save intermediate states during processing",
+                  "useCases": ["Long-running tasks", "Recovery systems"],
+                  "techniqueDetails": {
+                    "howItWorks": "Save intermediate states during processing",
+                    "whenToUse": "Need to preserve processing checkpoints",
+                    "useCase": "Long-running tasks, recovery systems",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                },
+                {
+                  "id": "state-restoration",
+                  "name": "State restoration",
+                  "description": "Resume from previous points in processing",
+                  "useCases": ["Recovery from interruptions"],
+                  "techniqueDetails": {
+                    "howItWorks": "Resume from previous points in processing",
+                    "whenToUse": "Recovery from interruptions or failures",
+                    "useCase": "Robust production systems",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                },
+                {
+                  "id": "window-management",
+                  "name": "Window management",
+                  "description": "Overall context optimization and organization",
+                  "useCases": [
+                    "Multi-step reasoning",
+                    "Complex document processing"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Overall context optimization and organization",
+                    "whenToUse": "Managing complex context workflows",
+                    "useCase": "Multi-step reasoning, complex document processing",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Context Compression Techniques",
+              "techniques": [
+                {
+                  "id": "icae",
+                  "name": "In-Context Autoencoder (ICAE)",
+                  "description": "Condenses long contexts into compact memory slots for direct conditioning",
+                  "useCases": ["Memory-constrained environments"],
+                  "techniqueDetails": {
+                    "howItWorks": "Condenses long contexts into compact memory slots that LLMs can directly condition on compressed representations",
+                    "whenToUse": "Significant context reduction while preserving critical information",
+                    "useCase": "Memory-constrained environments, mobile LLM deployment",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                },
+                {
+                  "id": "rcc",
+                  "name": "Recurrent Context Compression (RCC)",
+                  "description": "Expands context window length in constrained storage using instruction reconstruction techniques",
+                  "useCases": ["Edge computing", "Resource-limited deployment"],
+                  "techniqueDetails": {
+                    "howItWorks": "Expands context window length in constrained storage using instruction reconstruction techniques",
+                    "whenToUse": "Working within strict memory limitations",
+                    "useCase": "Edge computing, resource-limited deployment",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Memory Augmented Approaches",
+              "techniques": [
+                {
+                  "id": "knn-memory-caches",
+                  "name": "kNN-Based Memory Caches",
+                  "description": "Store key-value pairs with contrastive learning to improve retrieval accuracy",
+                  "useCases": [
+                    "Conversation systems",
+                    "Recommendation engines"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Store key-value pairs of past inputs for lookup with contrastive learning to improve retrieval accuracy, side networks address memory staleness",
+                    "whenToUse": "Need efficient lookup of historical interactions",
+                    "useCase": "Conversation systems, recommendation engines",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Hierarchical Caching Systems",
+              "techniques": [
+                {
+                  "id": "hierarchical-caching",
+                  "name": "Hierarchical Caching",
+                  "description": "Multi-layer caching systems like Activation Refilling (ACRE)",
+                  "useCases": ["Enterprise systems with multiple data tiers"],
+                  "techniqueDetails": {
+                    "howItWorks": "Multi-layer caching systems like Activation Refilling (ACRE)",
+                    "whenToUse": "Complex applications with varied access patterns",
+                    "useCase": "Enterprise systems with multiple data tiers",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                },
+                {
+                  "id": "infinite-llm",
+                  "name": "Infinite-LLM with DistAttention",
+                  "description": "Handle extremely long sequences using distributed attention mechanisms",
+                  "useCases": ["Large-scale document processing"],
+                  "techniqueDetails": {
+                    "howItWorks": "Handle extremely long sequences using distributed attention mechanisms",
+                    "whenToUse": "Processing unlimited sequence lengths",
+                    "useCase": "Large-scale document processing",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                },
+                {
+                  "id": "kcache",
+                  "name": "KCache",
+                  "description": "Smart optimization: K cache in high-bandwidth memory, V cache in CPU memory for optimized inference speed and memory usage",
+                  "useCases": ["High-performance serving", "Cost optimization"],
+                  "techniqueDetails": {
+                    "howItWorks": "Smart optimization: K cache in high-bandwidth memory, V cache in CPU memory for optimized inference speed and memory usage",
+                    "whenToUse": "Inference speed optimization is critical",
+                    "useCase": "High-performance serving, cost optimization",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                }
+              ]
+            },
+            {
+              "title": "Multi-agent Distributive Processing",
+              "techniques": [
+                {
+                  "id": "multi-agent-distributive",
+                  "name": "Multi-Agent Distributive Processing",
+                  "description": "Handles massive inputs in distributed manner with high cache reusability in RAG and agent workloads",
+                  "useCases": [
+                    "Large-scale knowledge processing",
+                    "Enterprise RAG"
+                  ],
+                  "techniqueDetails": {
+                    "howItWorks": "Handles massive inputs in distributed manner with high cache reusability in RAG and agent workloads",
+                    "whenToUse": "Processing massive datasets across distributed systems",
+                    "useCase": "Large-scale knowledge processing, enterprise RAG",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                },
+                {
+                  "id": "cache-access-analysis",
+                  "name": "Cache Access Pattern Analysis",
+                  "description": "High reusability patterns in RAG and agent applications to reduce redundancy",
+                  "useCases": ["Production RAG systems", "Agent platforms"],
+                  "techniqueDetails": {
+                    "howItWorks": "High reusability patterns in RAG and agent applications to reduce redundancy",
+                    "whenToUse": "Optimizing performance through better caching strategies",
+                    "useCase": "Production RAG systems, agent platforms",
+                    "sectionOfPaper": "4.3.3. Context Compression"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
