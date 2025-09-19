@@ -51,9 +51,7 @@ import contextData from "./data/contextNavigator.json";
               data-category={category.id}
               data-accent={accent}
             >
-              <div
-                class="main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 pb-4"
-              >
+              <div class="main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 pb-4">
                 <div class="flex items-center gap-4">
                   <div class="w-8 h-8 rounded-full accent-dot" />
                   {category.title}
@@ -95,9 +93,7 @@ import contextData from "./data/contextNavigator.json";
                               {technique.description}
                             </div>
                             {technique.useCases.map((uc) => (
-                              <span
-                                class="use-case inline-block border px-2 py-1 rounded-xl text-xs mt-2 mr-2"
-                              >
+                              <span class="use-case inline-block border px-2 py-1 rounded-xl text-xs mt-2 mr-2">
                                 {uc}
                               </span>
                             ))}
@@ -138,8 +134,16 @@ import contextData from "./data/contextNavigator.json";
 
   @supports (color: color-mix(in srgb, white, black)) {
     .main-category {
-      --accent-color-muted: color-mix(in srgb, var(--accent-color) 16%, transparent);
-      --accent-color-glow: color-mix(in srgb, var(--accent-color) 32%, transparent);
+      --accent-color-muted: color-mix(
+        in srgb,
+        var(--accent-color) 16%,
+        transparent
+      );
+      --accent-color-glow: color-mix(
+        in srgb,
+        var(--accent-color) 32%,
+        transparent
+      );
     }
   }
 
@@ -198,7 +202,10 @@ import contextData from "./data/contextNavigator.json";
     border-color: var(--accent-color);
     color: var(--accent-color);
     background-color: var(--accent-color-muted);
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .technique-details {
@@ -253,30 +260,32 @@ import contextData from "./data/contextNavigator.json";
   /* ... etc ... */
 </style>
 
-<script>
-  // Client-side script (runs in the browser)
-  import Fuse from "fuse.js";
+<!-- Load Fuse.js from CDN -->
+<script
+  src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"
+  crossorigin="anonymous"
+  onload="console.log('Fuse.js loaded successfully')"
+  onerror="console.error('Failed to load Fuse.js')"></script>
 
-  // The detailed descriptions for when a technique is clicked
-  const techniqueDetails = {
-    clear: {
-      title: "CLEAR Framework",
-      howItWorks:
-        "Conciseness, Logic, Explicitness, Adaptability, Reflectiveness for robust prompt design",
-      whenToUse: "Design for various use cases with self-evaluation built in",
-      useCase: "Building robust prompt templates for production AI systems",
-      sectionOfPaper: "4.1.1",
-    },
-    cot: {
-      title: "Chain of Thought (CoT)",
-      howItWorks:
-        "Breaks complex problems into step-by-step reasoning. Key phrase: 'Let's think step by step'.",
-      whenToUse: "Multi-step arithmetic, logical reasoning tasks",
-      useCase: "Mathematical problem solving, debugging code logic",
-      sectionOfPaper: "4.1.1",
-    },
-    // ... Add ALL other technique details here for the click-to-expand feature
-  };
+<script define:vars={{ contextData }}>
+  // Client-side script (runs in the browser)
+
+  // Build technique details from JSON data
+  let techniqueDetails = {};
+
+  function buildTechniqueDetails(data) {
+    data.categories.forEach((category) => {
+      category.subcategories.forEach((subcategory) => {
+        subcategory.subsections.forEach((subsection) => {
+          subsection.techniques.forEach((technique) => {
+            if (technique.techniqueDetails) {
+              techniqueDetails[technique.id] = technique.techniqueDetails;
+            }
+          });
+        });
+      });
+    });
+  }
 
   let searchData = [];
   let fuse = null;
@@ -297,7 +306,7 @@ import contextData from "./data/contextNavigator.json";
     });
   }
 
-  function filterTechniques(searchTerm: string) {
+  function filterTechniques(searchTerm) {
     const allMainCategories = document.querySelectorAll(".main-category");
     const allSubCategories = document.querySelectorAll(".sub-category");
     const allTechniques = document.querySelectorAll(".technique");
@@ -315,10 +324,12 @@ import contextData from "./data/contextNavigator.json";
       return;
     }
 
+    let matchedElements = new Set();
+
     const results = fuse.search(searchTerm);
-    const matchedElements = new Set(
-      results.map((result) => result.item.element)
-    );
+    results.forEach((result) => {
+      matchedElements.add(result.item.element);
+    });
 
     allTechniques.forEach((technique) => {
       technique.style.display = matchedElements.has(technique)
@@ -391,53 +402,86 @@ import contextData from "./data/contextNavigator.json";
   }
 
   // --- Initialize after DOM is ready ---
-  buildSearchIndex();
-  fuse = new Fuse(searchData, {
-    keys: ["name", "description", "useCases"],
-    threshold: 0.4,
-  });
+  function initializeNavigator() {
+    buildTechniqueDetails(contextData);
+    buildSearchIndex();
 
-  document
-    .querySelector(".search-input")
-    .addEventListener("input", (e) => filterTechniques(e.target.value));
+    // Wait for Fuse.js to be available
+    const initializeFuse = () => {
+      if (typeof Fuse !== "undefined") {
+        fuse = new Fuse(searchData, {
+          keys: ["name", "description", "useCases"],
+          threshold: 0.4,
+          includeScore: true,
+          ignoreLocation: true,
+          shouldSort: true,
+          minMatchCharLength: 2,
+        });
+        console.log("Fuse.js search initialized successfully");
+      } else {
+        console.log("Fuse.js not available, using fallback search");
+      }
+    };
 
-  document.querySelectorAll(".filter-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document
-        .querySelectorAll(".filter-btn")
-        .forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      showCategory(btn.dataset.filter);
-    });
-  });
-
-  const grid = document.getElementById("techniquesGrid");
-  grid.addEventListener("click", (e) => {
-    const technique = e.target.closest(".technique");
-    if (technique) {
-      showTechniqueDetails(technique.dataset.technique);
-      return;
+    // Try to initialize Fuse immediately, or wait for it to load
+    if (typeof Fuse !== "undefined") {
+      initializeFuse();
+    } else {
+      // Wait a bit for Fuse.js to load
+      setTimeout(initializeFuse, 100);
     }
 
-    const toggleBtn = e.target.closest(".collapse-toggle-btn");
-    if (toggleBtn) {
-      const mainCategory = toggleBtn.closest(".main-category");
-      const shouldExpand = toggleBtn.textContent.trim() === "Expand All";
-      mainCategory.querySelectorAll(".sub-category").forEach((sc) => {
-        shouldExpand ? sc.setAttribute("open", "") : sc.removeAttribute("open");
+    document
+      .querySelector(".search-input")
+      .addEventListener("input", (e) => filterTechniques(e.target.value));
+
+    document.querySelectorAll(".filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document
+          .querySelectorAll(".filter-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        showCategory(btn.dataset.filter);
       });
-      updateToggleButtonText(mainCategory);
-      return;
-    }
+    });
 
-    const summary = e.target.closest(".sub-category summary");
-    if (summary) {
-      setTimeout(() => {
-        // Allow 'open' attribute to update
-        updateToggleButtonText(summary.closest(".main-category"));
-      }, 10);
-    }
-  });
+    const grid = document.getElementById("techniquesGrid");
+    grid.addEventListener("click", (e) => {
+      const technique = e.target.closest(".technique");
+      if (technique) {
+        showTechniqueDetails(technique.dataset.technique);
+        return;
+      }
 
-  document.querySelectorAll(".main-category").forEach(updateToggleButtonText);
+      const toggleBtn = e.target.closest(".collapse-toggle-btn");
+      if (toggleBtn) {
+        const mainCategory = toggleBtn.closest(".main-category");
+        const shouldExpand = toggleBtn.textContent.trim() === "Expand All";
+        mainCategory.querySelectorAll(".sub-category").forEach((sc) => {
+          shouldExpand
+            ? sc.setAttribute("open", "")
+            : sc.removeAttribute("open");
+        });
+        updateToggleButtonText(mainCategory);
+        return;
+      }
+
+      const summary = e.target.closest(".sub-category summary");
+      if (summary) {
+        setTimeout(() => {
+          // Allow 'open' attribute to update
+          updateToggleButtonText(summary.closest(".main-category"));
+        }, 10);
+      }
+    });
+
+    document.querySelectorAll(".main-category").forEach(updateToggleButtonText);
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeNavigator);
+  } else {
+    initializeNavigator();
+  }
 </script>
