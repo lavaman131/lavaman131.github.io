@@ -293,6 +293,7 @@ import contextData from "./data/contextNavigator.json";
   function buildSearchIndex() {
     searchData = [];
     document.querySelectorAll(".technique").forEach((technique) => {
+      const techniqueId = technique.dataset.technique;
       const name = technique
         .querySelector(".technique-name")
         .textContent.trim();
@@ -302,7 +303,39 @@ import contextData from "./data/contextNavigator.json";
       const useCases = Array.from(technique.querySelectorAll(".use-case"))
         .map((el) => el.textContent.trim())
         .join(" ");
-      searchData.push({ element: technique, name, description, useCases });
+
+      // Get additional data from technique details if available
+      let additionalData = "";
+      const details = techniqueDetails[techniqueId];
+      if (details) {
+        additionalData = [
+          details.howItWorks || "",
+          details.whenToUse || "",
+          details.useCase || "",
+          details.sectionOfPaper || "",
+        ].join(" ");
+      }
+
+      // Get category and subcategory information for broader context
+      const subCategory = technique.closest(".sub-category");
+      const mainCategory = technique.closest(".main-category");
+      const categoryTitle =
+        mainCategory
+          ?.querySelector(".main-category-title")
+          ?.textContent?.trim() || "";
+      const subCategoryTitle =
+        subCategory?.querySelector(".category-title")?.textContent?.trim() ||
+        "";
+
+      searchData.push({
+        element: technique,
+        name,
+        description,
+        useCases,
+        additionalData,
+        categoryTitle,
+        subCategoryTitle,
+      });
     });
   }
 
@@ -410,12 +443,39 @@ import contextData from "./data/contextNavigator.json";
     const initializeFuse = () => {
       if (typeof Fuse !== "undefined") {
         fuse = new Fuse(searchData, {
-          keys: ["name", "description", "useCases"],
+          keys: [
+            {
+              name: "name",
+              weight: 0.3,
+            },
+            {
+              name: "description",
+              weight: 0.25,
+            },
+            {
+              name: "useCases",
+              weight: 0.2,
+            },
+            {
+              name: "additionalData",
+              weight: 0.15,
+            },
+            {
+              name: "categoryTitle",
+              weight: 0.05,
+            },
+            {
+              name: "subCategoryTitle",
+              weight: 0.05,
+            },
+          ],
           threshold: 0.4,
           includeScore: true,
           ignoreLocation: true,
           shouldSort: true,
           minMatchCharLength: 2,
+          findAllMatches: true,
+          ignoreFieldNorm: false,
         });
         console.log("Fuse.js search initialized successfully");
       } else {
