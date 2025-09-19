@@ -2,6 +2,7 @@
   "categories": [
     {
       "id": "retrieval",
+      "accent": "green",
       "title": "Context Retrieval & Generation",
       "subcategories": [
         {
@@ -804,6 +805,7 @@
     },
     {
       "id": "management",
+      "accent": "peach",
       "title": "Context Management",
       "subcategories": [
         {

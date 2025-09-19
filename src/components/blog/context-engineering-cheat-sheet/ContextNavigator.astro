@@ -44,21 +44,22 @@ import contextData from "./data/contextNavigator.json";
     <div class="main-grid flex flex-col gap-10 mb-10" id="techniquesGrid">
       {
         contextData.categories.map((category) => {
-          const color = "blue";
+          const accent = category.accent ?? "blue";
           return (
             <div
               class="main-category bg-ctp-base border border-ctp-surface0 rounded-2xl p-8 shadow-lg transition-all duration-300"
               data-category={category.id}
+              data-accent={accent}
             >
               <div
-                class={`main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 border-ctp-${color} pb-4`}
+                class="main-category-title text-3xl font-extrabold mb-8 flex items-center justify-between text-ctp-text border-b-4 pb-4"
               >
                 <div class="flex items-center gap-4">
-                  <div class={`w-8 h-8 rounded-full bg-ctp-${color}`} />
+                  <div class="w-8 h-8 rounded-full accent-dot" />
                   {category.title}
                 </div>
                 <button
-                  class="collapse-toggle-btn px-3 py-1 text-sm font-medium text-ctp-subtext1 hover:text-ctp-text border border-ctp-blue hover:border-ctp-blue rounded-lg transition-all duration-200 hover:bg-ctp-surface0"
+                  class="collapse-toggle-btn px-3 py-1 text-sm font-medium border rounded-lg transition-all duration-200 accent-button"
                   data-category={category.id}
                 >
                   Collapse All
@@ -67,12 +68,12 @@ import contextData from "./data/contextNavigator.json";
 
               {category.subcategories.map((subcategory) => (
                 <details
-                  class={`sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 border-ctp-${color} transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
+                  class="sub-category bg-ctp-mantle rounded-xl p-6 mb-6 border-l-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                   data-subcategory={subcategory.id}
                   open
                 >
                   <summary class="category-title text-xl font-bold mb-5 flex items-center gap-3 text-ctp-text cursor-pointer">
-                    <div class={`w-5 h-5 rounded-full bg-ctp-${color}`} />
+                    <div class="w-5 h-5 rounded-full accent-dot" />
                     {subcategory.title}
                   </summary>
 
@@ -84,10 +85,10 @@ import contextData from "./data/contextNavigator.json";
                       <div class="technique-list space-y-3">
                         {subsection.techniques.map((technique) => (
                           <div
-                            class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:border-ctp-blue hover:translate-x-1 hover:shadow-md"
+                            class="technique p-3 rounded-lg bg-ctp-mantle border border-ctp-surface0 cursor-pointer transition-all duration-200 hover:bg-ctp-surface1 hover:translate-x-1"
                             data-technique={technique.id}
                           >
-                            <div class="technique-name font-semibold text-ctp-blue mb-1">
+                            <div class="technique-name font-semibold accent-text mb-1">
                               {technique.name}
                             </div>
                             <div class="technique-description text-sm text-ctp-subtext1 leading-relaxed">
@@ -95,7 +96,7 @@ import contextData from "./data/contextNavigator.json";
                             </div>
                             {technique.useCases.map((uc) => (
                               <span
-                                class={`use-case inline-block border border-ctp-${color} bg-transparent text-ctp-text px-2 py-1 rounded-xl text-xs mt-2 mr-2`}
+                                class="use-case inline-block border px-2 py-1 rounded-xl text-xs mt-2 mr-2"
                               >
                                 {uc}
                               </span>
@@ -117,11 +118,96 @@ import contextData from "./data/contextNavigator.json";
 
 <style>
   /* All your previous styles go here */
+  .main-category {
+    --accent-color: var(--catppuccin-color-blue);
+    --accent-color-muted: rgba(137, 180, 250, 0.18);
+    --accent-color-glow: rgba(137, 180, 250, 0.3);
+  }
+
+  .main-category[data-accent="green"] {
+    --accent-color: var(--catppuccin-color-green);
+    --accent-color-muted: rgba(166, 227, 161, 0.18);
+    --accent-color-glow: rgba(166, 227, 161, 0.28);
+  }
+
+  .main-category[data-accent="peach"] {
+    --accent-color: var(--catppuccin-color-peach);
+    --accent-color-muted: rgba(254, 100, 11, 0.18);
+    --accent-color-glow: rgba(254, 100, 11, 0.28);
+  }
+
+  @supports (color: color-mix(in srgb, white, black)) {
+    .main-category {
+      --accent-color-muted: color-mix(in srgb, var(--accent-color) 16%, transparent);
+      --accent-color-glow: color-mix(in srgb, var(--accent-color) 32%, transparent);
+    }
+  }
+
+  .main-category-title {
+    border-color: var(--accent-color);
+  }
+
+  .accent-dot {
+    background-color: var(--accent-color);
+  }
+
+  .accent-text {
+    color: var(--accent-color);
+  }
+
+  .accent-button {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    background-color: transparent;
+  }
+
+  .accent-button:hover {
+    background-color: var(--accent-color-muted);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+  }
+
+  .sub-category {
+    border-left-color: var(--accent-color);
+  }
+
+  .technique:hover .technique-name,
+  .technique.selected .technique-name {
+    color: var(--accent-color);
+  }
+
+  .technique:hover .technique-description,
+  .technique.selected .technique-description {
+    color: var(--ctp-text);
+  }
+
+  .main-category .technique:hover,
+  .main-category .technique.selected {
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 12px var(--accent-color-glow);
+  }
+
+  .technique:hover .use-case,
+  .technique.selected .use-case {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background-color: var(--accent-color-muted);
+  }
+
+  .use-case {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background-color: var(--accent-color-muted);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .technique-details {
+    border-left-color: var(--accent-color);
+  }
+
   .technique.selected {
     background-color: var(--ctp-surface1);
-    border-color: var(--ctp-blue);
     transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(137, 180, 250, 0.2);
   }
   .detail-table {
     width: 100%;
@@ -158,7 +244,7 @@ import contextData from "./data/contextNavigator.json";
     top: 50%;
     transform: translateY(-50%);
     font-size: 0.875rem;
-    color: var(--ctp-subtext1);
+    color: var(--accent-color);
     transition: transform 0.2s ease;
   }
   .sub-category[open] summary::before {
@@ -281,7 +367,7 @@ import contextData from "./data/contextNavigator.json";
       targetElement.classList.add("selected");
       const detailsDiv = document.createElement("div");
       detailsDiv.className =
-        "technique-details mt-4 p-4 bg-ctp-surface0 rounded-lg border-l-4 border-ctp-blue";
+        "technique-details mt-4 p-4 bg-ctp-surface0 rounded-lg border-l-4";
       detailsDiv.innerHTML = `
           <table class="detail-table"><tbody>
             <tr><th>How It Works</th><td>${details.howItWorks}</td></tr>
