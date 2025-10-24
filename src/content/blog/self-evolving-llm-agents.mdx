@@ -1,0 +1,728 @@
+## Why This Matters for Production ML Systems
+
+Modern LLM agents face a persistent challenge: how do they continuously improve from real-world experience without expensive retraining cycles? Two recent frameworks, **ReasoningBank with Memory-aware Test-Time Scaling (MaTTS)** and **Agentic Context Engineering (ACE)**, provide complementary solutions to this problem. ReasoningBank enables agents to distill and retrieve structured reasoning patterns from past trajectories, while ACE allows agents to incrementally refine their operational context based on execution feedback.
+
+This article synthesizes these frameworks and proposes how their integration could create a powerful architecture for production ML systems that learn continuously, adapt efficiently, and scale intelligently, all without retraining. We believe the complementary nature of these frameworks presents a compelling direction for future exploration, and we outline one potential integration strategy that practitioners might consider alongside other innovative combinations.
+
+---
+
+## Framework Overview: Two Complementary Approaches
+
+### ReasoningBank + MaTTS: Learning from Experience
+
+ReasoningBank introduces a structured memory system that captures reasoning patterns from both successful and failed agent trajectories. Rather than treating each task as isolated, agents build a growing repository of reusable reasoning strategies.
+
+The key innovation is **Memory-aware Test-Time Scaling (MaTTS)**, which generates richer experiences through two modes:
+
+- **Parallel scaling**: Generate $k$ diverse trajectories simultaneously and use self-contrast to identify robust patterns
+- **Sequential scaling**: Iteratively refine a single trajectory over $k$ passes
+
+This approach delivered significant improvements: up to **+8.3% success rate** on WebArena, **34.2% relative improvement** via MaTTS, and **16% fewer interaction steps** on SWE-Bench-Verified.
+
+### Agentic Context Engineering: Evolving Operational Knowledge
+
+ACE takes a different angle: instead of storing complete trajectories, it maintains an evolving context of domain-specific heuristics represented as bullet points. The framework uses a three-stage pipeline:
+
+1. **Generator**: Creates delta context updates based on execution feedback
+2. **Reflector**: Iteratively critiques and refines these updates across multiple epochs
+3. **Curator**: Merges refined updates while removing redundancies via semantic de-duplication
+
+The results are compelling: **+17.1% accuracy improvement** on agent benchmarks and **86.9% latency reduction** in context adaptation compared to monolithic rewrites.
+
+---
+
+## Technical Deep-Dive: How These Systems Work
+
+### Memory Representation and Retrieval in ReasoningBank
+
+ReasoningBank structures agent trajectories into JSON-formatted memory items:
+
+$$
+m_i = \text{Extract}(\tau_j) = \{ \text{title}, \text{description}, \text{content} \}
+$$
+
+Each memory item receives a pre-computed embedding using gemini-embedding-001. When an agent faces a new query $q$, relevant memories are retrieved via cosine similarity:
+
+$$
+m^* = \arg\max_{m_i \in M} \cos(\text{Embed}(q), e(m_i))
+$$
+
+The top-$k$ memories $M_q$ are injected as additional system instructions, enriching the agent's context with relevant past experiences.
+
+**Agent Policy Formulation**
+
+The LLM agent's decision-making policy incorporates retrieved memory:
+
+$$
+\pi_{LLM}(a_t | o_t, \tau_{<t}, M) = \text{LLM}(\text{concat}(o_t, \tau_{<t}, M))
+$$
+
+where $o_t$ is the current observation, $\tau_{<t}$ represents the trajectory history, and $M$ contains the retrieved memories.
+
+**Memory Retrieval (ReasoningBank)**
+
+```python
+def retrieve_memories(query, memory_bank, k=5):
+    """
+    Retrieve top-k relevant memories using cosine similarity
+    
+    Args:
+        query: Current task query
+        memory_bank: List of memory items with embeddings
+        k: Number of memories to retrieve
+    
+    Returns:
+        List of top-k memory items
+    """
+    query_embedding = embed(query)
+    
+    similarities = []
+    for memory in memory_bank:
+        sim = cosine_similarity(query_embedding, memory.embedding)
+        similarities.append((sim, memory))
+    
+    similarities.sort(reverse=True)
+    return [mem for _, mem in similarities[:k]]
+```
+
+### Memory-Aware Test-Time Scaling (MaTTS)
+
+MaTTS enriches the agent's experience through multi-trajectory generation:
+
+**Parallel Scaling** generates diverse trajectories $\{ \tau_1, \ldots, \tau_k \}$ for each query, then applies a self-contrast function:
+
+$$
+C(T) \rightarrow M_{\text{refined}}
+$$
+
+This filters spurious attempts and identifies consistent reasoning patterns.
+
+**Sequential Scaling** refines a single trajectory iteratively:
+
+$$
+R(\tau) \rightarrow \tau_{\text{refined}}
+$$
+
+Both modes create a positive feedback loop: better trajectories lead to better memories, which guide improved future reasoning.
+
+### Closed-Loop Memory Updates
+
+After trajectory execution, an LLM-as-judge (temperature=0.0) deterministically labels outcomes as Success or Failure. Memory items from both outcomes are appended to the memory bank:
+
+$$
+M_{t+1} = M_t \cup \{ R_i \}_{i=1}^k
+$$
+
+This append-only approach enables unsupervised continual learning, no ground-truth labels required.
+
+**Multi-Trajectory Generation with MaTTS**
+
+```python
+def matts_parallel_scaling(prompt, k=5):
+    """
+    MaTTS Parallel Scaling: Generate k diverse trajectories
+    
+    Args:
+        prompt: Task prompt with context and memories
+        k: Number of trajectories to generate
+    
+    Returns:
+        Best trajectory after self-contrast
+    """
+    # Generate diverse trajectories
+    trajectories = []
+    for _ in range(k):
+        trajectory = LLM.generate(prompt, temperature=0.7)
+        trajectories.append(trajectory)
+    
+    # Self-contrast to identify consistent patterns
+    refined = self_contrast(trajectories)
+    
+    # Select best trajectory
+    return select_best_trajectory(refined)
+
+def self_contrast(trajectories):
+    """
+    Apply self-contrast to filter spurious reasoning
+    
+    Args:
+        trajectories: List of generated trajectories
+    
+    Returns:
+        Filtered trajectories with consistent reasoning
+    """
+    # Identify common reasoning patterns
+    patterns = extract_reasoning_patterns(trajectories)
+    
+    # Filter trajectories that align with consensus patterns
+    refined = []
+    for traj in trajectories:
+        if aligns_with_consensus(traj, patterns):
+            refined.append(traj)
+    
+    return refined if refined else trajectories
+    
+```
+
+<br />
+
+**Memory Extraction and Update**
+
+```python
+def extract_and_update_memory(trajectory, label, memory_bank):
+    """
+    Extract memory items and update memory bank
+    
+    Args:
+        trajectory: Executed agent trajectory
+        label: Success/Failure from LLM-as-judge
+        memory_bank: Current memory bank
+    
+    Returns:
+        Updated memory bank
+    """
+    # Extract reasoning units
+    memory_items = []
+    
+    for step in trajectory.steps:
+        if is_significant_reasoning(step):
+            memory_item = {
+                'title': generate_title(step),
+                'description': generate_description(step, label),
+                'content': step.full_reasoning,
+                'label': label,
+                'embedding': embed(step.full_reasoning)
+            }
+            memory_items.append(memory_item)
+    
+    # Append to memory bank (no pruning)
+    memory_bank.extend(memory_items)
+    
+    return memory_bank
+
+def llm_as_judge(trajectory, temperature=0.0):
+    """
+    Deterministically label trajectory success/failure
+    
+    Args:
+        trajectory: Agent trajectory to evaluate
+        temperature: Sampling temperature (0.0 for deterministic)
+    
+    Returns:
+        'Success' or 'Failure' label
+    """
+    evaluation_prompt = f"""
+    Evaluate this agent trajectory:
+    {trajectory}
+    
+    Did the agent successfully complete the task?
+    Respond with only: Success or Failure
+    """
+    
+    label = LLM.generate(evaluation_prompt, temperature=temperature)
+    return label.strip()
+```
+
+
+### Incremental Context Adaptation in Agentic Context Engineering (ACE)
+
+ACE represents context $C_t$ as itemized bullet points capturing domain heuristics. The core innovation is incremental delta updates:
+
+$$
+C_t = C_{t-1} + \Delta C_t
+$$
+
+where $\Delta C_t$ represents refined, compact changes rather than complete context rewrites.
+
+**The Generator-Reflector-Curator Pipeline**
+
+**Generator** produces initial delta contexts from execution feedback $E_t$:
+
+$$
+\Delta C_t^{(0)} = \text{Generator}(C_{t-1}, E_t, q_t)
+$$
+
+**Reflector** iteratively refines these updates over multiple epochs $e \in [1, N]$:
+
+$$
+\Delta C_t^{(e)} = \text{Reflector}(\Delta C_t^{(e-1)}, C_{t-1}, E_t)
+$$
+
+**Curator** merges the refined delta with existing context:
+
+$$
+C_t = \text{Curator}(C_{t-1}, \Delta C_t^{(N)})
+$$
+
+Semantic embedding-based de-duplication prevents redundancy and context collapse.
+
+### Mathematical Framework for Online and Offline Modes
+
+**Online Adaptation**: Context updates after each execution cycle:
+
+$$
+C_t = \text{Curator}(C_{t-1}, \text{Refine}(\text{Generator}(C_{t-1}, E_t, q_t)))
+$$
+
+**Offline Adaptation**: Batch updates across accumulated feedback:
+
+$$
+C_{t+1} = \text{Curator}(C_t, \text{Refine}(\text{Generator}(C_t, \{E_1, \ldots, E_t\}, Q)))
+$$
+
+Offline mode enables multi-epoch refinement for higher-quality context evolution.
+
+**Delta Context Generation and Refinement (ACE)**
+
+```python
+def generate_delta_context(current_context, execution_feedback, query):
+    """
+    Generator: Create initial delta context from execution feedback
+    
+    Args:
+        current_context: Existing context bullet points
+        execution_feedback: Feedback from recent executions
+        query: Current task query
+    
+    Returns:
+        Initial delta context as bullet points
+    """
+    prompt = f"""
+    Given the current context:
+    {current_context}
+    
+    And execution feedback:
+    {execution_feedback}
+    
+    Generate compact, actionable bullet points to address:
+    {query}
+    """
+    
+    delta_context = LLM.generate(prompt)
+    return parse_bullets(delta_context)
+
+def refine_delta_context(delta_context, current_context, 
+                        execution_feedback, num_epochs=3):
+    """
+    Reflector: Iteratively refine delta context across multiple epochs
+    
+    Args:
+        delta_context: Initial delta context
+        current_context: Existing context
+        execution_feedback: Execution outcomes
+        num_epochs: Number of refinement iterations
+    
+    Returns:
+        Refined delta context
+    """
+    for epoch in range(num_epochs):
+        critique_prompt = f"""
+        Review this delta context:
+        {delta_context}
+        
+        Against existing context:
+        {current_context}
+        
+        Based on feedback:
+        {execution_feedback}
+        
+        Refine for: clarity, actionability, non-redundancy
+        """
+        
+        delta_context = LLM.generate(critique_prompt)
+        delta_context = parse_bullets(delta_context)
+    
+    return delta_context
+
+def merge_context(current_context, refined_delta):
+    """
+    Curator: Merge refined delta with existing context
+    
+    Args:
+        current_context: Existing context bullets
+        refined_delta: Refined delta context
+    
+    Returns:
+        Updated context with de-duplication
+    """
+    # Compute embeddings for all bullets
+    current_embeddings = [embed(bullet) for bullet in current_context]
+    delta_embeddings = [embed(bullet) for bullet in refined_delta]
+    
+    merged = list(current_context)
+    
+    for delta_bullet, delta_emb in zip(refined_delta, delta_embeddings):
+        # Check semantic similarity with existing bullets
+        is_redundant = False
+        for curr_emb in current_embeddings:
+            if cosine_similarity(delta_emb, curr_emb) > threshold:
+                is_redundant = True
+                break
+        
+        if not is_redundant:
+            merged.append(delta_bullet)
+            current_embeddings.append(delta_emb)
+    
+    return merged
+```
+<br/>
+
+---
+
+## Implementation Architecture: Bringing It All Together
+
+Here's one approach to combine both frameworks into a unified system:
+
+### Core Algorithm: Unified Memory and Context Evolution
+
+```python
+# Initialize
+M = []  # Memory bank
+C = initial_context  # Bullet-point context
+k = 5  # Number of trajectories for MaTTS
+
+for t in range(num_iterations):
+    # Step 1: Query and Memory Retrieval
+    q_t = get_query(t)
+    embeddings = embed(q_t)
+    R = retrieve_top_k(M, embeddings, k=5)
+    
+    # Step 2: Generate Delta Context (ACE Generator)
+    Delta_C = Generator(C, E_t, q_t)
+    
+    # Step 3: Refine Delta Context (ACE Reflector - multi-epoch)
+    for epoch in range(N_epochs):
+        Delta_C = Reflector(Delta_C, C, E_t)
+    
+    # Step 4: Merge Context (ACE Curator)
+    C_new = Curator(C, Delta_C)
+    
+    # Step 5: Form Prompt with Updated Context and Memories
+    prompt = concat(C_new, R, q_t)
+    
+    # Step 6: Multi-Trajectory Generation (MaTTS Parallel Scaling)
+    trajectories = [LLM.generate(prompt) for _ in range(k)]
+    
+    # Step 7: Self-Contrast and Selection
+    refined_trajectories = self_contrast(trajectories)
+    tau_star = select_best(refined_trajectories)
+    
+    # Step 8: Execute and Observe
+    outcome = execute(tau_star)
+    
+    # Step 9: Label and Extract Memory (ReasoningBank)
+    label = LLM_as_judge(tau_star, temperature=0.0)
+    new_memories = Extract(tau_star, label)
+    
+    # Step 10: Update Memory Bank
+    M.update(new_memories)
+    
+    # Step 11: Update Execution Feedback for Next Iteration
+    E_t = outcome_feedback(outcome)
+    C = C_new
+```
+
+<br/>
+---
+
+## Why These Frameworks Complement Each Other
+
+| Dimension | ReasoningBank + MaTTS | ACE | Combined Power |
+|-----------|----------------------|-----|----------------|
+| **Knowledge Type** | Concrete reasoning trajectories | Abstract heuristics and strategies | Specific examples + general principles |
+| **Update Granularity** | Episode-level (per trajectory) | Token-level (delta contexts) | Multi-scale adaptation |
+| **Scaling Dimension** | Multi-trajectory exploration | Multi-epoch refinement | Depth + breadth of experience |
+| **Memory Cost** | Grows with trajectories | Bounded by context size | Memory quality over quantity |
+| **Adaptation Speed** | Accumulates gradually | Updates incrementally | Fast + robust learning |
+
+### Unified Learning Paradigm
+
+The integration creates a closed-loop learning system:
+
+1. **Memory-Informed Context**: Retrieved reasoning patterns guide delta context generation
+2. **Context-Guided Trajectories**: Evolved context shapes multi-trajectory exploration
+3. **Trajectory-Enriched Memory**: New experiences continuously expand the memory bank
+4. **Feedback-Driven Refinement**: Execution outcomes refine both memory and context
+
+This creates a virtuous cycle: better memories → better contexts → better trajectories → better memories.
+
+---
+
+## System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Production LLM Agent                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────────┐         ┌──────────────┐                 │
+│  │   Query q_t  │────────▶│   Retrieve   │                 │
+│  └──────────────┘         │  Memories M  │                 │
+│                           └──────┬───────┘                 │
+│                                  │                          │
+│  ┌──────────────┐         ┌─────▼────────┐                │
+│  │  Feedback    │────────▶│  Generator   │                │
+│  │     E_t      │         │  (Delta C)   │                │
+│  └──────────────┘         └──────┬───────┘                │
+│                                  │                          │
+│                           ┌──────▼───────┐                 │
+│                           │  Reflector   │                 │
+│                           │ (Refine Δ C) │                 │
+│                           └──────┬───────┘                │
+│                                  │                          │
+│                           ┌──────▼───────┐                 │
+│                           │   Curator    │                 │
+│                           │  (Merge C)   │                 │
+│                           └──────┬───────┘                │
+│                                  │                          │
+│  ┌────────────────────────┬─────▼───────┐                 │
+│  │    Memories M          │  Context C  │                 │
+│  └────────────────────────┴─────┬───────┘                │
+│                                  │                          │
+│                           ┌──────▼───────┐                 │
+│                           │  MaTTS k-way │                 │
+│                           │  Generation  │                 │
+│                           └──────┬───────┘                │
+│                                  │                          │
+│                           ┌──────▼───────┐                 │
+│                           │    Execute   │                 │
+│                           │  Trajectory  │                 │
+│                           └──────┬───────┘                │
+│                                  │                          │
+│                           ┌──────▼───────┐                 │
+│                           │ LLM-as-Judge │                 │
+│                           │    Label     │                 │
+│                           └──────┬───────┘                │
+│                                  │                          │
+│                           ┌──────▼───────┐                 │
+│                           │   Extract    │                 │
+│                           │  & Update M  │                 │
+│                           └──────────────┘                 │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+<br/>
+
+---
+
+## Actionable Takeaways
+
+### 1. Memory Quality Over Quantity
+
+Don't just store everything, distill reasoning patterns into structured, retrievable items. The ReasoningBank approach shows that well-structured memory (JSON format with titles, descriptions, and content) enables more effective retrieval than unstructured trajectory dumps.
+
+**Practical Implementation**:
+```python
+# Good: Structured memory extraction
+memory_item = {
+    'title': 'Navigate to nested menu via hover interaction',
+    'description': 'Hover over parent menu to reveal submenu options',
+    'content': 'When target element is in nested menu: (1) identify parent menu, (2) hover to trigger submenu, (3) click target',
+    'embedding': embed(content)
+}
+
+# Bad: Unstructured dump
+memory_item = entire_trajectory_text
+```
+
+### 2. Incremental Updates Reduce Latency and Cost
+
+ACE's delta context approach reduced adaptation latency by **86.9%** and token cost by **83.6%**. For production systems with tight SLA requirements, incremental updates are non-negotiable.
+
+**Practical Implementation**:
+- Generate compact delta contexts (5-10 bullets) rather than rewriting entire contexts (50+ bullets)
+- Use semantic de-duplication to prevent context bloat
+- Leverage KV cache for unchanged context portions
+
+### 3. Multi-Trajectory Exploration Beats Single-Shot Attempts
+
+MaTTS parallel scaling improved success rates by **34.2%** relative to baseline. The investment in k=3 to k=5 trajectories pays dividends through self-contrast filtering and robust pattern identification.
+
+**Practical Trade-off**:
+- Critical tasks (user-facing, high-stakes): Use k=5 parallel scaling
+- Routine tasks (internal tools, low-stakes): Use k=1 or k=3
+- Development/testing: Use k=3 as default
+
+### 4. Learn from Failures, Not Just Successes
+
+ReasoningBank explicitly includes failed trajectories in memory. This negative learning prevents repeated mistakes and accelerates convergence.
+
+**Practical Implementation**:
+```python
+# Store both outcomes with labels
+if label == 'Success':
+    memory['content'] = f"Successful approach: {reasoning}"
+else:
+    memory['content'] = f"Failed approach (avoid): {reasoning}"
+```
+
+### 5. Multi-Epoch Refinement Improves Context Quality
+
+ACE's Reflector iterates over delta contexts multiple times (typically 3 epochs). This multi-pass refinement produces higher-quality, more actionable context updates than single-pass generation.
+
+**Practical Implementation**:
+- Epoch 1: Generate initial delta from raw feedback
+- Epoch 2: Critique for clarity and actionability
+- Epoch 3: Refine for non-redundancy and conciseness
+
+### 6. Closed-Loop Self-Supervision Eliminates Labeling Bottlenecks
+
+LLM-as-judge enables unsupervised continual learning from unlabeled data streams. This eliminates the need for manual annotation pipelines in production.
+
+**Practical Implementation**:
+- Use temperature=0.0 for deterministic, reproducible judgments
+- Define clear success criteria in judge prompts
+- Monitor judge agreement with human evaluations periodically
+
+### 7. Embedding-Based Retrieval and De-duplication Are Critical
+
+Both frameworks rely heavily on semantic embeddings (gemini-embedding-001) for retrieval and de-duplication. Pre-computing and caching these embeddings is essential for production latency.
+
+**Practical Implementation**:
+```python
+# Pre-compute and cache embeddings
+class EmbeddingCache:
+    def __init__(self):
+        self.cache = {}
+    
+    def embed(self, text):
+        if text not in self.cache:
+            self.cache[text] = embedding_model.embed(text)
+        return self.cache[text]
+
+# Use for retrieval and de-duplication
+retriever = MemoryRetriever(embedding_cache)
+curator = ContextCurator(embedding_cache)
+```
+
+<br/>
+
+---
+
+## Challenges and Future Directions
+
+### Current Limitations
+
+**Memory Bank Growth**: Append-only strategy leads to unbounded growth. Future work should explore intelligent pruning strategies that preserve memory quality while managing storage.
+
+**Context Window Constraints**: Even with delta updates, context can grow beyond model limits. Hierarchical context structures or dynamic compression may help.
+
+**Compute Cost**: Multi-trajectory generation (k=5) increases inference cost 5x. Cost-performance trade-offs need careful tuning per use case.
+
+**Domain Transfer**: Memory and context from one domain may not transfer well to another. Domain-aware memory indexing could improve cross-domain generalization.
+
+**Evaluation Robustness**: LLM-as-judge may have biases or blind spots. Human-in-the-loop validation remains important for high-stakes decisions.
+
+### Research Opportunities
+
+**Hierarchical Memory**: Organize memories into hierarchies (general strategies → domain tactics → specific examples) for more efficient retrieval and reasoning.
+
+**Meta-Learning Context**: Learn how to generate better delta contexts from patterns in successful context updates across tasks.
+
+**Multi-Agent Collaboration**: Share memories and contexts across agent teams, enabling collective learning and specialization.
+
+**Formal Verification**: Develop formal methods to verify memory consistency and context coherence, especially for safety-critical applications.
+
+**Adaptive Scaling**: Dynamically adjust k based on task difficulty or uncertainty, optimizing compute vs. performance trade-offs in real-time.
+
+---
+
+## Conclusion: A New Paradigm for Production LLM Agents
+
+The synthesis of ReasoningBank's structured memory distillation with Agentic Context Engineering's incremental adaptation presents a transformative approach to building production-ready LLM agents. This integrated framework delivers:
+
+✅ **Continuous, unsupervised learning** from streaming, unlabeled data through LLM-based self-supervision
+
+✅ **Memory-augmented context evolution** where retrieved reasoning strategies inform compact, interpretable updates
+
+✅ **Multi-dimensional scaling** via multi-trajectory exploration and multi-epoch refinement, not just bigger models or more data
+
+✅ **Efficient, modular architectures** that reduce latency (up to 86.9%) and cost (up to 83.6%) for real-world deployment
+
+✅ **Robust performance gains** across diverse benchmarks: +8.3% on WebArena, +17.1% on AppWorld, 34.2% relative improvement via MaTTS
+
+For ML engineers building production systems, this combined approach offers concrete blueprints for mathematical formalizations, pseudocode workflows, and implementation best practices to develop scalable, interpretable, and adaptive LLM agents capable of lifelong learning without retraining.
+
+The key insight: **emphasize memory quality over quantity, incremental updates over wholesale rewrites, and closed-loop self-supervision over manual labeling**. This paradigm shift addresses critical challenges in production AI systems such as distribution shifts, limited labeled data, resource constraints while enabling continuous improvement and adaptation.
+
+As LLM agents move from research prototypes to production workhorses, frameworks like these provide the architectural foundation for systems that learn from experience, adapt to change, and scale intelligently, all essential properties for real-world deployment.
+
+---
+
+## Appendix
+
+### Key Implementation Considerations
+
+**Model Configuration**
+- **LLM Models**: Gemini-2.5 variants, Claude-3.7, DeepSeek-V3.1 via Vertex AI API
+- **Embedding Model**: gemini-embedding-001 for memory and context similarity
+- **Decoding Temperature**: 0.7 for trajectory generation (exploration-exploitation balance)
+- **Judge Temperature**: 0.0 for deterministic success/failure classification
+
+**Memory Management**
+- **Format**: JSON with fields `{title, description, content}` plus pre-computed embeddings
+- **Storage Strategy**: Append-only without pruning to isolate impact of memory quality
+- **Retrieval**: Top-k cosine similarity search (typically k=5)
+- **Indexing**: Pre-compute and cache embeddings for fast retrieval
+
+**Context Management**
+- **Representation**: Itemized bullet points for interpretability
+- **Update Strategy**: Incremental delta contexts merged with semantic de-duplication
+- **De-duplication Threshold**: Cosine similarity > 0.85 to identify redundant bullets
+- **Size Management**: Bounded by token limits; curator removes low-value items when needed
+
+**Agent Loop Architecture**
+- **Framework**: ReAct (Reasoning + Acting) interleaved steps
+- **Trajectory Structure**: Sequence of (thought, action, observation) tuples
+- **Memory Injection**: Retrieved memories added as system instructions
+- **Context Conditioning**: Evolved context prepended to task prompt
+
+**Compute and Latency Optimization**
+- **KV Cache Reuse**: Maintain cache across delta context updates
+- **Parallel Generation**: Batch k trajectories in MaTTS parallel mode
+- **Embedding Caching**: Pre-compute and store embeddings for memory and context items
+- **Lazy Loading**: Load memories on-demand rather than loading entire bank
+
+**Scaling Trade-offs**
+- **k=1**: Baseline, no additional compute
+- **k=3**: Good balance, ~2x improvement with 3x compute
+- **k=5**: Maximum tested, ~2.5x improvement with 5x compute
+- **Recommendation**: Start with k=3 for production, scale to k=5 for critical tasks
+
+**Self-Supervision Pipeline**
+- **LLM-as-Judge**: Binary success/failure classification at temperature=0.0
+- **Labeling Criteria**: Task completion, correctness, efficiency
+- **Failure Integration**: Include failed trajectories in memory for negative learning
+- **Label Confidence**: Deterministic labeling eliminates sampling noise
+
+**Monitoring and Observability**
+- **Memory Growth**: Track memory bank size and retrieval relevance over time
+- **Context Drift**: Monitor context size and semantic coherence across updates
+- **Performance Metrics**: Success rate, interaction steps, latency per trajectory
+- **Quality Signals**: Self-contrast agreement rate, judge label consistency
+
+### Benchmark Results Across Domains
+
+| Benchmark | Metric | ReasoningBank + MaTTS | ACE | Key Insight |
+|-----------|--------|----------------------|-----|-------------|
+| **WebArena** | Success Rate Improvement | **+8.3%** absolute | N/A | Memory retrieval critical for web navigation |
+| **Mind2Web** | Element Accuracy, Action F1 | **+7.2%** improvement | N/A | Structured memory aids cross-domain generalization |
+| **SWE-Bench-Verified** | Issue Resolution Rate | **+4.6%** improvement | N/A | **16% fewer interaction steps** via memory |
+| **AppWorld** | Accuracy | N/A | **+17.1%** over baselines | Context adaptation improves agentic reasoning |
+| **Financial Benchmarks** | Accuracy | N/A | **+8.6%** over baselines | Domain-specific context refinement essential |
+| **Latency & Cost** | Adaptation Latency Reduction | N/A | **86.9%** reduction | Delta updates dramatically reduce overhead |
+
+### MaTTS Scaling Analysis
+
+Performance at different scaling factors (k):
+
+| Mode | k=1 | k=3 | k=5 | Observation |
+|------|-----|-----|-----|-------------|
+| Parallel | 51.2% | 53.8% | **55.1%** | Consistent improvement with scaling |
+| Sequential | 51.2% | 53.1% | 54.5% | Diminishing returns at higher k |
+
+**Key Finding**: Parallel scaling outperforms sequential at larger k, suggesting diverse exploration trumps iterative refinement for test-time scaling.
+
+## References
+
+TOOD insert link to papers
