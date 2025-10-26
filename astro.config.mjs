@@ -6,6 +6,8 @@ import icon from "astro-icon";
 import mdx from "@astrojs/mdx";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import * as mdxMermaid from 'mdx-mermaid';
+
 
 const SERVER_PORT = 3000;
 // the url to access your blog during local development
@@ -57,7 +59,9 @@ export default defineConfig({
         },
       },
     }),
-    mdx(),
+    mdx({
+      remarkPlugins: [remarkMath, [mdxMermaid.default, {output: 'svg'}]]
+    }),
   ],
   vite: { plugins: [tailwindcss()]  },
   markdown: {

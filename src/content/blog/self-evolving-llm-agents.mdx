@@ -383,56 +383,71 @@ This creates a virtuous cycle: better memories → better contexts → better tr
 
 ## System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Production LLM Agent                      │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  ┌──────────────┐         ┌──────────────┐                 │
-│  │   Query q_t  │────────▶│   Retrieve   │                 │
-│  └──────────────┘         │  Memories M  │                 │
-│                           └──────┬───────┘                 │
-│                                  │                          │
-│  ┌──────────────┐         ┌─────▼────────┐                │
-│  │  Feedback    │────────▶│  Generator   │                │
-│  │     E_t      │         │  (Delta C)   │                │
-│  └──────────────┘         └──────┬───────┘                │
-│                                  │                          │
-│                           ┌──────▼───────┐                 │
-│                           │  Reflector   │                 │
-│                           │ (Refine Δ C) │                 │
-│                           └──────┬───────┘                │
-│                                  │                          │
-│                           ┌──────▼───────┐                 │
-│                           │   Curator    │                 │
-│                           │  (Merge C)   │                 │
-│                           └──────┬───────┘                │
-│                                  │                          │
-│  ┌────────────────────────┬─────▼───────┐                 │
-│  │    Memories M          │  Context C  │                 │
-│  └────────────────────────┴─────┬───────┘                │
-│                                  │                          │
-│                           ┌──────▼───────┐                 │
-│                           │  MaTTS k-way │                 │
-│                           │  Generation  │                 │
-│                           └──────┬───────┘                │
-│                                  │                          │
-│                           ┌──────▼───────┐                 │
-│                           │    Execute   │                 │
-│                           │  Trajectory  │                 │
-│                           └──────┬───────┘                │
-│                                  │                          │
-│                           ┌──────▼───────┐                 │
-│                           │ LLM-as-Judge │                 │
-│                           │    Label     │                 │
-│                           └──────┬───────┘                │
-│                                  │                          │
-│                           ┌──────▼───────┐                 │
-│                           │   Extract    │                 │
-│                           │  & Update M  │                 │
-│                           └──────────────┘                 │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+%%{init: {
+  'theme': 'default',
+  'flowchart': {
+    'htmlLabels': false
+  }
+}}%%
+flowchart TD
+    Start["`Query q`"] --> Embed["`Embed Query
+    (embedding_model)`"]
+    Embed --> Retrieve["`Retrieve Top-K Memories
+    (cosine similarity)`"]
+
+    Retrieve --> Generator["`Generator
+    Generate Δ Context
+    Candidates
+    (from query +
+    memories + context)`"]
+    Generator --> Reflector["`Reflector
+    Refine Δ Context
+    (N reflection
+    epochs)`"]
+    Reflector --> Curator["`Curator
+    Synthesize &
+    Deduplicate
+    (semantic merge)`"]
+
+    Curator --> Combine["`Combine Contexts
+    (base + memories
+    + curated Δ)`"]
+
+    Combine --> ScalingMode{"`Scaling Mode?`"}
+
+    ScalingMode -->|Parallel| ParallelGen["`Generate N
+    Trajectories
+    (parallel
+    sampling)`"]
+    ParallelGen --> SelfContrast["`Self-Contrast
+    Filter
+    (LLM-as-Judge
+    scoring)`"]
+    SelfContrast --> BestTraj["`Select Best
+    Trajectory`"]
+
+    ScalingMode -->|Sequential| SeqGen["`Generate Single
+    Trajectory`"]
+    SeqGen --> SelfRefine["`Self-Refine
+    (N refinement
+    passes)`"]
+    SelfRefine --> BestTraj
+
+    BestTraj --> Execute["`Execute
+    Trajectory
+    (return response)`"]
+    Execute --> ExtractMem["`Extract New
+    Memories
+    (LLM extraction
+    pipeline)`"]
+    ExtractMem --> UpdatePool["`Update Memory
+    Pool
+    (additive,
+    no pruning)`"]
+
+    UpdatePool -.->|Updated Memory Pool| Retrieve
+    Curator -.->|Update Context| Start
 ```
 <br/>
 
