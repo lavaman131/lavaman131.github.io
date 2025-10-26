@@ -1095,35 +1095,57 @@ This creates a virtuous cycle: better memories → better contexts → better tr
   'flowchart': {
     'htmlLabels': false,
     'wrap': true
+  },
+  'themeVariables': {
+    'primaryColor': '#E8F4F8',
+    'primaryTextColor': '#1a1a1a',
+    'primaryBorderColor': '#4A90A4',
+    'secondaryColor': '#F0E8F4',
+    'secondaryTextColor': '#1a1a1a',
+    'secondaryBorderColor': '#8B7AA8',
+    'tertiaryColor': '#F4F0E8',
+    'tertiaryTextColor': '#1a1a1a',
+    'tertiaryBorderColor': '#A89B7A',
+    'noteBkgColor': '#E8F8E8',
+    'noteTextColor': '#1a1a1a',
+    'noteBorderColor': '#6FA86F'
   }
 }}%%
 flowchart TD
-    Start["Query q"] --> Embed["Embed Query\n(embedding_model)"]
-    Embed --> Retrieve["Retrieve Top-K Memories\n(cosine similarity)"]
+    Start["Query q"]:::inputStyle --> Embed["Embed Query\n(embedding_model)"]:::memoryStyle
+    Embed --> Retrieve["Retrieve Top-K Memories\n(cosine similarity)"]:::memoryStyle
 
-    Retrieve --> Generator["Generator\nGenerate Δ Context Candidates\n(from query + memories + context)"]
-    Generator --> Reflector["Reflector\nRefine Δ Context\n(N reflection epochs)"]
-    Reflector --> Curator["Curator\nSynthesize & Deduplicate\n(semantic merge)"]
+    Retrieve --> Generator["Generator\nGenerate Δ Context Candidates\n(from query + memories + context)"]:::aceStyle
+    Generator --> Reflector["Reflector\nRefine Δ Context\n(N reflection epochs)"]:::aceStyle
+    Reflector --> Curator["Curator\nSynthesize & Deduplicate\n(semantic merge)"]:::aceStyle
 
-    Curator --> Combine["Combine Contexts\n(base + memories + curated Δ)"]
+    Curator --> Combine["Combine Contexts\n(base + memories + curated Δ)"]:::combineStyle
 
-    Combine --> ScalingMode{"Scaling Mode?"}
+    Combine --> ScalingMode{"Scaling Mode?"}:::decisionStyle
 
-    ScalingMode -->|Parallel| ParallelGen["Generate N Trajectories\n(parallel sampling)"]
-    ParallelGen --> SelfContrast["Self-Contrast Filter\n(LLM-as-Judge scoring)"]
-    SelfContrast --> BestTraj["Select Best Trajectory"]
+    ScalingMode -->|Parallel| ParallelGen["Generate N Trajectories\n(parallel sampling)"]:::mattsStyle
+    ParallelGen --> SelfContrast["Self-Contrast Filter\n(LLM-as-Judge scoring)"]:::mattsStyle
+    SelfContrast --> BestTraj["Select Best Trajectory"]:::mattsStyle
 
-    ScalingMode -->|Sequential| SeqGen["Generate Single Trajectory"]
-    SeqGen --> SelfRefine["Self-Refine\n(N refinement passes)"]
+    ScalingMode -->|Sequential| SeqGen["Generate Single Trajectory"]:::mattsStyle
+    SeqGen --> SelfRefine["Self-Refine\n(N refinement passes)"]:::mattsStyle
     SelfRefine --> BestTraj
 
-    BestTraj --> Execute["Execute Trajectory\n(return response)"]
-    Execute --> ExtractMem["Extract New Memories\n(LLM extraction pipeline)"]
-    ExtractMem --> UpdatePool["Update Memory Pool\n(additive, no pruning)"]
+    BestTraj --> Execute["Execute Trajectory\n(return response)"]:::executeStyle
+    Execute --> ExtractMem["Extract New Memories\n(LLM extraction pipeline)"]:::extractStyle
+    ExtractMem --> UpdatePool["Update Memory Pool\n(additive, no pruning)"]:::memoryStyle
 
     UpdatePool -.->|Updated Memory Pool| Retrieve
     Curator -.->|Update Context| Start
 
+    classDef inputStyle fill:#BBE5ED,stroke:#2E86AB,stroke-width:2px,color:#1a1a1a
+    classDef memoryStyle fill:#C5DBF7,stroke:#4A7BA7,stroke-width:2px,color:#1a1a1a
+    classDef aceStyle fill:#E4C9F5,stroke:#9B59B6,stroke-width:2px,color:#1a1a1a
+    classDef combineStyle fill:#BEF0CB,stroke:#27AE60,stroke-width:2px,color:#1a1a1a
+    classDef decisionStyle fill:#FFD6A5,stroke:#F39C12,stroke-width:2px,color:#1a1a1a
+    classDef mattsStyle fill:#FFCCCB,stroke:#E74C3C,stroke-width:2px,color:#1a1a1a
+    classDef executeStyle fill:#B2E6D4,stroke:#16A085,stroke-width:2px,color:#1a1a1a
+    classDef extractStyle fill:#F5C6E8,stroke:#D35D9A,stroke-width:2px,color:#1a1a1a
 ```
 <br/>
 
