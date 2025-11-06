@@ -5,13 +5,6 @@ authors: "Alex Lavaee, Norin Lavaee"
 description: "An overview of two frameworks for memory and context management to enable continous self-learning systems"
 ---
 
-## Key Takeaways
-
-- **ReasoningBank + Memory-aware Test-Time Scaling (MaTTS)** distills structured reasoning patterns from agent trajectories, improving success rates by up to 8.3% through parallel trajectory generation (k=3 to k=5)
-- **Agentic Context Engineering (ACE)** incrementally adapts context via delta updates, reducing adaptation latency by 86.9% and improving accuracy by 17.1%
-- **Combined architecture** creates closed-loop learning: retrieved memories inform context updates, evolved contexts guide trajectory generation, trajectories enrich both memory and context
-- **Production-ready**: Full implementation specs provided for rapid POC development without retraining infrastructure
-
 ## The Challenge: Learning Without Retraining
 
 Modern LLM agents face a fundamental constraint: they can't continuously improve from real-world experience without expensive retraining cycles. When deployed, they encounter edge cases, domain-specific patterns, and novel scenarios that expose gaps in their base capabilities. Current approaches either ignore this drift or require periodic fine-tuning, both suboptimal for production systems.
@@ -182,7 +175,7 @@ Pre-compute and cache embeddings for both memory retrieval and context de-duplic
 
 The synthesis of ReasoningBank and ACE demonstrates a new paradigm for production LLM agents: continuous learning without retraining. By combining structured memory distillation with incremental context adaptation, systems can:
 
-- Learn continuously from unlabeled data via LLM-as-judge self-supervision
+- Learn continuously without manual labels via LLM-as-judge evaluation
 - Adapt efficiently through delta updates (86.9% latency reduction)
 - Scale intelligently via multi-trajectory exploration (34.2% improvement)
 - Maintain interpretability through structured memory and bullet-point contexts
@@ -190,6 +183,15 @@ The synthesis of ReasoningBank and ACE demonstrates a new paradigm for productio
 For practitioners, this integrated approach offers concrete blueprints—complete with implementation specs, hyperparameters, and trade-off analysis—for building agents that evolve with experience. The key shift: emphasize memory quality over quantity, incremental updates over rewrites, and closed-loop learning over manual curation.
 
 As LLM agents transition from research prototypes to production systems, frameworks like these provide the architectural foundation for continuous adaptation, efficient scaling, and robust performance gains across diverse domains.
+
+---
+
+## Key Takeaways
+
+- **ReasoningBank + Memory-aware Test-Time Scaling (MaTTS)** distills structured reasoning patterns from agent trajectories, improving success rates by up to 8.3% through parallel trajectory generation (k=3 to k=5)
+- **Agentic Context Engineering (ACE)** incrementally adapts context via delta updates, reducing adaptation latency by 86.9% and improving accuracy by 17.1%
+- **Combined architecture** creates closed-loop learning: retrieved memories inform context updates, evolved contexts guide trajectory generation, trajectories enrich both memory and context
+- **Production-ready**: Full implementation specs provided below for rapid POC development without retraining infrastructure
 
 ---
 
