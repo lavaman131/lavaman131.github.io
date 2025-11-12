@@ -121,16 +121,27 @@
   @apply font-medium;
 }
 
+/* Mermaid diagram centering */
+.content-typography svg[id^="mermaid-svg-"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  max-width: 100%;
+  height: auto;
+}
+
 @media (max-width: 768px) {
   .content-typography table {
     @apply text-xs;
   }
-  
+
   .content-typography th,
   .content-typography td {
     @apply px-3 py-2;
   }
-  
+
   .content-typography th {
     @apply text-[0.7rem];
   }
