@@ -102,25 +102,41 @@ This transforms you from a passive user into a power user who configures how age
 The infrastructure above enables a research-driven development process that balances AI assistance with human oversight. Here's the workflow that produced 100k lines of quality code:
 
 ```mermaid
+%%{init: {
+  'theme': 'default',
+  'flowchart': {
+    'htmlLabels': false,
+    'wrap': true
+  },
+  'themeVariables': {
+    'primaryColor': '#E8F4F8',
+    'primaryTextColor': '#1a1a1a',
+    'primaryBorderColor': '#4A90A4',
+    'secondaryColor': '#F0E8F4',
+    'secondaryTextColor': '#1a1a1a',
+    'secondaryBorderColor': '#8B7AA8',
+    'tertiaryColor': '#F4F0E8',
+    'tertiaryTextColor': '#1a1a1a',
+    'tertiaryBorderColor': '#A89B7A',
+    'noteBkgColor': '#E8F8E8',
+    'noteTextColor': '#1a1a1a',
+    'noteBorderColor': '#6FA86F'
+  }
+}}%%
 graph TD
-    A[Deep Research] --> B["Product Requirements Document (PRD)"]
-    B --> C[Brainstorm with Coding Agent]
-    C --> D[Technical Design/Spec]
-    D --> E[Human Review & Feedback]
-    E --> F[Refined Technical Design/Spec]
-    F --> G[Implementation Plan Doc/ExecPlan]
-    G --> H[Implementation with Sub-Agents]
-    H --> I[Testing & Validation]
+    A[Deep Research]:::primaryStyle --> B["Product Requirements Document (PRD)"]:::tertiaryStyle
+    B --> C[Brainstorm with Coding Agent]:::secondaryStyle
+    C --> D[Technical Design/Spec]:::noteStyle
+    D --> E[Human Review & Feedback]:::primaryStyle
+    E --> F[Refined Technical Design/Spec]:::noteStyle
+    F --> G[Implementation Plan Doc/ExecPlan]:::tertiaryStyle
+    G --> H[Implementation with Sub-Agents]:::secondaryStyle
+    H --> I[Testing & Validation]:::primaryStyle
     
-    style A fill:#e1f5ff,stroke:#333,stroke-width:2px,color:#000
-    style B fill:#fff4e1,stroke:#333,stroke-width:2px,color:#000
-    style C fill:#ffe1f5,stroke:#333,stroke-width:2px,color:#000
-    style D fill:#e1ffe1,stroke:#333,stroke-width:2px,color:#000
-    style E fill:#ffe1e1,stroke:#333,stroke-width:2px,color:#000
-    style F fill:#e1ffe1,stroke:#333,stroke-width:2px,color:#000
-    style G fill:#fff4e1,stroke:#333,stroke-width:2px,color:#000
-    style H fill:#e1e1ff,stroke:#333,stroke-width:2px,color:#000
-    style I fill:#ffe1e1,stroke:#333,stroke-width:2px,color:#000
+    classDef primaryStyle fill:#E8F4F8,stroke:#4A90A4,stroke-width:2px,color:#1a1a1a
+    classDef secondaryStyle fill:#F0E8F4,stroke:#8B7AA8,stroke-width:2px,color:#1a1a1a
+    classDef tertiaryStyle fill:#F4F0E8,stroke:#A89B7A,stroke-width:2px,color:#1a1a1a
+    classDef noteStyle fill:#E8F8E8,stroke:#6FA86F,stroke-width:2px,color:#1a1a1a
 ```
 
 ### Research & Requirements
