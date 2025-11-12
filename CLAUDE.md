@@ -4,17 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # Project Overview
 
-<!--
-  TEMPLATE INSTRUCTIONS: Replace this section with your project's description.
-  Include information about:
-  - What your project does
-  - Main technologies used
-  - Key features or goals
--->
+This is a personal website and blog built with Astro, a modern static site generator. The site showcases projects and technical blog posts with rich content features including mathematical equations, Mermaid diagrams, and syntax-highlighted code blocks.
 
-[YOUR_PROJECT_DESCRIPTION]
+The site uses TypeScript throughout for type safety and Tailwind CSS with the Catppuccin theme for styling. It features two main content collections: blog posts and project showcases, both managed through Astro's content collections API with Zod schema validation.
 
-**Example**: This is a [YOUR_LANGUAGE] project that [YOUR_PROJECT_PURPOSE].
+**Key Features:**
+- Static site generation with Astro 5.9.3
+- TypeScript with strict mode enabled
+- MDX-based content with math support (KaTeX)
+- Mermaid diagram integration
+- Dark/light theme with Catppuccin colors
+- Responsive design with Tailwind CSS 4
+- Search functionality powered by Fuse.js
+- Deployed to https://alexlavaee.me
 
 # Skills Protocol (Superpowers)
 
@@ -149,27 +151,55 @@ Skip using an ExecPlan for straightforward tasks (roughly the easiest 25%).
 
 # Architecture
 
-<!--
-  TEMPLATE INSTRUCTIONS: Describe your project's architecture here.
-  Include information about:
-  - Overall architectural pattern (layered, microservices, etc.)
-  - Key components and their responsibilities
-  - Package/module structure
-  - Design principles
--->
+This project follows a **content-driven static site architecture** using Astro's file-based routing and content collections pattern.
 
-[YOUR_ARCHITECTURE_DESCRIPTION]
+**Key Components:**
 
-**Example architecture structure:**
+1. **Content Collections** (`src/content/`): Type-safe content management
+   - `blog/`: MDX blog posts with frontmatter validation
+   - `projects/`: Project showcases with cover images
+   - `config.ts`: Zod schemas defining content structure
+
+2. **Pages** (`src/pages/`): File-based routing
+   - `index.astro`: Homepage
+   - `blog.astro` & `blog/`: Blog listing and individual posts
+   - `projects.astro` & `projects/`: Project listing and details
+   - `404.astro`: Custom error page
+
+3. **Components** (`src/components/`): Reusable UI elements
+   - Layout components (Navigation, Footer, Heading)
+   - Content components (BlogCard, ProjectCard)
+   - Theme components (ThemeIcon)
+   - Blog-specific components (`blog/`)
+
+4. **Layouts** (`src/layouts/`): Page templates
+5. **Styles** (`src/styles/`): Global CSS and Tailwind configuration
+6. **Assets** (`src/assets/`): Images and videos
+
+**Project Structure:**
 ```
-your-project/
+lavaman131.github.io/
 ├── src/
-│   ├── [MODULE_1]/
-│   ├── [MODULE_2]/
-│   └── [MODULE_3]/
-├── tests/
-└── [CONFIG_FILES]
+│   ├── content/           # Content collections (blog, projects)
+│   │   ├── blog/          # MDX blog posts
+│   │   ├── projects/      # Project MDX files
+│   │   └── config.ts      # Content schemas
+│   ├── components/        # Astro components
+│   ├── layouts/           # Page layouts
+│   ├── pages/             # File-based routes
+│   ├── styles/            # Global styles
+│   └── assets/            # Static assets
+├── astro.config.mjs       # Astro configuration
+├── tsconfig.json          # TypeScript configuration
+└── package.json           # Dependencies and scripts
 ```
+
+**Design Principles:**
+- Type-safe content management with Zod validation
+- Component-based UI architecture
+- Static generation for optimal performance
+- Separation of content from presentation
+- Responsive and accessible design
 
 # Development Guidelines
 
@@ -179,38 +209,28 @@ your-project/
 - Human-in-the-loop: If you're unsure about a design decision or implementation detail, ask for clarification before proceeding. Feel free to ask clarifying questions as you are working.
 - Avoid re-inventing the wheel: Use existing libraries and tools where appropriate.
 
-<!--
-  TEMPLATE INSTRUCTIONS: Replace this section with your project's technology stack and package management instructions.
-  Include information about:
-  - Programming languages used
-  - Package managers (npm, pip, cargo, etc.)
-  - Common commands for development
-  - Build tools
--->
+## TypeScript/JavaScript
 
-## [YOUR_PRIMARY_LANGUAGE]
+`npm` is the package manager used to manage dependencies and run development scripts. Below are the common commands:
 
-`[YOUR_PACKAGE_MANAGER]` is the command-line tool used to manage the development environment and dependencies. Below are the common commands you'll use:
-
-- `[INSTALL_COMMAND]` - Install/sync dependencies
-- `[ADD_PACKAGE_COMMAND]` - Add a dependency
-- `[RUN_TESTS_COMMAND]` - Run tests
-- `[LINT_COMMAND]` - Run linting/formatting
-- `[BUILD_COMMAND]` - Build the project
+- `npm install` - Install/sync dependencies
+- `npm add <package>` - Add a new dependency
+- `npm run dev` - Start development server (localhost:3000)
+- `npm run build` - Build the site for production
+- `npm run preview` - Preview production build locally
+- `npx prettier --write .` - Format code with Prettier
 
 ### Technology Stack Focus
-- **[LANGUAGE_VERSION]**: [Description]
-- **[FRAMEWORK_1]**: [Purpose]
-- **[FRAMEWORK_2]**: [Purpose]
-
-## [YOUR_SECONDARY_LANGUAGE] (if applicable)
-
-`[PACKAGE_MANAGER]` commands:
-
-- `[BUILD_COMMAND]` - Build the project
-- `[TEST_COMMAND]` - Run tests
-- `[LINT_COMMAND]` - Run linter
-- `[FORMAT_COMMAND]` - Format code
+- **TypeScript**: Strict mode enabled for enhanced type safety across all files
+- **Astro 5.9.3**: Modern static site generator with file-based routing and content collections
+- **Tailwind CSS 4.1.10**: Utility-first CSS framework with Catppuccin theme integration
+- **MDX**: Enhanced Markdown with JSX support for rich content
+  - `remark-math` & `rehype-katex`: Mathematical equation rendering
+  - `mdx-mermaid`: Diagram support
+- **Astro Expressive Code**: Syntax-highlighted code blocks with theme support
+- **Astro Icon**: Icon component system with Font Awesome integration
+- **Fuse.js**: Client-side fuzzy search functionality
+- **Prettier**: Code formatting with Astro plugin support
 
 ### Code Organization and Modularity
 
@@ -244,58 +264,81 @@ your-project/
 - Skip docstrings for trivial functions where the name and type hints are self-explanatory
 - Prioritize documenting public APIs, complex logic, and non-intuitive design decisions
 
-<!--
-  TEMPLATE INSTRUCTIONS: Add language-specific code style guidelines here.
-  Common sections to include:
-  - Documentation standards (docstrings, comments)
-  - Naming conventions
-  - Type annotations
-  - Formatting tools
-  - Language-specific best practices
--->
-
-## [YOUR_LANGUAGE] Code Style
+## TypeScript/Astro Code Style
 
 ### Documentation and Comments
 
-- Write clear and concise comments for each function
-- Ensure functions have descriptive names and include type hints/annotations
-- Provide documentation following [YOUR_LANGUAGE_CONVENTION]
-  - Example: Use JSDoc for JavaScript, docstrings for Python
+- Write clear JSDoc comments for complex functions and types
+- Ensure functions have descriptive names that convey their purpose
+- TypeScript types serve as inline documentation - use them effectively
+- Add comments to explain "why" not "what" (the code shows what it does)
+- Document non-obvious Astro features (slots, props, content collections)
 
 ### Naming Conventions
 
-- **Variables and Functions**: `[YOUR_CONVENTION]` (e.g., camelCase, snake_case)
-- **Classes/Types**: `[YOUR_CONVENTION]` (e.g., PascalCase)
-- **Constants**: `[YOUR_CONVENTION]` (e.g., UPPER_SNAKE_CASE)
+- **Variables and Functions**: `camelCase`
+- **Components**: `PascalCase` (e.g., `BlogCard.astro`, `ThemeIcon.astro`)
+- **Types and Interfaces**: `PascalCase`
+- **Constants**: `UPPER_SNAKE_CASE` for true constants, `camelCase` for config objects
+- **Files**:
+  - Astro components: `PascalCase.astro`
+  - TypeScript modules: `camelCase.ts`
+  - Config files: `kebab-case.config.js`
 
-### Additional Language-Specific Guidelines
+### TypeScript Guidelines
 
-[YOUR_SPECIFIC_GUIDELINES]
+- Always enable strict mode (already configured in `tsconfig.json`)
+- Prefer explicit types over `any`
+- Use Zod schemas for runtime validation (content collections, API responses)
+- Leverage type inference where it improves readability
+- Define interfaces for component props in Astro components
+
+### Astro-Specific Patterns
+
+- Use content collections for structured content (blog posts, projects)
+- Define frontmatter schemas in `src/content/config.ts` using Zod
+- Leverage Astro's built-in optimizations (image optimization, lazy loading)
+- Use `.astro` files for components with HTML templates
+- Import TypeScript utilities as needed in Astro components
+- Follow Astro's component script conventions (frontmatter at the top)
+
+### Formatting
+
+- Prettier is configured with the Astro plugin
+- Run `npx prettier --write .` to format all files
+- Formatting is automatically applied to `.astro`, `.ts`, `.js`, and `.mdx` files
 
 # Test-Driven Development (TDD)
 
 - Never create throwaway test scripts or ad hoc verification files
 - If you need to test functionality, write a proper test in the test suite
 
-<!--
-  TEMPLATE INSTRUCTIONS: Customize this section with your testing framework and approach.
-  Include:
-  - Testing framework(s) used
-  - Test organization structure
-  - Testing best practices for your project
-  - Coverage requirements
--->
-
 ## Testing Guidelines
 
-- Write tests for all new features in the `[YOUR_TEST_DIRECTORY]/` directory
-- Use `[YOUR_TEST_FRAMEWORK]` as the testing framework
-- Use `[YOUR_MOCKING_LIBRARY]` for mocking dependencies (if applicable)
-- Aim for high test coverage, especially for critical components
-- Always include test cases for critical paths of the application
-- Account for common edge cases like empty inputs, invalid data types, and large datasets
-- Include comments for edge cases and the expected behavior in those cases
+**Note:** Testing infrastructure is not currently set up for this project. As a static site with primarily content-driven architecture, formal testing is minimal. However, when adding interactive features or complex logic, consider the following:
+
+### Recommended Testing Approach
+
+- **For Content Validation**: Ensure content collection schemas (Zod) properly validate frontmatter
+- **For Components with Logic**: Consider using Vitest for unit testing TypeScript utilities
+- **For Visual Regression**: Playwright or Cypress could be used for E2E testing of interactive features
+- **For Build Verification**: The `npm run build` command serves as a build-time validation
+
+### Future Testing Setup (if needed)
+
+- Create a `tests/` or `src/__tests__/` directory for test files
+- Use Vitest (recommended for Vite-based projects like Astro) as the testing framework
+- Test TypeScript utilities and helper functions
+- For Astro components, focus on testing the underlying logic rather than rendering
+- Use the Playwright MCP tool available for browser-based testing
+- Account for edge cases in content processing and search functionality
+
+### Manual Verification
+
+- Preview builds locally with `npm run preview` before deploying
+- Verify content renders correctly for new blog posts and projects
+- Test theme switching and responsive behavior manually
+- Validate that math equations and Mermaid diagrams render properly
 
 # Tools
 
