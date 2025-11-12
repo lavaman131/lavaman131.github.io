@@ -1,5 +1,5 @@
 ---
-title: "How I Shipped 100k Lines in 2 Weeks with AI Coding Infrastructure"
+title: "How I Shipped 100k LoC in 2 Weeks with Coding Agents"
 date: "2025-11-12"
 authors: "Alex Lavaee"
 description: "Open sourcing my developer workflow with AI agents—skills, sub-agents, and autonomous execution. A 5-minute setup that provides the missing infrastructure layer for AI coding tools."
@@ -7,7 +7,7 @@ description: "Open sourcing my developer workflow with AI agents—skills, sub-a
 
 ## The Problem
 
-Over the last two weeks, I shipped 100,000 lines of production-quality code using AI agents. But here's what I learned talking to engineers across companies: we're being asked to adopt AI coding tools (Cursor, Windsurf, GitHub Copilot, Claude Code) without instructions, support, or infrastructure on how to get ROI in production.
+Over the last two weeks, I shipped 100,000 lines of high-quality code using AI agents. But here's what I learned talking to engineers across companies: we're being asked to adopt AI coding tools (Cursor, Windsurf, GitHub Copilot, Claude Code) without instructions, support, or infrastructure on how to get ROI in production.
 
 When we onboard developers, we give them documentation, coding standards, proven workflows, and collaboration tools. When we "deploy" AI agents, we give them nothing. They start fresh every time. No project context, no memory of patterns, no proven workflows.
 
@@ -17,7 +17,7 @@ So I compiled **AI Coding Infrastructure**, the missing support layer that agent
 2. **Proven Workflows** (Skills): Battle-tested TDD, debugging, code review patterns agents MUST follow
 3. **Specialization** (Sub-Agents): 114+ domain experts working in parallel, not one generalist
 4. **Planning Systems** (ExecPlans): Self-contained living docs for complex features
-5. **Autonomous Execution** (Ralph): Continuous loops for overnight development
+5. **Autonomous Execution** (Ralph): Continuous loops for overnight autonomous development
 
 ## How It Works
 
@@ -27,9 +27,9 @@ A single markdown file (`AGENTS.md` or `CLAUDE.md`) in your project root contain
 
 ### Skills: Mandatory Workflow Discipline
 
-Skills are proven patterns from [Anthropic Skills](https://github.com/anthropics/skills) <a href="#ref-1">[1]</a> and [Superpowers](https://github.com/obra/superpowers) <a href="#ref-2">[2]</a>: TDD, systematic debugging, code review, brainstorming.
+Skills are proven patterns from [Anthropic Skills](https://github.com/anthropics/skills) <a href="#ref-2">[2]</a> and [Superpowers](https://github.com/obra/superpowers) <a href="#ref-3">[3]</a>: spec-driven development (SDD), test-driven development (TDD), systematic debugging, code review, brainstorming, etc.
 
-**The breakthrough**: Mandatory First Response Protocol. Before ANY response, agents MUST:
+**The difference**: Mandatory First Response Protocol. Before ANY response, agents MUST:
 
 1. List available skills
 2. Check if ANY skill matches
@@ -37,7 +37,13 @@ Skills are proven patterns from [Anthropic Skills](https://github.com/anthropics
 
 Agents can't rationalize "this is too simple for TDD" or "let me gather info first." If the skill applies, they MUST use it. This prevents the most common failure mode: shortcuts that seem reasonable but create bugs and technical debt.
 
-_Credit: [Superpowers](https://github.com/obra/superpowers) framework by Jesse Hallett and obra <a href="#ref-2">[2]</a>_
+_Credit: [Superpowers](https://github.com/obra/superpowers) framework by Jesse Hallett and obra <a href="#ref-3">[3]</a>_
+
+### Custom Skills: Tailored to Your Workflow
+
+You can also create custom skills for your unique workflows and patterns. One incredibly useful that I built is a meta-prompting skill called prompt-engineer that helps agents improve their own prompts based on project context and past failures. This was built using Anthropic's skill creation in [Anthropic Skills](https://github.com/anthropics/skills) <a href="#ref-2">[2]</a>.
+
+_Credit: Built on Anthropic's Task tool <a href="#ref-2">[2]</a>_
 
 ### Sub-Agents: Parallel Specialization
 
@@ -45,7 +51,7 @@ _Credit: [Superpowers](https://github.com/obra/superpowers) framework by Jesse H
 
 Example: Building a notification system? Agent Organizer dispatches Backend Developer, WebSocket Engineer, Database Optimizer, and React Specialist all simultaneously.
 
-_Credit: Built on Anthropic's Task tool <a href="#ref-1">[1]</a>_
+_Credit: Uses Awesome Claude Code Subagents <a href="#ref-1">[1]</a>_
 
 ### ExecPlans: Self-Contained Living Documents
 
@@ -55,7 +61,7 @@ Nothing gets lost across context switches or handoffs.
 
 ### Ralph: Overnight Autonomous Development
 
-Named after the [Ralph Wiggum meme](https://ghuntley.com/ralph/) <a href="#ref-3">[3]</a>, Ralph enables agents to run in continuous loops with no manual intervention.
+Named after the [Ralph Wiggum meme](https://ghuntley.com/ralph/) <a href="#ref-4">[4]</a>, Ralph enables agents to run in continuous loops with no manual intervention.
 
 **How it works**: Four files in `.ralph/` directory:
 - `prompt.md` — Your instructions ("Port TypeScript to Python")
@@ -70,9 +76,9 @@ The agent works, commits changes, sleeps 10 seconds, continues until task comple
 - Builds programming languages autonomously
 - Migrates entire codebases between technologies
 
-Best on cloud VMs (AWS EC2, Google Compute, DigitalOcean) with tmux/screen.
+Best on cloud VMs (AWS EC2, Google Compute, DigitalOcean) running a [tmux](https://github.com/tmux/tmux) session.
 
-_Credit: [Geoffrey Huntley](https://ghuntley.com/) <a href="#ref-3">[3]</a>_
+_Credit: [Geoffrey Huntley](https://ghuntley.com/) <a href="#ref-4">[4]</a>_
 
 ## Real Results
 
@@ -91,6 +97,68 @@ Two weeks. 100,000 lines of production-quality code. I took the final 20% as the
 
 This transforms you from a passive user into a power user who configures how agents think and collaborate.
 
+## My AI-Augmented Development Workflow
+
+The infrastructure above enables a research-driven development process that balances AI assistance with human oversight. Here's the workflow that produced 100k lines of quality code:
+
+```mermaid
+graph TD
+    A[Deep Research] --> B["Product Requirements Document (PRD)"]
+    B --> C[Brainstorm with Coding Agent]
+    C --> D[Technical Design/Spec]
+    D --> E[Human Review & Feedback]
+    E --> F[Refined Technical Design/Spec]
+    F --> G[Implementation Plan Doc/ExecPlan]
+    G --> H[Implementation with Sub-Agents]
+    H --> I[Testing & Validation]
+    
+    style A fill:#e1f5ff,stroke:#333,stroke-width:2px,color:#000
+    style B fill:#fff4e1,stroke:#333,stroke-width:2px,color:#000
+    style C fill:#ffe1f5,stroke:#333,stroke-width:2px,color:#000
+    style D fill:#e1ffe1,stroke:#333,stroke-width:2px,color:#000
+    style E fill:#ffe1e1,stroke:#333,stroke-width:2px,color:#000
+    style F fill:#e1ffe1,stroke:#333,stroke-width:2px,color:#000
+    style G fill:#fff4e1,stroke:#333,stroke-width:2px,color:#000
+    style H fill:#e1e1ff,stroke:#333,stroke-width:2px,color:#000
+    style I fill:#ffe1e1,stroke:#333,stroke-width:2px,color:#000
+```
+
+### Research & Requirements
+
+Start with comprehensive research into the problem space: user needs, existing solutions, relevant technologies, and constraints. This research feeds into a **Product Requirements Document (PRD)** that articulates the *what* and *why*—problem statement, target users, success metrics, and business objectives—without prescribing implementation details.
+
+### AI-Assisted Design
+
+This is where AI coding infrastructure becomes critical. **Brainstorm with your coding agent** to explore technical possibilities. The agent leverages its knowledge of patterns and best practices to generate multiple approaches, identify challenges, and discuss trade-offs. This exploratory phase surfaces ideas that might not emerge from solo brainstorming.
+
+Formalize the output into a **Technical Design/Spec** (often auto-generated as an ExecPlan). This describes the *how*: architecture decisions, API designs, data models, technology stack, system components, and scalability/security considerations.
+
+### Human Validation Loop
+
+**Critical checkpoint**: Experienced engineers review the AI-assisted spec. This human oversight catches edge cases, validates assumptions, and ensures alignment with organizational standards. This acknowledges that AI assistance needs human verification—I spent significant time here catching architectural issues before implementation.
+
+Incorporate feedback into a **Refined Technical Design/Spec**. This might involve adjusting architecture, adding clarifications, or reconsidering technology choices. The refined spec represents the agreed-upon technical approach with human validation baked in.
+
+### Execution
+
+Break the refined spec into an **Implementation Plan Doc** (ExecPlans in `specs/`). This includes task decomposition, effort estimates, dependency mapping, and milestone definitions.
+
+During **Implementation**, sub-agents work in parallel on independent tasks. Ralph handles overnight autonomous development for foundational features. Mandatory TDD skills catch bugs in the design phase.
+
+**Testing** validates against both PRD objectives and technical spec requirements: unit tests, integration tests, performance testing, and final QA.
+
+### Why This Works
+
+**AI-augmented but human-validated**: Balances the speed and breadth of AI with the judgment and experience of senior engineers. AI assists exploration and implementation; humans validate critical decisions.
+
+**Separation of concerns**: Clear distinction between product requirements (PRD), technical design (Spec), and execution planning (Plan Doc/ExecPlan). Each artifact serves its specific purpose.
+
+**Feedback integration**: Explicit human review loop after initial spec ensures first drafts benefit from iteration before implementation begins.
+
+**Research-driven**: Starting with deep research rather than jumping to requirements ensures decisions are grounded in solid understanding of the problem space.
+
+This workflow is particularly effective for complex projects where upfront planning investment pays dividends, teams leveraging AI coding tools, and organizations wanting to maintain human control over critical technical decisions while benefiting from AI capabilities.
+
 ## 5-Minute Setup
 
 1. Copy template files to your project (`AGENTS.md`/`CLAUDE.md`, `specs/`, optionally `.ralph/`)
@@ -101,7 +169,7 @@ Agent analyzes your codebase and populates AGENTS.md, then installs 100+ skills 
 
 **You get**: Project memory, mandatory workflows, specialized agents, ExecPlan templates, Ralph setup.
 
-**Repository**: [github.com/flora131/agent-instructions](https://github.com/flora131/agent-instructions) <a href="#ref-4">[4]</a>
+**Repository**: [github.com/flora131/agent-instructions](https://github.com/flora131/agent-instructions) <a href="#ref-5">[5]</a>
 
 ## Why Open Source This?
 
@@ -109,17 +177,17 @@ Developers aren't seeing production ROI from AI coding tools. Without infrastruc
 
 This infrastructure made the difference for me. From inconsistent results to 100,000 lines in two weeks. If it helps others build faster, it should be shared.
 
-**PRs welcome** <a href="#ref-4">[4]</a>: Build skills for your workflow, create domain sub-agents, improve setup, find better ExecPlan patterns, extend Ralph.
+**PRs welcome** <a href="#ref-5">[5]</a>: Build skills for your workflow, create domain sub-agents, improve setup, find better ExecPlan patterns, extend Ralph.
 
 We're at an inflection point. AI coding tools are deploying widely, but the infrastructure layer is missing. Let's build it together and make it easier and faster for developers to use.
 
 ## Credits
 
 Built on excellent work by:
-- **Superpowers** <a href="#ref-2">[2]</a>: Mandatory skill checking, TDD discipline, systematic debugging (Jesse Hallett, obra)
-- **Anthropic Skills** <a href="#ref-1">[1]</a>: Skills system and reusable patterns framework
-- **Ralph Method** <a href="#ref-3">[3]</a>: Continuous agent loops for autonomous development (Geoffrey Huntley)
-- **Sub-Agent Architecture**: Anthropic's Task tool and orchestration patterns <a href="#ref-1">[1]</a>
+- **Superpowers** <a href="#ref-3">[3]</a>: Mandatory skill checking, TDD discipline, systematic debugging (Jesse Hallett, obra)
+- **Anthropic Skills** <a href="#ref-2">[2]</a>: Skills system and reusable patterns framework
+- **Ralph Method** <a href="#ref-4">[4]</a>: Continuous agent loops for autonomous development (Geoffrey Huntley)
+- **Sub-Agent Architecture**: Anthropic's Task tool and orchestration patterns <a href="#ref-2">[2]</a>
 
 ## Additional Resources
 
@@ -151,7 +219,8 @@ Place this in `.ralph/sync.sh` and make it executable. The continuous loop (`.ra
 
 ### References
 
-<div id="ref-1">[1] Anthropic Skills Framework - https://github.com/anthropics/skills</div>
-<div id="ref-2">[2] Superpowers Framework by Jesse Hallett and obra - https://github.com/obra/superpowers</div>
-<div id="ref-3">[3] Ralph Wiggum Method by Geoffrey Huntley - https://ghuntley.com/ralph/</div>
-<div id="ref-4">[4] Agent Instructions Repository - https://github.com/flora131/agent-instructions</div>
+<div id="ref-1">[1] Awesome Claude Code Subagents - https://github.com/VoltAgent/awesome-claude-code-subagents</div>
+<div id="ref-2">[2] Anthropic Skills Framework - https://github.com/anthropics/skills</div>
+<div id="ref-3">[3] Superpowers Framework by Jesse Hallett and obra - https://github.com/obra/superpowers</div>
+<div id="ref-4">[4] Ralph Wiggum Method by Geoffrey Huntley - https://ghuntley.com/ralph/</div>
+<div id="ref-5">[5] Agent Instructions Repository - https://github.com/flora131/agent-instructions</div>
