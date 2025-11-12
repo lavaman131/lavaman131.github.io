@@ -1,5 +1,5 @@
 ---
-title: "How I Shipped 100k LoC in 2 Weeks with Coding Agents"
+title: "How I Shipped 100k LOC in 2 Weeks with Coding Agents"
 date: "2025-11-12"
 authors: "Alex Lavaee"
 description: "Open sourcing my developer workflow with AI agents—skills, sub-agents, and autonomous execution. A 5-minute setup that provides the missing infrastructure layer for AI coding tools."
@@ -78,7 +78,7 @@ The agent works, commits changes, sleeps 10 seconds, continues until task comple
 
 Best on cloud VMs (AWS EC2, Google Compute, DigitalOcean) running a [tmux](https://github.com/tmux/tmux) session.
 
-_Credit: [Geoffrey Huntley](https://ghuntley.com/) <a href="#ref-4">[4]</a>_
+_Credit: [Geoffrey Huntley](https://ghuntley.com/) <a href="#ref-4">[4]</a>, high-level implementation from [repomirror](https://github.com/repomirrorhq/repomirror) <a href="#ref-6">[6]</a>_
 
 ## Real Results
 
@@ -142,7 +142,7 @@ graph TD
 
 ### Research & Requirements
 
-Start with comprehensive research into the problem space: user needs, existing solutions, relevant technologies, and constraints. This research feeds into a **Product Requirements Document (PRD)** that articulates the *what* and *why*—problem statement, target users, success metrics, and business objectives—without prescribing implementation details.
+Start with comprehensive research into the problem space: user needs, existing solutions, relevant technologies, and constraints. This research feeds into a **Product Requirements Document (PRD)** that articulates the *what* and *why*, including the problem statement, target users, success metrics, and business objectives without prescribing implementation details.
 
 ### AI-Assisted Design
 
@@ -152,7 +152,7 @@ Formalize the output into a **Technical Design/Spec** (often auto-generated as a
 
 ### Human Validation Loop
 
-**Critical checkpoint**: Experienced engineers review the AI-assisted spec. This human oversight catches edge cases, validates assumptions, and ensures alignment with organizational standards. This acknowledges that AI assistance needs human verification—I spent significant time here catching architectural issues before implementation.
+**Critical checkpoint**: Experienced engineers review the AI-assisted spec. This human oversight catches edge cases, validates assumptions, and ensures alignment with organizational standards. This acknowledges that AI assistance needs human verification. I spent significant time here catching architectural issues before implementation.
 
 Incorporate feedback into a **Refined Technical Design/Spec**. This might involve adjusting architecture, adding clarifications, or reconsidering technology choices. The refined spec represents the agreed-upon technical approach with human validation baked in.
 
@@ -166,7 +166,7 @@ During **Implementation**, sub-agents work in parallel on independent tasks. Ral
 
 ### Why This Works
 
-**AI-augmented but human-validated**: Balances the speed and breadth of AI with the judgment and experience of senior engineers. AI assists exploration and implementation; humans validate critical decisions.
+**AI-augmented but human-validated**: Balances the speed and breadth of AI with the judgment and experience of senior engineers. AI assists exploration and implementation while humans validate critical decisions.
 
 **Separation of concerns**: Clear distinction between product requirements (PRD), technical design (Spec), and execution planning (Plan Doc/ExecPlan). Each artifact serves its specific purpose.
 
@@ -241,3 +241,4 @@ Place this in `.ralph/sync.sh` and make it executable. The continuous loop (`.ra
 <div id="ref-3">[3] Superpowers Framework by Jesse Hallett and obra - https://github.com/obra/superpowers</div>
 <div id="ref-4">[4] Ralph Wiggum Method by Geoffrey Huntley - https://ghuntley.com/ralph/</div>
 <div id="ref-5">[5] Agent Instructions Repository - https://github.com/flora131/agent-instructions</div>
+<div id="ref-6">[6] Repomirror - High-level implementation of Ralph method - https://github.com/repomirrorhq/repomirror</div>
