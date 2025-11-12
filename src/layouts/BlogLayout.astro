@@ -44,6 +44,13 @@ const { frontmatter } = Astro.props;
       crossorigin="anonymous"
       onload="renderMathInElement(document.body);"></script>
 
+    <!-- The loading of Mermaid is deferred to speed up page rendering -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
+      crossorigin="anonymous"
+      onload="mermaid.initialize({ startOnLoad: true, theme: 'default' });"></script>
+
     <ThemeScript />
   </head>
   <body
