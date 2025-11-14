@@ -46,6 +46,41 @@ The key insight: delta updates (ΔC<sub>t</sub>) are dramatically cheaper than f
 
 **Results**: +17.1% accuracy on agent benchmarks, 86.9% latency reduction in context adaptation, 83.6% reduction in token costs.
 
+## Real-World Applications
+
+### ReasoningBank + MaTTS: Pattern-Heavy Domains
+
+**Web navigation (WebArena, Mind2Web)**:
+- Repeated UI patterns: nested menus, multi-step forms, pagination
+- ReasoningBank captures interaction strategies ("hover parent menu to reveal submenu")
+- MaTTS parallel mode (k=3) discovers robust navigation across layout variations
+- After 50 interactions: 30+ reusable DOM traversal patterns
+
+**Code repository tasks (SWE-Bench)**:
+- Recurring patterns: type mismatches, import errors, test failures
+- ReasoningBank stores diagnostic strategies ("check function signature compatibility")
+- Sequential MaTTS (k=5) refines multi-file reasoning
+- Example memory: "verify dependency injection before debugging runtime errors"
+
+### ACE Alone: Incremental Domain Learning
+
+**Project-specific coding assistants**: Learn codebase conventions during development sessions.
+- Accumulates rules: "Use CustomError base class," "Database queries in repositories/"
+- Delta updates add conventions without regenerating existing rules
+- Reflection refines clarity: "Use CustomError" → "Extend CustomError base class for domain exceptions"
+- Semantic de-duplication prevents redundant rules
+- 86.9% latency reduction critical for frequent context updates
+
+**Generalizes to**: Customer support (product policies), content moderation (guideline updates), personal assistants (user preferences), any scenario requiring incremental knowledge accumulation with low-latency evolution.
+
+### Unified Framework: Production Automation
+
+**Enterprise SaaS automation (Salesforce, HubSpot)**:
+- ReasoningBank: UI interaction patterns (click sequences, field navigation)
+- ACE: Client-specific rules ("Client X requires 'Enterprise' tag on leads >$50k")
+- MaTTS parallel (k=3): Handles platform updates and custom layouts via multi-trajectory exploration
+- Synergy: Memories provide "how to navigate," context provides "what rules apply per client"
+
 ## Unified Architecture: Closed-Loop Learning
 
 Integrating these frameworks creates synergistic learning loops: <br/>
