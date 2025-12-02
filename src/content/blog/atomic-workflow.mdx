@@ -1,8 +1,8 @@
 ---
-title: "Agent Armory: From AI Coding Infrastructure to Automated Procedures and Memory for AI Coding Agents"
+title: "Atomic: From AI Coding Infrastructure to Automated Procedures and Memory for AI Coding Agents"
 date: "2025-12-01"
 authors: "Alex Lavaee, Norin Lavaee"
-description: "Building on AI Coding Infrastructure, Agent Armory introduces a research-to-execution flywheel where specifications become lasting memory. Here's what we learned scaling multi-agent workflows."
+description: "Building on AI Coding Infrastructure, Atomic introduces a research-to-execution flywheel where specifications become lasting memory. Here's what we learned scaling multi-agent workflows."
 ---
 
 import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
@@ -19,11 +19,11 @@ But we learned two critical lessons scaling it:
 
 **Lesson 2: Specs are the memory layer.** Each coding session produced valuable insights that evaporated when the context window reset. Research findings, architectural decisions, debugging discoveries—all lost. We needed a system where work compounds rather than restarts.
 
-**Agent Armory** is that system. It's a curated workflow with focused agents and skills designed to work together.
+**Atomic** is that system. It's a curated workflow with focused agents and skills designed to work together.
 
 ## The Core Insight: Lasting Memory Through Specs
 
-In Agent Armory, specifications live in `specs/` and survive across sessions. When a new session starts, agents read the existing specs to understand context, decisions, and progress. Research happens within a session, but the **spec is what persists**.
+In Atomic, specifications live in `specs/` and survive across sessions. When a new session starts, agents read the existing specs to understand context, decisions, and progress. Research happens within a session, but the **spec is what persists**.
 
 The workflow follows a clear progression:
 
@@ -37,7 +37,7 @@ The spec is the source of truth that carries context forward. Future sessions re
 
 ## Architecture: Three Primitives
 
-Agent Armory operates through three interconnected primitives:
+Atomic operates through three interconnected primitives:
 
 | Primitive | Role | Example |
 |-----------|------|---------|
@@ -266,7 +266,7 @@ These aren't optional. Broken code doesn't progress.
 
 ### 1. Agents Deliver 40-60%, Not 100%
 
-Set expectations correctly. Agent Armory gets you to 40-60% completion on complex features. The remaining work requires human judgment: edge cases, performance optimization, integration testing, architectural refinement.
+Set expectations correctly. Atomic gets you to 40-60% completion on complex features. The remaining work requires human judgment: edge cases, performance optimization, integration testing, architectural refinement.
 
 This isn't a failure—it's the right division of labor. Agents handle the mechanical work; you handle the judgment calls and code review.
 
@@ -294,7 +294,7 @@ This is the real payoff: lasting memory that compounds.
 
 ## You Own Decisions, Agents Own Execution
 
-Agent Armory doesn't replace engineering judgment. It amplifies it.
+Atomic doesn't replace engineering judgment. It amplifies it.
 
 - **You** approve specifications before implementation begins
 - **You** review the feature list decomposition
@@ -335,9 +335,9 @@ The agent analyzes your codebase, populates configuration with your patterns, an
 
 ## What's Next
 
-Agent Armory is actively evolving.
+Atomic is actively evolving.
 
-If you're building with AI coding agents and want workflows that compound, Agent Armory is the next step.
+If you're building with AI coding agents and want workflows that compound, Atomic is the next step.
 
 PRs welcome.
 
@@ -346,6 +346,6 @@ PRs welcome.
 ## References
 
 <div id="ref-1">[1] AI Coding Infrastructure - Previous post on foundational agent setup</div>
-<div id="ref-2">[2] Agent Armory Repository - https://github.com/flora131/agent-instructions</div>
+<div id="ref-2">[2] Atomic Repository - https://github.com/flora131/agent-instructions</div>
 <div id="ref-3">[3] Superpowers Framework - https://github.com/obra/superpowers</div>
 <div id="ref-4">[4] Anthropic Skills - https://github.com/anthropics/skills</div>
