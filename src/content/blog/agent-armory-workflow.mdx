@@ -5,6 +5,8 @@ authors: "Alex Lavaee, Norin Lavaee"
 description: "Building on AI Coding Infrastructure, Agent Armory introduces a research-to-execution flywheel where specifications become lasting memory. Here's what we learned scaling multi-agent workflows."
 ---
 
+import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+
 ## Building on AI Coding Infrastructure
 
 In our previous post on [AI Coding Infrastructure](/blog/ai-coding-infrastructure), we introduced the foundational layer for AI coding tools: project memory, mandatory skills, specialized sub-agents, ExecPlans, and autonomous execution with Ralph.
@@ -51,16 +53,18 @@ The key insight: agents work best when they do one thing well. A Research Agent 
 
 Here's the complete workflow. Notice how research outputs feed into specs, specs decompose into features, and implementation failures loop back through debugging—all while accumulating documentation.
 
+<InteractiveMermaid height="700px" maxZoom={4}>
+
 ```mermaid
 %%{init: {
   'theme': 'default',
   'flowchart': {
     'htmlLabels': false,
-    'nodeSpacing': 50,
-    'rankSpacing': 60
+    'nodeSpacing': 60,
+    'rankSpacing': 70
   },
   'themeVariables': {
-    'fontSize': '14px'
+    'fontSize': '16px'
   }
 }}%%
 flowchart TD
@@ -190,6 +194,8 @@ flowchart TD
     class SUPP support
     class COMPACT1,COMPACT2,LOOP annotation
 ```
+
+</InteractiveMermaid>
 
 ### Phase 1: Parallel Research
 
