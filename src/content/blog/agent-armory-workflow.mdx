@@ -64,113 +64,145 @@ Here's the complete workflow. Notice how research outputs feed into specs, specs
   }
 }}%%
 flowchart TD
-    subgraph Research["Research Phase"]
-        RC[Research Codebase Agent]
-        RC --> RL[Locator Agent]
-        RC --> RA[Analyzer Agent]
-        RC --> RO[Online Researcher Agent]
-        RC --> RP[Pattern Finder Agent]
+    subgraph Input[" "]
+        TASK["Task + docs/notes/tickets"]
     end
 
-    subgraph Output["Research Output"]
+    RC[Research Codebase Agent]
+    TASK --> RC
+
+    subgraph ResearchAgents[" "]
+        CPF[Codebase Pattern Finder Agent]
+        CL[Codebase Locator Agent]
+        CA[Codebase Analyzer Agent]
+        CRL[Codebase Research Locator Agent]
+        CRA[Codebase Research Analyzer Agent]
+        COR[Codebase Online Researcher Agent]
+    end
+
+    RC --> CPF
+    RC --> CL
+    RC --> CA
+    RC --> CRL
+    RC --> CRA
+    RC --> COR
+
+    subgraph Output[" "]
         ROut((Research Output))
-        Tickets["research/tickets/"]
-        Docs["research/docs/"]
-        Notes["research/notes/"]
-        ROut --> Tickets
-        ROut --> Docs
-        ROut --> Notes
+        Tree["research/ tickets/ docs/ notes/"]
+        ROut --- Tree
     end
 
-    Research --> ROut
+    ResearchAgents --> ROut
 
-    subgraph Spec["Specification Phase"]
-        CS[Create Spec Agent]
+    COMPACT1[compact]
+    Output --> COMPACT1
+
+    CS[Create Spec Agent]
+    COMPACT1 --> CS
+
+    HSR((Human Spec Review))
+    CS --> HSR
+
+    CFL[Create Feature List Agent]
+    HSR --> CFL
+
+    subgraph FeatureOutput[" "]
+        PROG((progress.txt))
+        FLJSON((feature-list.json))
     end
 
-    Output --> CS
+    CFL --> PROG
+    CFL --> FLJSON
 
-    subgraph Features["Feature Planning"]
-        CFL[Create Feature List Agent]
-        FL["Feature List JSON
-        - Category
-        - Description
-        - Test Steps"]
-    end
+    LOOP[for-each feature: compact + implement]
+    FeatureOutput --> LOOP
 
-    CS --> CFL
-    CFL --> FL
+    IMP[Implement Feature Agent]
+    LOOP --> IMP
 
-    subgraph Implementation["Implementation Loop"]
-        IMP[Implement Feature Agent]
+    subgraph ImplLoop[" "]
         CHG[Implement Change]
         TST[Create Tests]
         VAL[Validate All Tests]
-        MRK[Mark Feature Complete]
+        MRK[Mark Feature As Complete]
         CMT[Commit Change]
 
-        IMP --> CHG
         CHG --> TST
         TST --> VAL
-        VAL -->|Pass| MRK
+        VAL --> MRK
         MRK --> CMT
     end
 
-    FL --> IMP
+    IMP --> CHG
 
-    subgraph QA["Quality Control"]
-        HOOK[Deterministic Test Hooks]
-        PRE["Pre-commit checks"]
-        LINT["Linting"]
-        TEST["Testing"]
-        HOOK --> PRE
-        HOOK --> LINT
-        HOOK --> TEST
+    subgraph QA["Deterministic Test Hooks"]
+        PRE["1. pre-commit checks"]
+        LINT["2. linter checks"]
+        TEST["3. tests"]
     end
 
-    CMT --> HOOK
+    VAL --> QA
 
-    subgraph Debug["Debugging"]
-        DBG[Debug Agent]
-        RPT["Debug Reports"]
-        DBG --> RPT
-    end
+    QA -->|Pass| MRK
 
-    VAL -->|Fail| DBG
-    DBG --> IMP
+    COMPACT2[compact]
+    QA -->|Fail| COMPACT2
+
+    DBG[Debug Agent]
+    COMPACT2 --> DBG
+
+    DBGRPT((Debug Report Output))
+    DBG --> DBGRPT
+    DBG -.-> IMP
 
     SUPP[Coding Agent]
-    SUPP -.->|assists| IMP
+    SUPP -.->|assists| ImplLoop
 
-    classDef research fill:#d4edda,stroke:#28a745,stroke-width:2px
-    classDef output fill:#fff3cd,stroke:#ffc107,stroke-width:2px
-    classDef spec fill:#e2d5f1,stroke:#6f42c1,stroke-width:2px
-    classDef feature fill:#cce5ff,stroke:#007bff,stroke-width:2px
-    classDef impl fill:#ffeaa7,stroke:#fdcb6e,stroke-width:2px
-    classDef qa fill:#f8d7da,stroke:#dc3545,stroke-width:2px
-    classDef debug fill:#d1ecf1,stroke:#17a2b8,stroke-width:2px
-    classDef support fill:#e2d2b3,stroke:#856404,stroke-width:2px
+    classDef input fill:#2d2d2d,stroke:#666,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
+    classDef research fill:#2d4a3e,stroke:#28a745,stroke-width:2px,color:#fff
+    classDef researchSub fill:#2d4a3e,stroke:#28a745,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
+    classDef output fill:#4a3d4a,stroke:#e91e8c,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
+    classDef spec fill:#3d3d5c,stroke:#6f42c1,stroke-width:2px,color:#fff
+    classDef review fill:#4a3d4a,stroke:#e91e8c,stroke-width:2px,color:#fff
+    classDef feature fill:#2d3d4a,stroke:#007bff,stroke-width:2px,color:#fff
+    classDef featureOut fill:#2d3d4a,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
+    classDef impl fill:#4a3d2d,stroke:#fd7e14,stroke-width:2px,color:#fff
+    classDef implLoop fill:#4a3d2d,stroke:#fd7e14,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
+    classDef qa fill:#4a3d2d,stroke:#fd7e14,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
+    classDef debug fill:#2d4a4a,stroke:#17a2b8,stroke-width:2px,color:#fff
+    classDef debugOut fill:#2d4a4a,stroke:#17a2b8,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
+    classDef support fill:#3d3d3d,stroke:#666,stroke-width:2px,color:#fff
+    classDef annotation fill:none,stroke:none
 
-    class RC,RL,RA,RO,RP research
-    class ROut,Tickets,Docs,Notes output
+    class TASK input
+    class RC research
+    class CPF,CL,CA,CRL,CRA,COR researchSub
+    class ROut,Tree output
     class CS spec
-    class CFL,FL feature
+    class HSR review
+    class CFL feature
+    class PROG,FLJSON featureOut
     class IMP,CHG,TST,VAL,MRK,CMT impl
-    class HOOK,PRE,LINT,TEST qa
-    class DBG,RPT debug
+    class PRE,LINT,TEST qa
+    class DBG debug
+    class DBGRPT debugOut
     class SUPP support
+    class COMPACT1,COMPACT2,LOOP annotation
 ```
 
 ### Phase 1: Parallel Research
 
-Four agents work simultaneously—this is where parallelization shines:
+Six agents work simultaneously—this is where parallelization shines:
 
 | Agent | Output | Persists To |
 |-------|--------|-------------|
+| **Pattern Finder** | Structural patterns to follow | `research/notes/` |
 | **Locator** | Relevant code sections | `research/tickets/` |
 | **Analyzer** | Patterns & architecture | `research/docs/` |
+| **Research Locator** | Deeper code location analysis | `research/tickets/` |
+| **Research Analyzer** | Extended analysis findings | `research/docs/` |
 | **Online Researcher** | External docs & best practices | `research/docs/` |
-| **Pattern Finder** | Structural patterns to follow | `research/notes/` |
 
 **Why parallel?** Research tasks are independent. One agent finding authentication patterns doesn't block another analyzing database schemas.
 
