@@ -8,6 +8,7 @@ description: "Building on AI Coding Infrastructure, Atomic introduces a research
 import { Image } from "astro:assets";
 import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
 import atomicLogo from "../../assets/images/blog/atomic/atomic.png";
+import architectureSvg from "../../assets/images/blog/atomic/architecture.svg";
 
 ## Building on AI Coding Infrastructure
 
@@ -57,147 +58,7 @@ Atomic operates through three interconnected primitives:
 Here's the complete workflow. Notice how research outputs feed into specs, specs decompose into features, and implementation failures loop back through debugging, all while accumulating documentation as memory.
 
 <InteractiveMermaid height="700px" maxZoom={4}>
-
-```mermaid
-%%{init: {
-  'theme': 'default',
-  'flowchart': {
-    'htmlLabels': false,
-    'nodeSpacing': 60,
-    'rankSpacing': 70
-  },
-  'themeVariables': {
-    'fontSize': '16px'
-  }
-}}%%
-flowchart TD
-    subgraph Input[" "]
-        TASK["Task + docs/notes/tickets"]
-    end
-
-    RC[Research Codebase Agent]
-    TASK --> RC
-
-    subgraph ResearchAgents[" "]
-        CPF[Codebase Pattern Finder Agent]
-        CL[Codebase Locator Agent]
-        CA[Codebase Analyzer Agent]
-        CRL[Codebase Research Locator Agent]
-        CRA[Codebase Research Analyzer Agent]
-        COR[Codebase Online Researcher Agent]
-    end
-
-    RC --> CPF
-    RC --> CL
-    RC --> CA
-    RC --> CRL
-    RC --> CRA
-    RC --> COR
-
-    subgraph Output[" "]
-        ROut((Research Output))
-        Tree["research/ tickets/ docs/ notes/"]
-        ROut --- Tree
-    end
-
-    ResearchAgents --> ROut
-
-    COMPACT1[compact]
-    Output --> COMPACT1
-
-    CS[Create Spec Agent]
-    COMPACT1 --> CS
-
-    HSR((Human Spec Review))
-    CS --> HSR
-
-    CFL[Create Feature List Agent]
-    HSR --> CFL
-
-    subgraph FeatureOutput[" "]
-        PROG((progress.txt))
-        FLJSON((feature-list.json))
-    end
-
-    CFL --> PROG
-    CFL --> FLJSON
-
-    LOOP[for-each feature: compact + implement]
-    FeatureOutput --> LOOP
-
-    IMP[Implement Feature Agent]
-    LOOP --> IMP
-
-    subgraph ImplLoop[" "]
-        CHG[Implement Change]
-        TST[Create Tests]
-        VAL[Validate All Tests]
-        MRK[Mark Feature As Complete]
-        CMT[Commit Change]
-
-        CHG --> TST
-        TST --> VAL
-        VAL --> MRK
-        MRK --> CMT
-    end
-
-    IMP --> CHG
-
-    subgraph QA["Deterministic Test Hooks"]
-        PRE["1. pre-commit checks"]
-        LINT["2. linter checks"]
-        TEST["3. tests"]
-    end
-
-    VAL --> QA
-
-    QA -->|Pass| MRK
-
-    COMPACT2[compact]
-    QA -->|Fail| COMPACT2
-
-    DBG[Debug Agent]
-    COMPACT2 --> DBG
-
-    DBGRPT((Debug Report Output))
-    DBG --> DBGRPT
-    DBG -.-> IMP
-
-    SUPP[Coding Agent]
-    SUPP -.->|assists| ImplLoop
-
-    classDef input fill:#2d2d2d,stroke:#666,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef research fill:#2d4a3e,stroke:#28a745,stroke-width:2px,color:#fff
-    classDef researchSub fill:#2d4a3e,stroke:#28a745,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef output fill:#4a3d4a,stroke:#e91e8c,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef spec fill:#3d3d5c,stroke:#6f42c1,stroke-width:2px,color:#fff
-    classDef review fill:#4a3d4a,stroke:#e91e8c,stroke-width:2px,color:#fff
-    classDef feature fill:#2d3d4a,stroke:#007bff,stroke-width:2px,color:#fff
-    classDef featureOut fill:#2d3d4a,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef impl fill:#4a3d2d,stroke:#fd7e14,stroke-width:2px,color:#fff
-    classDef implLoop fill:#4a3d2d,stroke:#fd7e14,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef qa fill:#4a3d2d,stroke:#fd7e14,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef debug fill:#2d4a4a,stroke:#17a2b8,stroke-width:2px,color:#fff
-    classDef debugOut fill:#2d4a4a,stroke:#17a2b8,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef support fill:#3d3d3d,stroke:#666,stroke-width:2px,color:#fff
-    classDef annotation fill:none,stroke:none
-
-    class TASK input
-    class RC research
-    class CPF,CL,CA,CRL,CRA,COR researchSub
-    class ROut,Tree output
-    class CS spec
-    class HSR review
-    class CFL feature
-    class PROG,FLJSON featureOut
-    class IMP,CHG,TST,VAL,MRK,CMT impl
-    class PRE,LINT,TEST qa
-    class DBG debug
-    class DBGRPT debugOut
-    class SUPP support
-    class COMPACT1,COMPACT2,LOOP annotation
-```
-
+  <Image src={architectureSvg} alt="Atomic workflow architecture diagram showing the research-to-execution flywheel" />
 </InteractiveMermaid>
 
 ### Phase 1: Parallel Research
