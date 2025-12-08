@@ -145,10 +145,9 @@ Initially we let the Feature List Agent produce features of any size. Large feat
 
 The fix: enforce small features. If implementing a feature requires more than one session, decompose it. This constraint improved completion rates dramatically. This is something you'll need to test and get a feel for through trial and error and is also dependent on the model you're using.
 
-### 4. Debug Loops Need Limits
+### 4. Built-In Debug Loops Within Active Memory
 
-Debugging agents can loop indefinitely on hard problems. We added a max-retry limit (default: 3) after which it escalates to engineer review rather than spinning forever.
-
+As engineers are developing, they naturally run into bugs. During implementation, if the agent runs into a bug, this is added back into the feature list to be addressed in the next implementation loop. This mirrors just how an engineer works and resolves bugs as they go along with their implementation plan.
 ### 5. Documentation Compounds
 
 The `specs/` directories become genuinely valuable. New features reference old research. Debugging sessions read past notes. The system gets smarter over time.
@@ -168,45 +167,6 @@ Agents handle the mechanical work: researching codebases, writing boilerplate, r
 That division is the key to making this work.
 
 ## Getting Started
-
-```bash
-# Clone the repository
-git clone https://github.com/flora131/atomic/
-
-# Copy the appropriate context file to your project root and ask your AI assistant to populate it:
-
-# For Claude Code
-cp CLAUDE.md /path/to/your-project/
-
-# For other AI tools (GitHub Copilot, Kiro, OpenCode)
-cp AGENTS.md /path/to/your-project/
-
-# Then open your project in your AI coding assistant and ask:
-> "Analyze this codebase and populate the CLAUDE.md (or AGENTS.md) with project-specific context"
-
-# Copy the folder for your AI coding assistant to your project:
-
-# For Claude Code
-cp -r .claude /path/to/your-project/
-
-# For GitHub Copilot
-cp -r .github /path/to/your-project/
-
-# For Kiro
-cp -r .kiro /path/to/your-project/
-
-# For OpenCode
-cp -r .opencode /path/to/your-project/
-
-# Copy the MCP configuration files for recommended MCP servers (deepwiki, playwright):
-cp .mcp.json /path/to/your-project/
-cp -r .vscode/ /path/to/your-project/
-
-```
-
-<br></br>
-
-The agent analyzes your codebase, populates configuration with your patterns, and installs the procedure.
 
 **Repository**: [github.com/flora131/atomic](https://github.com/flora131/atomic/)
 
