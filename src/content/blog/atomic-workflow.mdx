@@ -1,27 +1,31 @@
 ---
-title: "Atomic: From AI Coding Infrastructure to Automated Procedures and Memory for AI Coding Agents"
+title: "Atomic: Automated Procedures and Memory for AI Coding Agents"
 date: "2025-12-01"
 authors: "Alex Lavaee, Norin Lavaee"
 description: "Building on AI Coding Infrastructure, Atomic introduces a research-to-execution flywheel where specifications become lasting memory. Here's what we learned scaling multi-agent workflows."
 ---
 
+import { Image } from "astro:assets";
 import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+import atomicLogo from "../../assets/images/blog/atomic/atomic.png";
 
 ## Building on AI Coding Infrastructure
 
-In our previous post on [AI Coding Infrastructure](/blog/ai-coding-infrastructure), we introduced the foundational layer for AI coding tools: project memory, mandatory skills, specialized sub-agents, ExecPlans, and autonomous execution with Ralph.
+<div class="flex justify-center">
+  <Image src={atomicLogo} alt="Atomic logo" width={256} height={256} />
+</div>
 
-That infrastructure solved the **statelessness problem**—agents finally remembered your project context and followed proven workflows.
+In our previous post on [AI Coding Infrastructure](/blog/ai-coding-infrastructure), we introduced a foundational layer for AI coding tools: skills, specialized subagents, ExecPlans, and autonomous execution with Ralph.
 
-But we learned two critical lessons scaling it:
+But we learned two critical lessons as we continued to scale it:
 
-**Lesson 1: Less is more.** Having 114+ sub-agents and dozens of skills sounds powerful, but in practice it created confusion. Agents didn't know which specialist to call. Skills overlapped and contradicted each other. We learned to curate a focused set of agents and skills that work cohesively in a single workflow—not a buffet of options.
+**Lesson 1: Less is more.** Having 114+ subagents and dozens of skills sounds powerful, but in practice it created confusion. Agents didn't know which specialist to call. Skills overlapped and contradicted each other. We learned to curate a focused set of agents and skills that work cohesively in a single workflow.
 
-**Lesson 2: Specs are the memory layer.** Each coding session produced valuable insights that evaporated when the context window reset. Research findings, architectural decisions, debugging discoveries—all lost. We needed a system where work compounds rather than restarts.
+**Lesson 2: Specs were the main memory layer.** Each coding session produced valuable insights that evaporated when the context window reset. Research findings, architectural decisions, debugging discoveries—all lost. We needed a system where work compounds rather than restarts and that maintains active working memory to keep the agent on track.
 
-**Atomic** is that system. It's a curated workflow with focused agents and skills designed to work together.
+**Atomic** is that system. It's an automated procedure with focused agents, commands/prompts, and skills designed to work together. The procedure for Atomic follows Software Development Lifecycle best practices and enables engineers to effectively steer agents, providing alignment.
 
-## The Core Insight: Lasting Memory Through Specs
+## The Core Insight: Lasting Memory Through Specs & Active Memory Through Progress.txt
 
 In Atomic, specifications live in `specs/` and survive across sessions. When a new session starts, agents read the existing specs to understand context, decisions, and progress. Research happens within a session, but the **spec is what persists**.
 
@@ -29,11 +33,11 @@ The workflow follows a clear progression:
 
 1. **Research** → Multiple agents analyze the codebase in parallel
 2. **Spec Creation** → Synthesize research into a specification (this is what persists)
-3. **Feature Decomposition** → Break the spec into discrete, implementable features
-4. **Implementation** → Build each feature with tests and validation
+3. **Feature Decomposition** → Break the spec into discrete, implementable features (provides agent with actual status so it doesn't erroneously declare a feature complete)
+4. **Implementation** → Build each feature with tests and validation (this is where active memory is tracked through progress.txt)
 5. **Pull Request** → Package changes for review
 
-The spec is the source of truth that carries context forward. Future sessions read existing specs to understand decisions, progress, and architectural choices.
+The features and progress.txt are what maintain active memory during implementation. The spec is the source of truth that carries context forward. Future sessions read existing specs to understand decisions, progress, and architectural choices.
 
 ## Architecture: Three Primitives
 
@@ -41,17 +45,16 @@ Atomic operates through three interconnected primitives:
 
 | Primitive | Role | Example |
 |-----------|------|---------|
-| **Commands** | Orchestrate workflows | `/research-codebase`, `/implement-plan`, `/create-pr` |
-| **Agents** | Execute specialized tasks | Research Agent, Implementation Agent, Debug Agent |
-| **Skills** | Inject domain knowledge | TDD patterns, debugging workflows, code review checklists |
+| **Commands** | Orchestrate workflows | `/research-codebase`, `/creat-spec`, `/create-feature-list`, /implement-feature`, `/compact`, `/commit`, `/create-debug-report`, `create-pr`, `explain-code` |
+| **subagents** | Execute specialized tasks | codebase-analyzer, codebase-locator, codebase-online-researcher, codebase-pattern-finder, codebase-research-analyzer, codebase-research-locater |
+| **Skills** | Inject domain knowledge | prompt-engineer, testing-anti-patterns |
+| **MCP Servers** | Research online and debug | playwright, deepwiki |
 
-**Six specialized agents** handle distinct phases: codebase research, pattern finding, spec creation, feature planning, implementation, and debugging. **Nine commands** orchestrate common workflows. **Two skills** enforce quality practices.
-
-The key insight: agents work best when they do one thing well. A Research Agent that only researches produces better findings than a generalist trying to research-and-implement simultaneously.
+**Nine commands** automate our procedure, leveraging **six subagents**. **Two skills** available for prompt enhancement and testing best practices. **Playwright** is leveraged for debugging and documentation look up where we've seen Search APIs and webFetch fall short. While, **deepwiki** is leveraged for critical information on open source code relevant to the project being developed. To be able to effectively steer the agents, engineer is always in the loop for every step as a core principle.
 
 ## The Research-to-Execution Flywheel
 
-Here's the complete workflow. Notice how research outputs feed into specs, specs decompose into features, and implementation failures loop back through debugging—all while accumulating documentation.
+Here's the complete workflow. Notice how research outputs feed into specs, specs decompose into features, and implementation failures loop back through debugging, all while accumulating documentation as memory.
 
 <InteractiveMermaid height="700px" maxZoom={4}>
 
@@ -199,7 +202,7 @@ flowchart TD
 
 ### Phase 1: Parallel Research
 
-Six agents work simultaneously—this is where parallelization shines:
+Six agents work simultaneously:
 
 | Agent | Output | Persists To |
 |-------|--------|-------------|
@@ -210,13 +213,13 @@ Six agents work simultaneously—this is where parallelization shines:
 | **Research Analyzer** | Extended analysis findings | `research/docs/` |
 | **Online Researcher** | External docs & best practices | `research/docs/` |
 
-**Why parallel?** Research tasks are independent. One agent finding authentication patterns doesn't block another analyzing database schemas.
+**Why parallel?** Research tasks are independent. One agent finding authentication patterns doesn't block another analyzing database schemas. Review the spec and make sure it's not missing any key information.
 
 ### Phase 2: Specification
 
-The create-spec command synthesizes all research into a single specification. Critically, this spec references the research documents—so anyone (human or agent) reading the spec can trace decisions back to their source.
+The create-spec command synthesizes all research into a single specification. Critically, this spec references the research documents so anyone (engineer or agent) reading the spec can trace decisions back to their source.
 
-Specs include: problem statement, proposed solution, architectural decisions, acceptance criteria, and links to relevant research files.
+Specs include: problem statement, proposed solution, architectural decisions, acceptance criteria, and links to relevant research files. Review the spec and make sure it is in line with what you're looking to implement.
 
 ### Phase 3: Feature Decomposition
 
@@ -238,20 +241,21 @@ The create-feature-list command breaks specs into discrete features, each with:
 
 <br></br>
 
-**Learning**: Features must be small enough to implement in one session. If a feature requires multiple context switches, it's too big—decompose further.
+**Learning**: Features must be small enough to implement in one session. If a feature requires multiple context switches, it's too big, decompose further. Adjust depending on model you're using and whether or not task falls within common training distribution set of models. Review all features and make any adjustments as necessary before proceeding.
 
-### Phase 4: Serial Implementation
+### Phase 4: Atomic Implementation
 
 Features implement **one at a time**, each following this loop:
 
 1. Implement the change
 2. Create tests
 3. Validate all tests pass (including previous features)
-4. Mark complete & commit
+4. Review all code and make any adjustments as necessary
+5. Mark complete & commit
 
-**Why serial?** Parallel implementation creates merge conflicts and tangled dependencies making it harder to debug. Serial implementation with validation gates catches issues immediately. We only recommend parallel implementation when you're sure that you're working on areas that do not conflict with each other.
+**Why atomic?** Parallel implementation creates merge conflicts and tangled dependencies making it harder to debug depending on the features. Additionally, as your codebase grows, it becomes more difficult for coding agents to follow instructions and make correct changes. Atomic implementation with validation gates catches issues immediately and prevents cascading failures. We only recommend parallel implementation when you're sure that you're working on areas that do not conflict with each other. In the future, as models and scaffolding/harnesses around these agents improve, we anticipate being able to increase the scope and greater parallelization for features.
 
-The create-debug-report command handles failures—producing diagnostic reports that feed back into the implementation loop rather than failing silently.
+In case of bugs, the create-debug-report command handles failures, producing diagnostic reports that naturally feed back into the implementation loop.
 
 ### Phase 5: Quality Gates
 
@@ -268,23 +272,21 @@ These aren't optional. Broken code doesn't progress.
 
 Set expectations correctly. Atomic gets you to 40-60% completion on complex features. The remaining work requires human judgment: edge cases, performance optimization, integration testing, architectural refinement.
 
-This isn't a failure—it's the right division of labor. Agents handle the mechanical work; you handle the judgment calls and code review.
+This isn't a failure, it's the right division of labor and realistic for today's systems. Agents handle the mechanical work while you handle the judgment calls and code review.
 
 ### 2. Research Quality Determines Everything
 
 Garbage research produces garbage specs which produce garbage implementations. We spent significant time refining the Research Agents because their output quality cascades through the entire pipeline.
 
-The Pattern Finder Agent was a late addition—and crucial. Without it, implementations ignored existing codebase conventions.
-
 ### 3. Feature Size Matters More Than You Think
 
-Initially we let the Feature List Agent produce features of any size. Large features failed constantly—they exceeded context windows, created merge conflicts, and couldn't be validated atomically.
+Initially we let the Feature List Agent produce features of any size. Large features failed constantly they exceeded context windows, created merge conflicts, made it harder to review, and led to more cascading failures.
 
-The fix: enforce small features. If implementing a feature requires more than one session, decompose it. This constraint improved completion rates dramatically.
+The fix: enforce small features. If implementing a feature requires more than one session, decompose it. This constraint improved completion rates dramatically. This is something you'll need to test and get a feel for through trial and error and is also dependent on the model you're using.
 
 ### 4. Debug Loops Need Limits
 
-Debugging agents can loop indefinitely on hard problems. We added a max-retry limit (default: 3) after which it escalates to human review rather than spinning forever.
+Debugging agents can loop indefinitely on hard problems. We added a max-retry limit (default: 3) after which it escalates to engineer review rather than spinning forever.
 
 ### 5. Documentation Compounds
 
@@ -308,30 +310,52 @@ That division is the key to making this work.
 
 ```bash
 # Clone the repository
-git clone https://github.com/flora131/agent-instructions.git
+git clone https://github.com/flora131/atomic/
 
-# Copy templates to your project
-cp agent-instructions/AGENTS.md your-project/
-cp -r agent-instructions/specs your-project/
-cp -r agent-instructions/research your-project/
+# Copy the appropriate context file to your project root and ask your AI assistant to populate it:
 
-# In your AI coding tool, run:
-# "Set up agent instructions for this project"
+# For Claude Code
+cp CLAUDE.md /path/to/your-project/
+
+# For other AI tools (GitHub Copilot, Kiro, OpenCode)
+cp AGENTS.md /path/to/your-project/
+
+# Then open your project in your AI coding assistant and ask:
+> "Analyze this codebase and populate the CLAUDE.md (or AGENTS.md) with project-specific context"
+
+# Copy the folder for your AI coding assistant to your project:
+
+# For Claude Code
+cp -r .claude /path/to/your-project/
+
+# For GitHub Copilot
+cp -r .github /path/to/your-project/
+
+# For Kiro
+cp -r .kiro /path/to/your-project/
+
+# For OpenCode
+cp -r .opencode /path/to/your-project/
+
+# Copy the MCP configuration files for recommended MCP servers (deepwiki, playwright):
+cp .mcp.json /path/to/your-project/
+cp -r .vscode/ /path/to/your-project/
+
 ```
 
 <br></br>
 
-The agent analyzes your codebase, populates configuration with your patterns, and installs the workflow.
+The agent analyzes your codebase, populates configuration with your patterns, and installs the procedure.
 
-**Repository**: [github.com/flora131/agent-instructions](https://github.com/flora131/agent-instructions)
+**Repository**: [github.com/flora131/atomic](https://github.com/flora131/atomic/)
 
 ## Key Takeaways
 
-- **Specs as lasting memory**: Specifications aren't throwaway prompts—they persist across sessions and inform all future work
-- **Three primitives**: Commands orchestrate workflows, Agents execute specialized tasks, Skills inject domain knowledge
-- **Research-to-execution flywheel**: A five-step workflow where research feeds specs, specs feed features, and documentation accumulates
-- **Parallel research, serial implementation**: Multiple agents analyze simultaneously, but features implement one at a time with quality gates
-- **You own decisions, agents own execution**: Expect 40-60% completion requiring human polish and refinement
+- **Specs as lasting memory**: Specifications aren't throwaway prompts— they persist across sessions and inform all future work
+- **Three primitives**: Commands orchestrate, Agents execute specialized tasks, Skills improve how tasks are performed
+- **Research-to-execution flywheel**: A five-step procedure where research feeds specs, specs feed features, and documentation accumulates
+- **Parallel research, atomic implementation**: Multiple agents analyze simultaneously, but features implement one at a time with quality gates
+- **You own decisions and steer, agents own execution**: Expect 40-60% completion requiring engineer polish and refinement
 
 ## What's Next
 
@@ -345,7 +369,7 @@ PRs welcome.
 
 ## References
 
-<div id="ref-1">[1] AI Coding Infrastructure - Previous post on foundational agent setup</div>
+<div id="ref-1">[1] AI Coding Infrastructure - Previous post on foundational agent setup - https://alexlavaee.me/blog/ai-coding-infrastructure/</div>
 <div id="ref-2">[2] Atomic Repository - https://github.com/flora131/agent-instructions</div>
 <div id="ref-3">[3] Superpowers Framework - https://github.com/obra/superpowers</div>
 <div id="ref-4">[4] Anthropic Skills - https://github.com/anthropics/skills</div>
