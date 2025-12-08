@@ -8,6 +8,7 @@ description: "Building on AI Coding Infrastructure, Atomic introduces a research
 import { Image } from "astro:assets";
 import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
 import atomicLogo from "../../assets/images/blog/atomic/atomic.png";
+import architectureSvg from "../../assets/images/blog/atomic/architecture.svg";
 
 ## Building on AI Coding Infrastructure
 
@@ -57,147 +58,7 @@ Atomic operates through three interconnected primitives:
 Here's the complete workflow. Notice how research outputs feed into specs, specs decompose into features, and implementation failures loop back through debugging, all while accumulating documentation as memory.
 
 <InteractiveMermaid height="700px" maxZoom={4}>
-
-```mermaid
-%%{init: {
-  'theme': 'default',
-  'flowchart': {
-    'htmlLabels': false,
-    'nodeSpacing': 60,
-    'rankSpacing': 70
-  },
-  'themeVariables': {
-    'fontSize': '16px'
-  }
-}}%%
-flowchart TD
-    subgraph Input[" "]
-        TASK["Task + docs/notes/tickets"]
-    end
-
-    RC[Research Codebase Agent]
-    TASK --> RC
-
-    subgraph ResearchAgents[" "]
-        CPF[Codebase Pattern Finder Agent]
-        CL[Codebase Locator Agent]
-        CA[Codebase Analyzer Agent]
-        CRL[Codebase Research Locator Agent]
-        CRA[Codebase Research Analyzer Agent]
-        COR[Codebase Online Researcher Agent]
-    end
-
-    RC --> CPF
-    RC --> CL
-    RC --> CA
-    RC --> CRL
-    RC --> CRA
-    RC --> COR
-
-    subgraph Output[" "]
-        ROut((Research Output))
-        Tree["research/ tickets/ docs/ notes/"]
-        ROut --- Tree
-    end
-
-    ResearchAgents --> ROut
-
-    COMPACT1[compact]
-    Output --> COMPACT1
-
-    CS[Create Spec Agent]
-    COMPACT1 --> CS
-
-    HSR((Human Spec Review))
-    CS --> HSR
-
-    CFL[Create Feature List Agent]
-    HSR --> CFL
-
-    subgraph FeatureOutput[" "]
-        PROG((progress.txt))
-        FLJSON((feature-list.json))
-    end
-
-    CFL --> PROG
-    CFL --> FLJSON
-
-    LOOP[for-each feature: compact + implement]
-    FeatureOutput --> LOOP
-
-    IMP[Implement Feature Agent]
-    LOOP --> IMP
-
-    subgraph ImplLoop[" "]
-        CHG[Implement Change]
-        TST[Create Tests]
-        VAL[Validate All Tests]
-        MRK[Mark Feature As Complete]
-        CMT[Commit Change]
-
-        CHG --> TST
-        TST --> VAL
-        VAL --> MRK
-        MRK --> CMT
-    end
-
-    IMP --> CHG
-
-    subgraph QA["Deterministic Test Hooks"]
-        PRE["1. pre-commit checks"]
-        LINT["2. linter checks"]
-        TEST["3. tests"]
-    end
-
-    VAL --> QA
-
-    QA -->|Pass| MRK
-
-    COMPACT2[compact]
-    QA -->|Fail| COMPACT2
-
-    DBG[Debug Agent]
-    COMPACT2 --> DBG
-
-    DBGRPT((Debug Report Output))
-    DBG --> DBGRPT
-    DBG -.-> IMP
-
-    SUPP[Coding Agent]
-    SUPP -.->|assists| ImplLoop
-
-    classDef input fill:#2d2d2d,stroke:#666,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef research fill:#2d4a3e,stroke:#28a745,stroke-width:2px,color:#fff
-    classDef researchSub fill:#2d4a3e,stroke:#28a745,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef output fill:#4a3d4a,stroke:#e91e8c,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef spec fill:#3d3d5c,stroke:#6f42c1,stroke-width:2px,color:#fff
-    classDef review fill:#4a3d4a,stroke:#e91e8c,stroke-width:2px,color:#fff
-    classDef feature fill:#2d3d4a,stroke:#007bff,stroke-width:2px,color:#fff
-    classDef featureOut fill:#2d3d4a,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef impl fill:#4a3d2d,stroke:#fd7e14,stroke-width:2px,color:#fff
-    classDef implLoop fill:#4a3d2d,stroke:#fd7e14,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef qa fill:#4a3d2d,stroke:#fd7e14,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef debug fill:#2d4a4a,stroke:#17a2b8,stroke-width:2px,color:#fff
-    classDef debugOut fill:#2d4a4a,stroke:#17a2b8,stroke-width:2px,stroke-dasharray: 5 5,color:#fff
-    classDef support fill:#3d3d3d,stroke:#666,stroke-width:2px,color:#fff
-    classDef annotation fill:none,stroke:none
-
-    class TASK input
-    class RC research
-    class CPF,CL,CA,CRL,CRA,COR researchSub
-    class ROut,Tree output
-    class CS spec
-    class HSR review
-    class CFL feature
-    class PROG,FLJSON featureOut
-    class IMP,CHG,TST,VAL,MRK,CMT impl
-    class PRE,LINT,TEST qa
-    class DBG debug
-    class DBGRPT debugOut
-    class SUPP support
-    class COMPACT1,COMPACT2,LOOP annotation
-```
-
+  <Image src={architectureSvg} alt="Atomic workflow architecture diagram showing the research-to-execution flywheel" />
 </InteractiveMermaid>
 
 ### Phase 1: Parallel Research
@@ -284,10 +145,9 @@ Initially we let the Feature List Agent produce features of any size. Large feat
 
 The fix: enforce small features. If implementing a feature requires more than one session, decompose it. This constraint improved completion rates dramatically. This is something you'll need to test and get a feel for through trial and error and is also dependent on the model you're using.
 
-### 4. Debug Loops Need Limits
+### 4. Built-In Debug Loops Within Active Memory
 
-Debugging agents can loop indefinitely on hard problems. We added a max-retry limit (default: 3) after which it escalates to engineer review rather than spinning forever.
-
+As engineers are developing, they naturally run into bugs. During implementation, if the agent runs into a bug, this is added back into the feature list to be addressed in the next implementation loop. This mirrors just how an engineer works and resolves bugs as they go along with their implementation plan.
 ### 5. Documentation Compounds
 
 The `specs/` directories become genuinely valuable. New features reference old research. Debugging sessions read past notes. The system gets smarter over time.
@@ -307,45 +167,6 @@ Agents handle the mechanical work: researching codebases, writing boilerplate, r
 That division is the key to making this work.
 
 ## Getting Started
-
-```bash
-# Clone the repository
-git clone https://github.com/flora131/atomic/
-
-# Copy the appropriate context file to your project root and ask your AI assistant to populate it:
-
-# For Claude Code
-cp CLAUDE.md /path/to/your-project/
-
-# For other AI tools (GitHub Copilot, Kiro, OpenCode)
-cp AGENTS.md /path/to/your-project/
-
-# Then open your project in your AI coding assistant and ask:
-> "Analyze this codebase and populate the CLAUDE.md (or AGENTS.md) with project-specific context"
-
-# Copy the folder for your AI coding assistant to your project:
-
-# For Claude Code
-cp -r .claude /path/to/your-project/
-
-# For GitHub Copilot
-cp -r .github /path/to/your-project/
-
-# For Kiro
-cp -r .kiro /path/to/your-project/
-
-# For OpenCode
-cp -r .opencode /path/to/your-project/
-
-# Copy the MCP configuration files for recommended MCP servers (deepwiki, playwright):
-cp .mcp.json /path/to/your-project/
-cp -r .vscode/ /path/to/your-project/
-
-```
-
-<br></br>
-
-The agent analyzes your codebase, populates configuration with your patterns, and installs the procedure.
 
 **Repository**: [github.com/flora131/atomic](https://github.com/flora131/atomic/)
 
