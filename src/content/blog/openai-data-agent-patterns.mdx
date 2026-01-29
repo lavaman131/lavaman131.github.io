@@ -5,6 +5,8 @@ authors: "Alex Lavaee"
 description: "OpenAI built a data agent serving 3.5k users across 600 petabytes. The architectural patterns that made it work are the same ones that power a 3,000-line coding agent CLI."
 ---
 
+import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+
 ## The Convergence
 
 OpenAI recently published a deep dive on their internal data agent, a tool powered by GPT-5.2 that serves 3,500+ users querying 600 petabytes of data across 70,000 datasets. It is available through Slack, web interfaces, IDEs, and MCP connectors.
@@ -488,6 +490,8 @@ Here is what the convergence reveals: layered context with clear boundaries beat
 
 OpenAI discovered this managing petabytes. Atomic discovered it managing a few thousand lines of markdown specs. The infrastructure changes with scale, but the architecture does not.
 
+<InteractiveMermaid height="500px">
+
 ```mermaid
 %%{init: {
   'theme': 'default',
@@ -547,6 +551,8 @@ flowchart TB
     classDef secondaryStyle fill:#F0E8F4,stroke:#8B7AA8,stroke-width:2px,color:#1a1a1a
     classDef tertiaryStyle fill:#F4F0E8,stroke:#A89B7A,stroke-width:2px,color:#1a1a1a
 ```
+
+</InteractiveMermaid>
 
 **Why this pattern emerges independently:**
 
