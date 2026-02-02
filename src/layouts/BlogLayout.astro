@@ -142,6 +142,18 @@ const { frontmatter } = Astro.props;
             }
           </header>
 
+          {
+            frontmatter.cover && (
+              <figure class="mb-8">
+                <Image
+                  src={frontmatter.cover}
+                  alt={frontmatter.title}
+                  class="w-full rounded-lg"
+                />
+              </figure>
+            )
+          }
+
           <!-- Blog Content with Custom Typography -->
           <div class="content-typography max-w-none">
             <slot />

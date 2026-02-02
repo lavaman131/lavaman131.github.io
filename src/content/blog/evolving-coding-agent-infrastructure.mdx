@@ -3,7 +3,11 @@ title: "Evolving Coding Agent Infrastructure: The Rise of the Meta-Framework Lay
 date: "2026-02-02"
 authors: "Alex Lavaee"
 description: "How hooks, skills, and tool orchestration are transforming developer infrastructure. A deep dive into Claude Code's layered stack and why the most important code you write this year won't be features."
+cover: "../../assets/images/blog/evolving-coding-agent-infrastructure/cover.png"
 ---
+
+import { Image } from "astro:assets";
+import hooksLifecycle from "../../assets/images/blog/evolving-coding-agent-infrastructure/hooks-lifecycle.avif";
 
 I shipped 12 features last week without writing a single line of application code.
 
@@ -67,6 +71,13 @@ Anthropic's benchmarks show dynamic tool discovery improves accuracy dramaticall
 ## Hooks: The Control Plane
 
 Hooks are user-defined commands or LLM prompts that execute at specific lifecycle points. They're the foundation for building guardrails, automation, and quality gates.
+
+<figure>
+  <Image src={hooksLifecycle} alt="Claude Code hooks lifecycle diagram showing the agentic loop with PreToolUse, PostToolUse, SubagentStart/Stop, and Stop events" />
+  <figcaption>
+    Hooks lifecycle in Claude Code's agentic loop. Source: [Anthropic](https://code.claude.com/docs/en/hooks)
+  </figcaption>
+</figure>
 
 ### Three Types of Hooks
 
