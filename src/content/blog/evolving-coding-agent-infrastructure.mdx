@@ -1,0 +1,453 @@
+---
+title: "Evolving Coding Agent Infrastructure: The Rise of the Meta-Framework Layer"
+date: "2026-02-02"
+authors: "Alex Lavaee"
+description: "How hooks, skills, and orchestration rules are transforming developer infrastructure. A deep dive into Claude Code's five-layer stack and why the most important code you write this year won't be features."
+---
+
+I shipped 12 features last week without writing a single line of application code.
+
+Instead, I wrote hooks, skills, and orchestration rules. This isn't hyperbole—it's the new reality of developer infrastructure. A meta-framework layer is emerging on top of coding agents, and Claude Code 2.1 just formalized it with a five-layer stack.
+
+## Key Takeaways
+
+- **Hooks are the control plane**: Command hooks for deterministic checks, prompt hooks for flexible validation, agent hooks for multi-turn verification
+- **Skills package institutional knowledge**: Define processes once, hot-reload them, run them in isolated contexts
+- **CLI complexity now serves agents, not humans**: Yegge's 100+ subcommand pattern optimizes for machine comprehension
+- **Level 4+ teams don't review AI code**: Focus shifts to proving systems work through testing and guardrails
+- **The developer role is shifting**: From implementation to orchestration
+
+## The Five-Layer Stack
+
+Claude Code 2.1 introduces a formalized architecture for agent automation:
+
+1. **MCP (Model Context Protocol)**: Universal adapter for external tools and APIs
+2. **Hooks**: Event-driven automation at lifecycle points
+3. **Skills**: Packaged expertise that activates contextually
+4. **Subagents**: Isolated execution contexts for specific tasks
+5. **Plugins**: Distributable bundles combining all of the above
+
+Each layer can define its own scoped hooks. The system is recursive—a plugin can contain skills with their own hooks, which can spawn subagents that have their own lifecycle events.
+
+## Hooks: The Control Plane
+
+Hooks are user-defined commands or LLM prompts that execute at specific lifecycle points. They're the foundation for building guardrails, automation, and quality gates.
+
+### Three Types of Hooks
+
+**Command Hooks** execute shell scripts for deterministic checks:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/validate-command.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Prompt Hooks** use an LLM to evaluate conditions flexibly:
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if all tasks are complete: $ARGUMENTS",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Agent Hooks** spawn multi-turn subagents for complex verification:
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "Run the test suite and verify all tests pass. $ARGUMENTS",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+These hooks can run for up to 10 minutes—enough time for full test suites or security scans before any change gets accepted.
+
+### Lifecycle Events
+
+| Event | When It Fires | Use Case |
+|:------|:--------------|:---------|
+| `PreToolUse` | Before a tool executes | Block dangerous commands |
+| `PostToolUse` | After successful execution | Run linters, tests |
+| `UserPromptSubmit` | When user submits input | Validate requests |
+| `Stop` | When agent finishes | Verify all work is complete |
+
+## Skills: Packaged Institutional Knowledge
+
+Skills are markdown files with YAML frontmatter that define reusable agent behaviors. They activate automatically when their description matches the current task context.
+
+```yaml
+---
+name: code-review
+description: Review code changes for quality and security
+tools: Read, Grep, Glob, Bash
+hooks:
+  PreToolUse:
+    - matcher: "Edit|Write"
+      hooks:
+        - type: prompt
+          prompt: "Verify this change follows our style guide: $ARGUMENTS"
+---
+
+## Code Review Process
+
+When reviewing code changes:
+1. Check for security vulnerabilities
+2. Verify test coverage
+3. Ensure consistent style
+```
+
+This is the "NPM for agent behaviors" pattern. Define your code review process once, hot-reload it, run it in isolated contexts with custom guardrails.
+
+## The Inversion of CLI Design
+
+Steve Yegge built a CLI with 100+ subcommands for his Beads project. His reasoning challenges conventional UX wisdom:
+
+> "The complicated Beads CLI isn't for humans; it's for agents."
+
+He implemented "whatever I saw the agents trying to do with Beads, until nearly every guess by an agent is now correct." Traditional UX optimizes for human learnability. Agent-friendly design optimizes for predictable machine comprehension.
+
+This pattern appears throughout the meta-framework layer: complexity at the orchestration level serves agent accuracy, while human developers interact at a higher abstraction layer.
+
+## Level 4+ Teams: No Code Review, Ever
+
+Dan Shapiro's Five Levels framework describes the progression of AI-assisted development:
+
+- **Level 0-2**: AI assists; humans review everything
+- **Level 3**: AI generates most code; humans review full-time
+- **Level 4**: Engineering teams collaborate on specs; agents implement
+- **Level 5**: Fully automated software factories
+
+The critical observation from Level 4+ teams: "Nobody reviews AI-produced code, ever. They don't even look at it."
+
+This isn't negligence—it's a fundamental shift in what developers do. The focus moves to:
+
+- **System validation**: Massive investment in testing, simulation, and tooling
+- **Proving correctness**: Building guardrails that demonstrate the system works
+- **Agent enablement**: Designing systems that help agents work effectively
+
+## Building Your Orchestration Layer
+
+The pattern is clear: the most important code you write this year won't be features. It'll be the hooks, skills, and orchestration logic that govern your agents.
+
+Here's a practical starting point. Create `.claude/settings.json` in your project:
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/post-edit.sh",
+            "async": true,
+            "timeout": 120
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Review the conversation. Are all requested tasks complete? Have tests been run? $ARGUMENTS"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Then create `.claude/hooks/post-edit.sh`:
+
+```bash
+#!/bin/bash
+# Runs after every file edit
+
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+
+# Only process source files
+if [[ "$FILE_PATH" != *.ts && "$FILE_PATH" != *.js && "$FILE_PATH" != *.py ]]; then
+  exit 0
+fi
+
+# Run your validation pipeline
+npm run lint --quiet 2>&1 || true
+npm test --quiet 2>&1 || true
+
+exit 0
+```
+
+## Conclusion
+
+The meta-framework layer is the new infrastructure. Hooks give you event-driven control. Skills package your team's institutional knowledge. Subagents provide isolated execution contexts. Together, they let you define what your agents can and cannot do, how they verify their work, and when they're allowed to stop.
+
+The developer role is shifting from implementation to orchestration. The question isn't whether to adopt this pattern—it's how quickly you can build the infrastructure that lets agents do the implementation while you focus on system design, guardrails, and verification.
+
+What infrastructure are you building on top of your coding agents?
+
+---
+
+## Reference Implementations
+
+### Complete Bash Command Validator Hook
+
+This production-ready hook blocks dangerous shell commands before execution. Save to `.claude/hooks/block-dangerous.sh`:
+
+```bash
+#!/bin/bash
+# block-dangerous.sh - PreToolUse hook for Bash commands
+# Blocks destructive commands and requires confirmation for risky operations
+
+set -euo pipefail
+
+# Read JSON input from stdin
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+
+# Define blocked patterns
+BLOCKED_PATTERNS=(
+  "rm -rf /"
+  "rm -rf ~"
+  "rm -rf \$HOME"
+  ":(){:|:&};:"  # Fork bomb
+  "mkfs"
+  "dd if=/dev/"
+  "> /dev/sd"
+  "chmod -R 777 /"
+  "chown -R"
+)
+
+# Check for blocked patterns
+for pattern in "${BLOCKED_PATTERNS[@]}"; do
+  if echo "$COMMAND" | grep -qE "$pattern"; then
+    jq -n '{
+      hookSpecificOutput: {
+        hookEventName: "PreToolUse",
+        permissionDecision: "deny",
+        permissionDecisionReason: "Blocked: Command matches dangerous pattern"
+      }
+    }'
+    exit 0
+  fi
+done
+
+# Define patterns requiring user confirmation
+ASK_PATTERNS=(
+  "rm -rf"
+  "git push.*--force"
+  "git reset --hard"
+  "DROP TABLE"
+  "DELETE FROM.*WHERE"
+  "npm publish"
+  "docker system prune"
+)
+
+for pattern in "${ASK_PATTERNS[@]}"; do
+  if echo "$COMMAND" | grep -qiE "$pattern"; then
+    jq -n --arg reason "Risky command detected: $pattern" '{
+      hookSpecificOutput: {
+        hookEventName: "PreToolUse",
+        permissionDecision: "ask",
+        permissionDecisionReason: $reason
+      }
+    }'
+    exit 0
+  fi
+done
+
+# Allow other commands
+exit 0
+```
+
+Configuration in `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/block-dangerous.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Complete Test-on-Save Hook
+
+This async hook runs your test suite after every file modification without blocking the agent. Save to `.claude/hooks/run-tests-async.sh`:
+
+```bash
+#!/bin/bash
+# run-tests-async.sh - PostToolUse hook for Edit|Write
+# Runs tests asynchronously and reports results to Claude
+
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+
+# Determine file type and test command
+case "$FILE_PATH" in
+  *.ts|*.tsx|*.js|*.jsx)
+    TEST_CMD="npm test -- --passWithNoTests --silent"
+    ;;
+  *.py)
+    TEST_CMD="pytest -q --tb=no"
+    ;;
+  *.go)
+    TEST_CMD="go test ./... -short"
+    ;;
+  *.rs)
+    TEST_CMD="cargo test --quiet"
+    ;;
+  *)
+    exit 0  # Skip non-source files
+    ;;
+esac
+
+# Run tests and capture output
+RESULT=$($TEST_CMD 2>&1)
+EXIT_CODE=$?
+
+# Report results back to Claude
+if [ $EXIT_CODE -eq 0 ]; then
+  jq -n --arg file "$FILE_PATH" '{
+    systemMessage: ("Tests passed after editing " + $file)
+  }'
+else
+  jq -n --arg file "$FILE_PATH" --arg result "$RESULT" '{
+    systemMessage: ("Tests failed after editing " + $file + ":\n" + $result)
+  }'
+fi
+```
+
+### Complete Stop Verification Skill
+
+Save to `.claude/skills/verify-completion.md`:
+
+```yaml
+---
+name: verify-completion
+description: Verify all tasks are complete before stopping
+hooks:
+  Stop:
+    - hooks:
+        - type: agent
+          prompt: |
+            Before allowing the agent to stop, verify:
+
+            1. All explicitly requested tasks are complete
+            2. Any modified files have been saved
+            3. Tests have been run if code was changed
+            4. No errors remain unaddressed
+
+            Check the transcript for uncompleted requests.
+            Use Grep to search for TODO or FIXME in modified files.
+
+            Context: $ARGUMENTS
+
+            Return {"ok": true} only if everything is verified.
+            Return {"ok": false, "reason": "..."} with specific unfinished items.
+          timeout: 60
+---
+
+# Completion Verification
+
+This skill ensures thorough completion before the agent stops working.
+```
+
+### Complete Lint-on-Save Hook with Auto-Fix
+
+```bash
+#!/bin/bash
+# lint-and-fix.sh - PostToolUse hook that auto-fixes lint issues
+
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name')
+
+# Only run on successful writes/edits
+if [ "$TOOL_NAME" != "Write" ] && [ "$TOOL_NAME" != "Edit" ]; then
+  exit 0
+fi
+
+# Detect project type and run appropriate linter with auto-fix
+if [ -f "package.json" ]; then
+  # JavaScript/TypeScript project
+  if command -v npx &> /dev/null; then
+    # Try eslint with fix
+    npx eslint --fix "$FILE_PATH" 2>/dev/null || true
+    # Try prettier
+    npx prettier --write "$FILE_PATH" 2>/dev/null || true
+  fi
+elif [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then
+  # Python project
+  if command -v ruff &> /dev/null; then
+    ruff check --fix "$FILE_PATH" 2>/dev/null || true
+    ruff format "$FILE_PATH" 2>/dev/null || true
+  elif command -v black &> /dev/null; then
+    black --quiet "$FILE_PATH" 2>/dev/null || true
+  fi
+elif [ -f "go.mod" ]; then
+  # Go project
+  gofmt -w "$FILE_PATH" 2>/dev/null || true
+  goimports -w "$FILE_PATH" 2>/dev/null || true
+fi
+
+# Suppress output to avoid cluttering agent context
+exit 0
+```
+
+---
+
+## Sources
+
+- [Claude Code Hooks Reference](https://code.claude.com/docs/en/hooks)
+- [Steve Yegge on agent-friendly CLIs](https://simonwillison.net/2026/Jan/30/steve-yegge/)
+- [Dan Shapiro's Five Levels](https://simonwillison.net/2026/Jan/28/the-five-levels/)
+- [alexop.dev Claude Code full stack analysis](https://alexop.dev/posts/understanding-claude-code-full-stack/)
