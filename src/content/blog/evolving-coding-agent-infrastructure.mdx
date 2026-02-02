@@ -2,32 +2,67 @@
 title: "Evolving Coding Agent Infrastructure: The Rise of the Meta-Framework Layer"
 date: "2026-02-02"
 authors: "Alex Lavaee"
-description: "How hooks, skills, and orchestration rules are transforming developer infrastructure. A deep dive into Claude Code's five-layer stack and why the most important code you write this year won't be features."
+description: "How hooks, skills, and tool orchestration are transforming developer infrastructure. A deep dive into Claude Code's layered stack and why the most important code you write this year won't be features."
 ---
 
 I shipped 12 features last week without writing a single line of application code.
 
-Instead, I wrote hooks, skills, and orchestration rules. This isn't hyperbole—it's the new reality of developer infrastructure. A meta-framework layer is emerging on top of coding agents, and Claude Code 2.1 just formalized it with a five-layer stack.
+Instead, I wrote hooks, skills, and orchestration rules. This is the new reality of developer infrastructure. A meta-framework layer is emerging on top of coding agents, and Claude Code has formalized it with a layered architecture that puts tools at the center.
 
 ## Key Takeaways
 
+- **Tools are what make agents agentic**: Without tools, LLMs can only respond with text; with tools, they can act
+- **Tool overload degrades performance**: Fewer, well-scoped tools per agent dramatically improve accuracy and reduce context waste
+- **One agent, one tool is the emerging pattern**: Single-tool agents eliminate confusion and improve reliability
 - **Hooks are the control plane**: Command hooks for deterministic checks, prompt hooks for flexible validation, agent hooks for multi-turn verification
 - **Skills package institutional knowledge**: Define processes once, hot-reload them, run them in isolated contexts
-- **CLI complexity now serves agents, not humans**: Yegge's 100+ subcommand pattern optimizes for machine comprehension
 - **Level 4+ teams don't review AI code**: Focus shifts to proving systems work through testing and guardrails
-- **The developer role is shifting**: From implementation to orchestration
 
 ## The Five-Layer Stack
 
-Claude Code 2.1 introduces a formalized architecture for agent automation:
+Claude Code's architecture formalizes a five-layer stack for agent automation:
 
-1. **MCP (Model Context Protocol)**: Universal adapter for external tools and APIs
+1. **Tools**: The foundation of agentic behavior include file operations, search, execution, and web access
 2. **Hooks**: Event-driven automation at lifecycle points
 3. **Skills**: Packaged expertise that activates contextually
-4. **Subagents**: Isolated execution contexts for specific tasks
+4. **Subagents**: Isolated execution contexts with their own tool access
 5. **Plugins**: Distributable bundles combining all of the above
 
-Each layer can define its own scoped hooks. The system is recursive—a plugin can contain skills with their own hooks, which can spawn subagents that have their own lifecycle events.
+Each layer can define its own scoped tool permissions. The system is recursive in that a plugin can contain skills with their own hooks, which can spawn subagents that have restricted tool access.
+
+### Tools: The Foundation
+
+Without tools, LLMs can only respond with text. With tools, they can act. Claude Code's built-in tools fall into four categories:
+
+- **File operations**: Read files, edit code, create new files, rename and reorganize
+- **Search**: Find files by pattern, search content with regex, explore codebases
+- **Execution**: Run shell commands, start servers, run tests, use git
+- **Web**: Search the web, fetch documentation, look up error messages
+
+The key insight is that you control which tools each agent has access to. This separation is critical because giving an agent too many tools degrades performance, while well-scoped tool access improves accuracy and reduces confusion.
+
+## Why Tool Separation Matters
+
+A five-tool agent setup can consume ~55K tokens before any work begins. Add more tools and you quickly hit 100K+ tokens of overhead. But the real problem isn't just context consumption, it's accuracy.
+
+Anthropic's research shows that when agents have access to too many tools:
+
+- **Wrong tool selection** becomes the most common failure mode
+- **Parameter inference degrades** as options multiply
+- **Latency increases** as the model processes tool descriptions
+- **Context waste** leaves less room for actual work
+
+The solution is clean separation. Single-tool agents eliminate ambiguity in tool selection and let agents focus purely on parameter inference rather than deciding which tool to invoke.
+
+### The Hierarchy of Reliability
+
+From most to least reliable:
+
+1. **Pure functions**: Deterministic, side-effect controlled, cheaper, faster, fully testable
+2. **Direct tool calls**: Function calls with clear schemas
+3. **Dynamic tool discovery**: Load tools on-demand rather than upfront
+
+Anthropic's benchmarks show dynamic tool discovery improves accuracy dramatically. Opus 4 went from 49% to 74% accuracy while reducing token usage by 85%.
 
 ## Hooks: The Control Plane
 
@@ -95,7 +130,7 @@ Hooks are user-defined commands or LLM prompts that execute at specific lifecycl
 }
 ```
 
-These hooks can run for up to 10 minutes—enough time for full test suites or security scans before any change gets accepted.
+These hooks can run for up to 10 minutes which is enough time for full test suites or security scans before any change gets accepted.
 
 ### Lifecycle Events
 
@@ -131,7 +166,19 @@ When reviewing code changes:
 3. Ensure consistent style
 ```
 
-This is the "NPM for agent behaviors" pattern. Define your code review process once, hot-reload it, run it in isolated contexts with custom guardrails.
+Notice the `tools` field where skills can explicitly declare which tools they need access to. This is the "NPM for agent behaviors" pattern: define your code review process once, restrict its tool access, hot-reload it, and run it in isolated contexts with custom guardrails.
+
+## Tool Boundaries in Multi-Agent Systems
+
+A single agent tasked with too many responsibilities becomes a "Jack of all trades, master of none."
+
+Multi-agent systems are the microservices architecture for AI:
+
+- **Specialization**: Each agent focuses on a narrow domain with specific tools
+- **Decentralization**: Failures are isolated; one agent's confusion doesn't cascade
+- **Clear interfaces**: Agents communicate through defined channels, not shared state
+
+When your coding tool can run commands in a terminal, you can often avoid complex integrations entirely. Instead of adding external adapters, write a script or add a Makefile command and tell the agent to use that instead. Simplicity wins.
 
 ## The Inversion of CLI Design
 
@@ -154,7 +201,7 @@ Dan Shapiro's Five Levels framework describes the progression of AI-assisted dev
 
 The critical observation from Level 4+ teams: "Nobody reviews AI-produced code, ever. They don't even look at it."
 
-This isn't negligence—it's a fundamental shift in what developers do. The focus moves to:
+This is a fundamental shift in what developers do. The focus moves to:
 
 - **System validation**: Massive investment in testing, simulation, and tooling
 - **Proving correctness**: Building guardrails that demonstrate the system works
@@ -219,9 +266,9 @@ exit 0
 
 ## Conclusion
 
-The meta-framework layer is the new infrastructure. Hooks give you event-driven control. Skills package your team's institutional knowledge. Subagents provide isolated execution contexts. Together, they let you define what your agents can and cannot do, how they verify their work, and when they're allowed to stop.
+Tools are the foundation of agentic behavior. The meta-framework layer—hooks, skills, subagents—provides the infrastructure to orchestrate those tools effectively. Clean tool boundaries reduce confusion, improve accuracy, and let you build systems where agents excel at what they do best.
 
-The developer role is shifting from implementation to orchestration. The question isn't whether to adopt this pattern—it's how quickly you can build the infrastructure that lets agents do the implementation while you focus on system design, guardrails, and verification.
+The developer role is shifting from implementation to orchestration. The question isn't whether to adopt this pattern, it's how quickly you can build the infrastructure that lets agents do the implementation while you focus on system design, guardrails, and verification.
 
 What infrastructure are you building on top of your coding agents?
 
@@ -447,7 +494,8 @@ exit 0
 
 ## Sources
 
-- [Claude Code Hooks Reference](https://code.claude.com/docs/en/hooks)
+- [How Claude Code Works](https://code.claude.com/docs/en/how-claude-code-works)
+- [Anthropic Engineering: Advanced Tool Use](https://www.anthropic.com/engineering/advanced-tool-use)
+- [Anthropic Research: Building Effective Agents](https://www.anthropic.com/research/building-effective-agents)
 - [Steve Yegge on agent-friendly CLIs](https://simonwillison.net/2026/Jan/30/steve-yegge/)
 - [Dan Shapiro's Five Levels](https://simonwillison.net/2026/Jan/28/the-five-levels/)
-- [alexop.dev Claude Code full stack analysis](https://alexop.dev/posts/understanding-claude-code-full-stack/)
