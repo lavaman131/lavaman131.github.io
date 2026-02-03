@@ -351,7 +351,7 @@ Every agent action needs an audit trail:
 
 DevOps is shifting from automation (do what I say) to autonomy (decide what's best). Your CI/CD pipeline doesn't need more YAML. It needs agents with the right guardrails.
 
-The infrastructure is ready. All three major coding agents now have native GitHub Actions integration. The question is no longer "can we do this?" but "how do we do this safely?"
+The infrastructure is ready. All major coding agents now have native GitHub Actions integration. The question is no longer "can we do this?" but "how do we do this safely?"
 
 Start small: enable Copilot Autofix for security vulnerabilities. Add a Claude review job for PRs touching critical paths. Use confidence thresholds to gate autonomous actions. Build trust incrementally.
 
@@ -551,7 +551,7 @@ jobs:
 ## Key Takeaways
 
 - AI coding agents work best when integrated into CI/CD with specialized roles: analysis, security, and execution agents with scoped permissions
-- The three major coding agents (Copilot, Codex, Claude Code) now have native GitHub Actions integration with distinct strengths
+- The major coding agents (Copilot, Codex, Claude Code, OpenCode) now have native GitHub Actions integration with distinct strengths
 - Confidence thresholds between 0.70-0.90 determine when agents act autonomously vs. escalate to humans
 - Multi-agent orchestration uses job chaining via `needs`, matrix strategies for parallelism, and artifact passing for context
 - Guardrails are non-negotiable: tool allowlists, container isolation, audit logging, and human approval gates for high-risk actions
