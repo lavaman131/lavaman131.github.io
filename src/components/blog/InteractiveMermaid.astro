@@ -3,11 +3,14 @@
  * InteractiveMermaid - A wrapper component for Mermaid diagrams with zoom/pan functionality.
  *
  * Usage in MDX:
- * <InteractiveMermaid>
- *   Your mermaid diagram code block
- * </InteractiveMermaid>
+ * <InteractiveMermaid chart={`
+ *   flowchart LR
+ *     A --> B
+ * `} />
  */
 interface Props {
+  /** Mermaid diagram code */
+  chart: string;
   /** Initial zoom level (default: 1) */
   initialZoom?: number;
   /** Minimum zoom level (default: 0.5) */
@@ -19,6 +22,7 @@ interface Props {
 }
 
 const {
+  chart,
   initialZoom = 1,
   minZoom = 0.5,
   maxZoom = 3,
@@ -31,6 +35,7 @@ const {
   data-initial-zoom={initialZoom}
   data-min-zoom={minZoom}
   data-max-zoom={maxZoom}
+  data-chart={chart}
 >
   <div class="mermaid-controls">
     <button class="zoom-btn zoom-in" title="Zoom In" aria-label="Zoom in">
@@ -107,7 +112,7 @@ const {
   </div>
   <div class="mermaid-viewport" style={`height: ${height};`}>
     <div class="mermaid-content">
-      <slot />
+      <div class="mermaid-render"></div>
     </div>
   </div>
 </div>
@@ -252,12 +257,79 @@ const {
     smoothScroll: boolean;
   }
 
+  interface MermaidAPI {
+    initialize: (config: Record<string, unknown>) => void;
+    render: (id: string, code: string) => Promise<{ svg: string }>;
+  }
+
   declare function panzoom(
     element: HTMLElement,
     options: PanZoomOptions
   ): PanZoomInstance;
 
-  function initializeInteractiveMermaid() {
+  declare const mermaid: MermaidAPI;
+
+  let mermaidIdCounter = 0;
+
+  async function renderMermaidCharts() {
+    const containers = document.querySelectorAll<HTMLElement>(
+      ".interactive-mermaid-container"
+    );
+
+    // Initialize mermaid with dark theme support
+    const isDarkTheme = document.documentElement.getAttribute("data-theme") !== "latte";
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: isDarkTheme ? "dark" : "default",
+      themeVariables: isDarkTheme ? {
+        primaryColor: "#89b4fa",
+        primaryTextColor: "#cdd6f4",
+        primaryBorderColor: "#45475a",
+        lineColor: "#a6adc8",
+        secondaryColor: "#313244",
+        tertiaryColor: "#1e1e2e",
+        background: "#1e1e2e",
+        mainBkg: "#313244",
+        nodeBorder: "#45475a",
+        clusterBkg: "#181825",
+        clusterBorder: "#45475a",
+        titleColor: "#cdd6f4",
+        edgeLabelBackground: "#313244",
+      } : {
+        primaryColor: "#1e66f5",
+        primaryTextColor: "#4c4f69",
+        primaryBorderColor: "#ccd0da",
+        lineColor: "#6c6f85",
+        secondaryColor: "#ccd0da",
+        tertiaryColor: "#eff1f5",
+        background: "#eff1f5",
+        mainBkg: "#ccd0da",
+        nodeBorder: "#ccd0da",
+        clusterBkg: "#e6e9ef",
+        clusterBorder: "#ccd0da",
+        titleColor: "#4c4f69",
+        edgeLabelBackground: "#ccd0da",
+      },
+    });
+
+    for (const container of containers) {
+      const chartCode = container.dataset.chart;
+      const renderTarget = container.querySelector<HTMLElement>(".mermaid-render");
+
+      if (!chartCode || !renderTarget) continue;
+
+      try {
+        const uniqueId = `mermaid-${mermaidIdCounter++}`;
+        const { svg } = await mermaid.render(uniqueId, chartCode);
+        renderTarget.innerHTML = svg;
+      } catch (error) {
+        console.error("Failed to render Mermaid chart:", error);
+        renderTarget.innerHTML = `<pre style="color: var(--ctp-red, #f38ba8); padding: 1rem;">Error rendering diagram: ${error}</pre>`;
+      }
+    }
+  }
+
+  function initializePanzoom() {
     const containers = document.querySelectorAll<HTMLElement>(
       ".interactive-mermaid-container"
     );
@@ -330,7 +402,8 @@ const {
         pz.moveTo(offsetX, offsetY);
       });
 
-      zoomFitBtn?.addEventListener("click", () => {
+      // Fit to view function - reusable for button and auto-fit
+      function fitToView() {
         const svg = content.querySelector("svg");
         if (!svg) return;
 
@@ -342,7 +415,7 @@ const {
         const svgWidth = svgRect.width / transform.scale;
         const svgHeight = svgRect.height / transform.scale;
 
-        // Calculate scale to fit
+        // Calculate scale to fit with some padding
         const padding = 40;
         const scaleX = (viewportRect.width - padding) / svgWidth;
         const scaleY = (viewportRect.height - padding) / svgHeight;
@@ -366,35 +439,53 @@ const {
             (newSvgRect.top - newViewportRect.top);
           const currentTransform = pz.getTransform();
           pz.moveTo(currentTransform.x + offsetX, currentTransform.y + offsetY);
+          updateZoomLevel();
         }, 50);
-      });
+      }
 
-      // Set initial zoom level display
-      updateZoomLevel();
+      zoomFitBtn?.addEventListener("click", fitToView);
+
+      // Auto-fit on load after a short delay to ensure SVG is rendered
+      setTimeout(fitToView, 100);
     });
   }
 
-  // Load panzoom library
-  function loadPanzoom(callback: () => void) {
-    if (typeof panzoom !== "undefined") {
-      callback();
-      return;
-    }
+  // Load external libraries
+  function loadScript(src: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[src="${src}"]`);
+      if (existing) {
+        resolve();
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = src;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error(`Failed to load ${src}`));
+      document.head.appendChild(script);
+    });
+  }
 
-    const script = document.createElement("script");
-    script.src =
-      "https://unpkg.com/panzoom@9.4.3/dist/panzoom.min.js";
-    script.onload = callback;
-    script.onerror = () => console.error("Failed to load panzoom library");
-    document.head.appendChild(script);
+  async function initializeAll() {
+    try {
+      // Load both libraries
+      await Promise.all([
+        loadScript("https://unpkg.com/panzoom@9.4.3/dist/panzoom.min.js"),
+        loadScript("https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"),
+      ]);
+
+      // First render the charts, then initialize panzoom
+      await renderMermaidCharts();
+      initializePanzoom();
+    } catch (error) {
+      console.error("Failed to initialize InteractiveMermaid:", error);
+    }
   }
 
   // Initialize when DOM is ready
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-      loadPanzoom(initializeInteractiveMermaid);
-    });
+    document.addEventListener("DOMContentLoaded", initializeAll);
   } else {
-    loadPanzoom(initializeInteractiveMermaid);
+    initializeAll();
   }
 </script>
