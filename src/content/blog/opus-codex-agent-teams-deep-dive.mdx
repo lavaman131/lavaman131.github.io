@@ -1,16 +1,16 @@
 ---
-title: "Opus 4.6, GPT-5.3 Codex, and Agent Teams: What Developers Actually Need to Know"
+title: "Opus 4.6, GPT-5.3 Codex, Agent Teams, and Fleet Mode: What Developers Actually Need to Know"
 date: "2026-02-05"
 authors: "Alex Lavaee, Norin Lavaee"
-description: "Three major AI releases dropped within 30 minutes of each other. Here's a technical deep dive into how Opus 4.6, GPT-5.3 Codex, and Claude Code's agent teams were built and how to start using them effectively."
+description: "Four major AI releases dropped within 24 hours. Here's a technical deep dive into Opus 4.6, GPT-5.3 Codex, Claude Code's agent teams, and Copilot CLI's Fleet Mode—and how to start using them effectively."
 cover: "../../assets/images/blog/opus-codex-agent-teams-deep-dive/cover.png"
 ---
 
 import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
 
-## Three Releases, One Thesis
+## Four Releases, One Thesis
 
-On February 5, 2026, Anthropic released Opus 4.6, OpenAI shipped GPT-5.3 Codex, and Claude Code launched agent teams all within roughly 30 minutes. Having tested both models and the new agent teams feature, I think what matters most isn't any single model's benchmark improvement. It's the collective signal: **individual model capability is starting to converge, and orchestration is becoming the differentiator**.
+On February 5, 2026, Anthropic released Opus 4.6, OpenAI shipped GPT-5.3 Codex, Claude Code launched agent teams, and GitHub rolled out Copilot CLI's experimental `/fleet` command—all within roughly 30 minutes. Having tested both models and the new multi-agent features, I think what matters most isn't any single model's benchmark improvement. It's the collective signal: **individual model capability is starting to converge, and orchestration is becoming the differentiator**.
 
 Here's a technical breakdown of each release and what's actionable for developers building with these tools.
 
@@ -230,13 +230,111 @@ Agent teams consume roughly **7x more tokens** than standard sessions when teamm
 - **Keep spawn prompts focused**: Teammates auto-load CLAUDE.md, MCP servers, and skills—everything in the spawn prompt adds to their initial context
 - **Clean up teams when done**: Active teammates consume tokens even while idle
 
+## GitHub Copilot CLI Fleet Mode: The Platform Play
+
+While Claude Code tackles multi-agent orchestration from the terminal up, GitHub is approaching the same problem from the platform down. The experimental `/fleet` command in Copilot CLI, combined with the broader Agent HQ launch, represents GitHub's answer to coordinated AI development.
+
+### The `/fleet` Command
+
+Fleet Mode is activated via a slash command within an interactive Copilot CLI session. You provide a high-level goal, and the CLI spawns multiple background agents that decompose and execute the task in parallel:
+
+```bash
+# Start an interactive session
+copilot
+
+# Spawn a fleet for a complex task
+/fleet "create unit tests for all functions in the 'utils' directory"
+
+# Or a multi-step refactor
+/fleet "refactor the API handling code to use the new client library
+and ensure all existing tests pass"
+```
+
+The key distinction from Claude Code's agent teams: fleet agents run in the **background** and don't block your main CLI session. You continue working while the fleet operates, and results surface as draft pull requests on GitHub.
+
+### Architecture: How Fleet Differs from Agent Teams
+
+The two systems solve the same problem—parallel agent execution—but with fundamentally different coordination models:
+
+<InteractiveMermaid chart={`
+flowchart LR
+    subgraph CC["Claude Code Agent Teams"]
+        direction TB
+        L1["Lead Agent"]
+        W1["Worker A"]
+        W2["Worker B"]
+        L1 -->|"spawn"| W1
+        L1 -->|"spawn"| W2
+        W1 <-->|"peer msg"| W2
+        W1 -->|"results"| L1
+        W2 -->|"results"| L1
+    end
+
+    subgraph GH["Copilot CLI Fleet Mode"]
+        direction TB
+        F1["/fleet command"]
+        A1["Agent 1"]
+        A2["Agent 2"]
+        PR["Draft PR"]
+        F1 -->|"decompose"| A1
+        F1 -->|"decompose"| A2
+        A1 -->|"commit"| PR
+        A2 -->|"commit"| PR
+    end
+
+    style L1 fill:#89b4fa,stroke:#74a0e3,color:#1e1e2e
+    style W1 fill:#a6e3a1,stroke:#82c97e,color:#1e1e2e
+    style W2 fill:#fab387,stroke:#e09a6f,color:#1e1e2e
+    style F1 fill:#f38ba8,stroke:#d97a95,color:#1e1e2e
+    style A1 fill:#f9e2af,stroke:#d4b978,color:#1e1e2e
+    style A2 fill:#94e2d5,stroke:#7cc5b8,color:#1e1e2e
+    style PR fill:#cba6f7,stroke:#b18ee0,color:#1e1e2e
+    style CC fill:none,stroke:#7f849c,color:#bac2de
+    style GH fill:none,stroke:#7f849c,color:#bac2de
+`} />
+
+| Aspect | Claude Code Agent Teams | Copilot CLI Fleet Mode |
+|--------|------------------------|----------------------|
+| **Coordination** | Peer-to-peer messaging via filesystem | Goal decomposition with background execution |
+| **Communication** | File-based mailboxes under `~/.claude/` | Git-based (branches, commits, PRs) |
+| **Isolation** | Separate context windows per agent | Git worktrees per background agent |
+| **Output** | In-session results to lead agent | Draft pull requests on GitHub |
+| **Blocking** | Agents run in-session (visible in iTerm/tmux) | Non-blocking background execution |
+| **Permissions** | Inherits from Claude Code settings | Prompted per-tool (touch, chmod, node, etc.) |
+| **Availability** | Experimental (env variable opt-in) | Experimental (`--experimental` flag) |
+
+### The Broader Context: Agent HQ and Mission Control
+
+Fleet Mode in the CLI is one piece of a larger GitHub orchestration story. GitHub's **Agent HQ** is a unified platform where developers can assign tasks to GitHub Copilot, Claude, and OpenAI Codex simultaneously. The **Mission Control** interface within Agent HQ lets you:
+
+- Assign the same task to multiple agents and compare their approaches
+- Monitor real-time session logs showing agent reasoning
+- Steer agents mid-run (pause, refine, restart)
+- Mention `@Copilot`, `@Claude`, or `@Codex` in PR comments for follow-up work
+
+Each coding agent session on Agent HQ consumes **one premium request** during public preview, with no additional subscription needed beyond Copilot Pro+ or Enterprise. Agent HQ support for Copilot CLI is listed as "coming soon"—for now, the `/fleet` command operates independently within the CLI.
+
+### Enabling Fleet Mode
+
+Fleet Mode requires the experimental flag. Launch Copilot CLI with `--experimental` or toggle it within a session:
+
+```bash
+# Launch with experimental features
+copilot --experimental
+
+# Or enable within an existing session
+/experimental
+```
+
+The setting persists in your config once enabled. Agents spawned via `/fleet` may request permission for file operations—you can approve individually or auto-approve for the session.
+
 ## Putting It All Together: What This Means for Developers
 
-These three releases point to the same conclusion from different angles.
+These four releases point to the same conclusion from different angles.
 
 **Model capability is converging**. Opus 4.6 and GPT-5.3 Codex trade benchmark leads depending on the evaluation. Opus 4.6 leads on GDPval-AA (+144 Elo over GPT-5.2) and BrowseComp. GPT-5.3 Codex leads on Terminal-Bench 2.0 (77.3% vs 65.4%) and OSWorld (64.7% vs 38.2%). On SWE-Bench Pro, they're within 1 percentage point. The gap between frontier models is narrowing to the point where the choice depends more on your specific workload than on absolute capability.
 
-**Orchestration is diverging**. The real differentiation is in how you coordinate agents. Claude Code's agent teams, Codex's supervisor-based approach, and the broader ecosystem of meta-frameworks are all tackling the same problem: moving developers from "writing code alongside AI" to "supervising teams of AI agents writing code."
+**Orchestration is diverging**. The real differentiation is in how you coordinate agents. Claude Code's agent teams, Copilot CLI's Fleet Mode, GitHub's Agent HQ, and the broader ecosystem of meta-frameworks are all tackling the same problem from different layers: moving developers from "writing code alongside AI" to "supervising teams of AI agents writing code." Claude Code does it from the terminal with peer-to-peer messaging. Copilot CLI does it with background agents and PR-based output. Agent HQ does it at the platform level with cross-provider orchestration. These approaches are complementary—and the tooling that wins will be the one that best fits your team's existing workflow.
 
 ### What I'd Recommend Trying
 
@@ -246,7 +344,9 @@ These three releases point to the same conclusion from different angles.
 
 3. **If you're evaluating GPT-5.3 Codex**: Its strength is in code review and bug finding. Community consensus is landing here strongly. Try it for review workflows and compare against your current setup.
 
-4. **If you're building agentic infrastructure**: Pay attention to the orchestration patterns, not just the models. The coordination layer—how you manage context, distribute tasks, and handle failures—will matter more than which model you choose as each generation narrows the gap.
+4. **If you use Copilot CLI**: Enable experimental mode (`copilot --experimental`) and try `/fleet` on a well-scoped task like generating tests across a directory. The non-blocking background execution means you can keep working while agents operate, and results land as draft PRs for review.
+
+5. **If you're building agentic infrastructure**: Pay attention to the orchestration patterns, not just the models. The coordination layer—how you manage context, distribute tasks, and handle failures—will matter more than which model you choose as each generation narrows the gap.
 
 ---
 
@@ -255,6 +355,7 @@ These three releases point to the same conclusion from different angles.
 - **Opus 4.6 introduces adaptive thinking**: The model dynamically decides when and how deeply to reason, replacing the binary on/off extended thinking of previous versions. This is a meaningful shift in how you interact with the API.
 - **GPT-5.3 Codex helped build itself**: Early versions debugged their own training runs, managed deployment, and diagnosed evaluation results—the first model OpenAI describes as instrumental in its own creation.
 - **Agent teams are the real architectural shift**: Claude Code now spawns coordinated agent teams with file-based peer-to-peer messaging, isolated context windows, and specialized roles—moving from manual subagent management to automatic orchestration.
+- **Copilot CLI Fleet Mode complements from the platform side**: The experimental `/fleet` command spawns parallel background agents that decompose goals, execute concurrently via Git worktrees, and deliver results as draft PRs—a non-blocking approach paired with GitHub's broader Agent HQ multi-provider orchestration.
 - **Model capability is converging, orchestration is diverging**: The benchmark gaps between frontier models are narrowing. The differentiator is increasingly how agents coordinate, not raw model intelligence.
 
 ## References
@@ -265,3 +366,7 @@ These three releases point to the same conclusion from different angles.
 - [GPT-5.3-Codex System Card](https://openai.com/index/gpt-5-3-codex-system-card/) — OpenAI
 - [Claude Code Agent Teams](https://code.claude.com/docs/en/agent-teams) — Anthropic Documentation
 - [Claude Code Multi-Agent Orchestration System](https://gist.github.com/kieranklaassen/d2b35569be2c7f1412c64861a219d51f) — Community Analysis
+- [GitHub Copilot CLI: Enhanced agents, context management, and new ways to install](https://github.blog/changelog/2026-01-14-github-copilot-cli-enhanced-agents-context-management-and-new-ways-to-install/) — GitHub Changelog
+- [Pick your agent: Use Claude and Codex on Agent HQ](https://github.blog/news-insights/company-news/pick-your-agent-use-claude-and-codex-on-agent-hq/) — GitHub Blog
+- [How to orchestrate agents using mission control](https://github.blog/ai-and-ml/github-copilot/how-to-orchestrate-agents-using-mission-control/) — GitHub Blog
+- [GitHub Copilot CLI](https://github.com/github/copilot-cli) — GitHub Repository
