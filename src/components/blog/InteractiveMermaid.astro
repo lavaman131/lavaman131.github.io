@@ -221,6 +221,17 @@ const {
     height: auto !important;
   }
 
+  /* Force dark text on nodes with colored backgrounds for readability */
+  .mermaid-content :global(.node .nodeLabel),
+  .mermaid-content :global(.node .nodeLabel p) {
+    color: #1e1e2e !important;
+  }
+
+  /* Remove edge label background boxes for cleaner appearance */
+  .mermaid-content :global(.labelBkg) {
+    background-color: transparent !important;
+  }
+
   /* Light theme adjustments */
   :global([data-theme="latte"]) .interactive-mermaid-container {
     border-color: var(--ctp-surface0, #ccd0da);
@@ -285,16 +296,16 @@ const {
         primaryColor: "#89b4fa",
         primaryTextColor: "#cdd6f4",
         primaryBorderColor: "#45475a",
-        lineColor: "#a6adc8",
+        lineColor: "#bac2de",
         secondaryColor: "#313244",
         tertiaryColor: "#1e1e2e",
         background: "#1e1e2e",
         mainBkg: "#313244",
-        nodeBorder: "#45475a",
-        clusterBkg: "#181825",
-        clusterBorder: "#45475a",
+        nodeBorder: "#585b70",
+        clusterBkg: "transparent",
+        clusterBorder: "#7f849c",
         titleColor: "#cdd6f4",
-        edgeLabelBackground: "#313244",
+        edgeLabelBackground: "transparent",
       } : {
         primaryColor: "#1e66f5",
         primaryTextColor: "#4c4f69",
@@ -308,7 +319,7 @@ const {
         clusterBkg: "#e6e9ef",
         clusterBorder: "#ccd0da",
         titleColor: "#4c4f69",
-        edgeLabelBackground: "#ccd0da",
+        edgeLabelBackground: "transparent",
       },
     });
 
