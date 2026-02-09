@@ -13,7 +13,7 @@ interface Props {
   chart: string;
   /** Initial zoom level (default: 1) */
   initialZoom?: number;
-  /** Minimum zoom level (default: 0.5) */
+  /** Minimum zoom level (default: 0.1) */
   minZoom?: number;
   /** Maximum zoom level (default: 3) */
   maxZoom?: number;
@@ -24,7 +24,7 @@ interface Props {
 const {
   chart,
   initialZoom = 1,
-  minZoom = 0.5,
+  minZoom = 0.1,
   maxZoom = 3,
   height = "600px",
 } = Astro.props;
@@ -221,10 +221,28 @@ const {
     height: auto !important;
   }
 
+  /* Prevent text clipping in diamond/rhombus nodes */
+  .mermaid-content :global(svg foreignObject) {
+    overflow: visible !important;
+  }
+
   /* Force dark text on nodes with colored backgrounds for readability */
   .mermaid-content :global(.node .nodeLabel),
   .mermaid-content :global(.node .nodeLabel p) {
     color: #1e1e2e !important;
+  }
+
+  /* Force readable edge label text in dark mode */
+  .mermaid-content :global(.edgeLabel),
+  .mermaid-content :global(.edgeLabel p),
+  .mermaid-content :global(.edgeLabel span) {
+    color: #cdd6f4 !important;
+  }
+
+  /* Force readable cluster/subgraph label text in dark mode */
+  .mermaid-content :global(.cluster-label),
+  .mermaid-content :global(.cluster-label .nodeLabel) {
+    color: #cdd6f4 !important;
   }
 
   /* Remove edge label background boxes for cleaner appearance */
@@ -249,6 +267,25 @@ const {
       var(--ctp-base, #eff1f5) 0%,
       var(--ctp-mantle, #e6e9ef) 100%
     );
+  }
+
+  /* Light theme: dark text for edge labels */
+  :global([data-theme="latte"]) .mermaid-content :global(.edgeLabel),
+  :global([data-theme="latte"]) .mermaid-content :global(.edgeLabel p),
+  :global([data-theme="latte"]) .mermaid-content :global(.edgeLabel span) {
+    color: #4c4f69 !important;
+  }
+
+  /* Light theme: dark text for cluster/subgraph labels */
+  :global([data-theme="latte"]) .mermaid-content :global(.cluster-label),
+  :global([data-theme="latte"]) .mermaid-content :global(.cluster-label .nodeLabel) {
+    color: #4c4f69 !important;
+  }
+
+  /* Light theme: dark text on node labels */
+  :global([data-theme="latte"]) .mermaid-content :global(.node .nodeLabel),
+  :global([data-theme="latte"]) .mermaid-content :global(.node .nodeLabel p) {
+    color: #1e1e2e !important;
   }
 </style>
 
@@ -292,32 +329,39 @@ const {
     mermaid.initialize({
       startOnLoad: false,
       theme: isDarkTheme ? "dark" : "default",
+      fontSize: 18,
+      flowchart: {
+        useMaxWidth: false,
+        nodeSpacing: 40,
+        rankSpacing: 70,
+        padding: 35,
+      },
       themeVariables: isDarkTheme ? {
         primaryColor: "#89b4fa",
-        primaryTextColor: "#cdd6f4",
-        primaryBorderColor: "#45475a",
+        primaryTextColor: "#1e1e2e",
+        primaryBorderColor: "#74c7ec",
         lineColor: "#bac2de",
-        secondaryColor: "#313244",
+        secondaryColor: "#a6e3a1",
         tertiaryColor: "#1e1e2e",
         background: "#1e1e2e",
-        mainBkg: "#313244",
-        nodeBorder: "#585b70",
-        clusterBkg: "transparent",
-        clusterBorder: "#7f849c",
+        mainBkg: "#89b4fa",
+        nodeBorder: "#74c7ec",
+        clusterBkg: "rgba(137, 180, 250, 0.1)",
+        clusterBorder: "#89b4fa",
         titleColor: "#cdd6f4",
         edgeLabelBackground: "transparent",
       } : {
-        primaryColor: "#1e66f5",
-        primaryTextColor: "#4c4f69",
-        primaryBorderColor: "#ccd0da",
+        primaryColor: "#89b4fa",
+        primaryTextColor: "#1e1e2e",
+        primaryBorderColor: "#74c7ec",
         lineColor: "#6c6f85",
-        secondaryColor: "#ccd0da",
+        secondaryColor: "#a6e3a1",
         tertiaryColor: "#eff1f5",
         background: "#eff1f5",
-        mainBkg: "#ccd0da",
-        nodeBorder: "#ccd0da",
-        clusterBkg: "#e6e9ef",
-        clusterBorder: "#ccd0da",
+        mainBkg: "#89b4fa",
+        nodeBorder: "#74c7ec",
+        clusterBkg: "rgba(137, 180, 250, 0.08)",
+        clusterBorder: "#7287fd",
         titleColor: "#4c4f69",
         edgeLabelBackground: "transparent",
       },
@@ -456,8 +500,8 @@ const {
 
       zoomFitBtn?.addEventListener("click", fitToView);
 
-      // Auto-fit on load after a short delay to ensure SVG is rendered
-      setTimeout(fitToView, 100);
+      // Auto-fit on load after a delay to ensure SVG is fully rendered
+      setTimeout(fitToView, 300);
     });
   }
 
