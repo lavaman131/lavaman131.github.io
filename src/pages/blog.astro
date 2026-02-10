@@ -5,6 +5,7 @@ import BlogCard from "../components/BlogCard.astro";
 import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
 import blogHeroImage from "../assets/images/blog/profile.png";
+import AtomicCallout from "../components/AtomicCallout.astro";
 
 const allBlogs = await getCollection("blog");
 // sort blogs by date
@@ -25,6 +26,11 @@ allBlogs.sort(
           width={1024}
           height={1024}
         />
+      </div>
+
+      <!-- Atomic Callout -->
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+        <AtomicCallout />
       </div>
 
       <!-- Blogs Grid -->
