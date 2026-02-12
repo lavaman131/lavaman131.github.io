@@ -5,6 +5,8 @@ authors: "Alex Lavaee, Norin Lavaee"
 description: "An overview of two frameworks for memory and context management to enable continous self-learning systems"
 ---
 
+import BlogCTA from "../../components/blog/BlogCTA.astro";
+
 ## The Challenge: Learning Without Retraining
 
 Modern LLM agents face a fundamental constraint: they can't continuously improve from real-world experience without expensive retraining cycles. When deployed, they encounter edge cases, domain-specific patterns, and novel scenarios that expose gaps in their base capabilities. Current approaches either ignore this drift or require periodic fine-tuning, both suboptimal for production systems.
@@ -149,6 +151,8 @@ flowchart TD
     classDef executeStyle fill:#B2E6D4,stroke:#16A085,stroke-width:2px,color:#1a1a1a
     classDef extractStyle fill:#F5C6E8,stroke:#D35D9A,stroke-width:2px,color:#1a1a1a
 ```
+
+<BlogCTA />
 
 ## Key Implementation Insights
 

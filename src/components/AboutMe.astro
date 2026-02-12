@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import profileImage from "../assets/images/profile.png";
 import { LINKEDIN_HANDLE } from "../config";
+import AtomicCallout from "./AtomicCallout.astro";
 ---
 
 <section class="w-full">
@@ -57,8 +58,13 @@ import { LINKEDIN_HANDLE } from "../config";
         </div>
       </div>
 
+      <!-- Atomic Callout -->
+      <div class="flex justify-center mt-12 lg:mt-16">
+        <AtomicCallout />
+      </div>
+
       <!-- Scroll indicator -->
-      <div class="flex justify-center mt-20 lg:mt-24">
+      <div class="flex justify-center mt-8 lg:mt-10">
         <button
           onclick="document.getElementById('content-section').scrollIntoView({ behavior: 'smooth' })"
           class="animate-bounce hover:text-ctp-mauve transition-colors duration-200 cursor-pointer focus:outline-none focus:text-ctp-mauve"
