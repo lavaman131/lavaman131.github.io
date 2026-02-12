@@ -7,6 +7,7 @@ import Navigation from "../components/Navigation.astro";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 import ThemeScript from "./ThemeScript.astro";
+import BlogCTA from "../components/blog/BlogCTA.astro";
 
 const { frontmatter } = Astro.props;
 ---
@@ -158,6 +159,9 @@ const { frontmatter } = Astro.props;
           <div class="content-typography max-w-none">
             <slot />
           </div>
+
+          <!-- End-of-Post CTA -->
+          <BlogCTA variant="footer" />
 
           <!-- Back to Blog Navigation -->
           <nav class="mt-8 pt-8 border-t border-ctp-surface0">

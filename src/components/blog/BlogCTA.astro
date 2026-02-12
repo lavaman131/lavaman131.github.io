@@ -1,0 +1,174 @@
+---
+interface Props {
+  /** URL to the Atomic GitHub repository */
+  href?: string;
+  /** "inline" for mid-content placement, "footer" for end-of-post */
+  variant?: "inline" | "footer";
+}
+
+const {
+  href = "https://github.com/flora131/atomic",
+  variant = "inline",
+} = Astro.props;
+
+const displayUrl = href.replace("https://", "");
+---
+
+<aside class={`blog-cta ${variant === "footer" ? "blog-cta-footer" : ""}`}>
+  <div class="blog-cta-prompt-line">
+    <span class="blog-cta-symbol">$</span>
+    <span class="blog-cta-cmd">atomic</span>
+  </div>
+  <div class="blog-cta-output">
+    {
+      variant === "footer" ? (
+        <p>
+          Liked this post? I'm building <strong>Atomic</strong> &mdash; an
+          open-source tool that helps developers research, plan, and execute
+          complex work with AI coding agents.
+        </p>
+      ) : (
+        <p>
+          Building with AI coding agents? Try <strong>Atomic</strong> &mdash;
+          open-source research-to-execution for complex codebases.
+        </p>
+      )
+    }
+  </div>
+  <div class="blog-cta-link-line">
+    <span class="blog-cta-symbol">$</span>
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      open {displayUrl}
+    </a>
+  </div>
+</aside>
+
+<style>
+  .blog-cta {
+    max-width: 36rem;
+    margin: 2.5rem auto;
+    border: 1px solid var(--ctp-surface0, #313244);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: var(--ctp-mantle, #181825);
+    transition:
+      border-color 0.3s ease,
+      background-color 0.3s ease;
+  }
+
+  .blog-cta:hover {
+    border-color: var(--ctp-surface1, #45475a);
+  }
+
+  .blog-cta-footer {
+    margin-top: 3rem;
+    margin-bottom: 0;
+  }
+
+  /* Prompt line */
+  .blog-cta-prompt-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem 0;
+    font-family:
+      ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    font-size: 0.8125rem;
+  }
+
+  .blog-cta-symbol {
+    color: var(--ctp-green, #a6e3a1);
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .blog-cta-cmd {
+    color: var(--ctp-text, #cdd6f4);
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  /* Output */
+  .blog-cta-output {
+    padding: 0.5rem 1rem 0.5rem 1.75rem;
+    border-left: 2px solid var(--ctp-surface0, #313244);
+    margin: 0.375rem 0.75rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .blog-cta-output p {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--ctp-subtext1, #bac2de);
+    margin: 0;
+    transition: color 0.3s ease;
+  }
+
+  .blog-cta-output strong {
+    color: var(--ctp-text, #cdd6f4);
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  /* Link line */
+  .blog-cta-link-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 1rem 0.625rem;
+    font-family:
+      ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+      "Liberation Mono", monospace;
+    font-size: 0.8125rem;
+  }
+
+  .blog-cta-link-line a {
+    color: var(--ctp-blue, #89b4fa);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .blog-cta-link-line a:hover {
+    color: var(--ctp-sky, #89dceb);
+    text-decoration: underline;
+  }
+
+  /* Light theme overrides */
+  :global([data-theme="latte"]) .blog-cta {
+    border-color: var(--ctp-surface0, #ccd0da);
+    background: var(--ctp-mantle, #e6e9ef);
+  }
+
+  :global([data-theme="latte"]) .blog-cta:hover {
+    border-color: var(--ctp-surface1, #bcc0cc);
+  }
+
+  :global([data-theme="latte"]) .blog-cta-symbol {
+    color: var(--ctp-green, #40a02b);
+  }
+
+  :global([data-theme="latte"]) .blog-cta-cmd {
+    color: var(--ctp-text, #4c4f69);
+  }
+
+  :global([data-theme="latte"]) .blog-cta-output {
+    border-color: var(--ctp-surface0, #ccd0da);
+  }
+
+  :global([data-theme="latte"]) .blog-cta-output p {
+    color: var(--ctp-subtext1, #5c5f77);
+  }
+
+  :global([data-theme="latte"]) .blog-cta-output strong {
+    color: var(--ctp-text, #4c4f69);
+  }
+
+  :global([data-theme="latte"]) .blog-cta-link-line a {
+    color: var(--ctp-blue, #1e66f5);
+  }
+
+  :global([data-theme="latte"]) .blog-cta-link-line a:hover {
+    color: var(--ctp-sky, #04a5e5);
+  }
+</style>

@@ -7,6 +7,7 @@ cover: "../../assets/images/blog/codex-macos-orchestration-desktop/cover.png"
 ---
 
 import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+import BlogCTA from "../../components/blog/BlogCTA.astro";
 
 ## What I Learned
 
@@ -95,6 +96,8 @@ The model has three layers:
 3. **Apply/Revert checkpoint**: Even with full permissions, file changes accumulate in a review state. You explicitly Apply to commit changes or Revert to discard them.
 
 This creates a nice panic button for exploratory sessions. I let an agent run in full-access mode a few times, reviewed the accumulated changes, then Reverted when it went sideways—no git reset required. That safety net made me more willing to experiment.
+
+<BlogCTA />
 
 ## How It Compares to What I'm Used To
 
