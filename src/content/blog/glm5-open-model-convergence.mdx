@@ -71,10 +71,11 @@ For multi-hour autonomous coding sessions where budget matters more than latency
 # At 6-10x cheaper per token, overnight sessions become
 # economically viable for tasks that were cost-prohibitive before
 
-cat .ralph/prompt.md | \
-    claude -p --model glm-5 --output-format=stream-json \
-        --dangerously-skip-permissions --add-dir . | \
-    tee -a .ralph/claude_output.jsonl
+# Configure OpenCode to use GLM-5 via opencode.json:
+# { "model": "zai-coding-plan/glm-5" }
+
+opencode --model zai-coding-plan/glm-5 --dir . 2>&1 | \
+    tee -a .ralph/opencode_output.log
 ```
 
 ### Weaker fit: Complex multi-step reasoning under time pressure
@@ -229,7 +230,7 @@ Open-closed model convergence is the most underpriced trend in AI right now. Her
 - **RL infrastructure improvements** — GLM-5's "slime" async RL system and similar innovations are closing the post-training gap. Watch for open-source RL tooling that lets smaller teams replicate frontier-level post-training
 - **Tool-use benchmarks** — HLE with tools, MCP-Atlas, and BrowseComp are better proxies for real-world agent capability than pure reasoning benchmarks. GLM-5 beat Opus 4.5 and GPT-5.2 on HLE with tools—that signal matters
 - **Deployment cost trajectory** — GLM-5 integrates DeepSeek Sparse Attention to reduce serving cost. As inference optimization improves for open models, the cost advantage over closed APIs will widen
-- **Ecosystem adoption** — GLM-5 already supports Claude Code, OpenCode, Kilo Code, Roo Code, Cline, and Droid. Broader tool compatibility means lower switching costs
+- **Ecosystem adoption** — OpenCode already supports GLM-5. Broader tool compatibility means lower switching costs
 
 The model race isn't over. But when the gap narrows to single digits, the question stops being "which model writes better code?" and starts being "which team built better infrastructure around the model?"
 
@@ -246,9 +247,10 @@ The answer to the second question is entirely in your control.
 **Coding agents**: Update your model config:
 
 ```json
-// ~/.claude/settings.json (for Claude Code)
+// opencode.json (for OpenCode)
 {
-  "model": "GLM-5"
+  "$schema": "https://opencode.ai/config.json",
+  "model": "zai-coding-plan/glm-5"
 }
 ```
 
