@@ -2,7 +2,6 @@
 import Layout from "../layouts/Layout.astro";
 import { SITE_TITLE } from "../config";
 import ProjectCard from "../components/ProjectCard.astro";
-import BlogCTA from "../components/blog/BlogCTA.astro";
 import { getCollection } from "astro:content";
 const allProjects = await getCollection("projects");
 // sort projects by name
@@ -12,13 +11,8 @@ allProjects.sort((a, b) => a.data.title.localeCompare(b.data.title));
 <Layout title={`Projects | ${SITE_TITLE}`}>
   <Fragment slot="main">
     <div class="w-full min-w-96 mx-auto">
-      <!-- Atomic CTA -->
-      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-6">
-        <BlogCTA />
-      </div>
-
       <!-- Projects Grid -->
-      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20">
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
         <div
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10"
         >
