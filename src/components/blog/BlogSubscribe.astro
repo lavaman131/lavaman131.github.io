@@ -1,6 +1,6 @@
 ---
 // Standalone email subscribe section for the blog listing page.
-// TODO: Integrate with Buttondown for email delivery.
+// Integrated with Buttondown for email delivery.
 ---
 
 <div class="blog-subscribe">
@@ -10,18 +10,23 @@
   </div>
   <p class="subscribe-desc">New posts delivered to your inbox. No spam, unsubscribe anytime.</p>
 
-  <!-- TODO: Replace with Buttondown form action -->
-  <form class="subscribe-form">
+  <form
+    action="https://buttondown.com/api/emails/embed-subscribe/mixture-of-experts"
+    method="post"
+    class="subscribe-form"
+    referrerpolicy="unsafe-url"
+  >
     <div class="subscribe-input-row">
       <input
         type="email"
         name="email"
+        id="bd-email"
         required
         placeholder="you@example.com"
         autocomplete="email"
         class="subscribe-input"
       />
-      <button type="submit" class="subscribe-button">Subscribe</button>
+      <input type="submit" value="Subscribe" class="subscribe-button" />
     </div>
   </form>
 </div>
