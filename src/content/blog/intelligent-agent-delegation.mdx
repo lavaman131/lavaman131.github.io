@@ -1,0 +1,204 @@
+---
+title: "Google DeepMind's Delegation Framework for Coding Agent Architecture"
+date: "2026-02-16"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "Google DeepMind's new paper formalizes delegation as more than task decomposition — it's a transfer of authority, accountability, and trust. Here's what that means for how we build coding agents, with concrete patterns you can apply today."
+cover: "../../assets/images/blog/intelligent-agent-delegation/cover.png"
+---
+
+import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+import BlogCTA from "../../components/blog/BlogCTA.astro";
+
+## The Gap Between Task Splitting and True Delegation
+
+Most coding agents decompose tasks the same way: take a complex request, break it into subtasks, execute them sequentially or in parallel, merge the results. It works for small problems. It falls apart at scale.
+
+Google DeepMind's [Intelligent AI Delegation](https://arxiv.org/abs/2602.11865) paper, published February 12, 2026 by Nenad Tomasev, Matija Franklin, and Simon Osindero, argues this is because we've been confusing **task decomposition** with **delegation**. Decomposition is mechanical. Delegation is a sociotechnical transfer of authority, responsibility, accountability, and trust. Without formalizing those transfers, multi-agent systems are prone to silent failures, responsibility diffusion, and cascading errors.
+
+The paper is primarily a conceptual framework, not an empirical study. But it crystallizes patterns that the best coding agent teams have already discovered independently, and it provides a vocabulary for the problems everyone else is hitting. This post breaks down the framework's five pillars, maps each to concrete coding agent patterns, and gives you actionable takeaways.
+
+---
+
+## The Five Pillars, Applied to Coding Agents
+
+The framework rests on five pillars: **dynamic assessment**, **adaptive execution**, **structural transparency**, **scalable market coordination**, and **systemic resilience**. Here's what each one means for coding agents specifically.
+
+<InteractiveMermaid chart={`
+flowchart TD
+    DA["Dynamic Assessment<br/><i>Can this agent handle<br/>this subtask?</i>"] --> AE["Adaptive Execution<br/><i>Monitor, reroute,<br/>checkpoint</i>"]
+    AE --> ST["Structural Transparency<br/><i>Verify outputs,<br/>audit trails</i>"]
+    ST --> SMC["Scalable Market<br/>Coordination<br/><i>Match tasks to<br/>best-fit agents</i>"]
+    SMC --> SR["Systemic Resilience<br/><i>Contain failures,<br/>revoke permissions</i>"]
+    SR -->|"Feedback"| DA
+    classDef pillar fill:#89b4fa,stroke:#74c7ec,color:#1e1e2e
+    class DA,AE,ST,SMC,SR pillar
+`} />
+
+### 1. Dynamic Assessment: Know What Your Agents Can Actually Do
+
+The paper frames task decomposition as an **optimization problem** — not a heuristic. The goal is to recursively decompose until every subtask's output is **verifiable**. This is the contract-first principle: don't delegate what you can't check.
+
+In practice, this is the difference between how Cursor's 1,000-agent browser experiment and Anthropic's 16-agent compiler project approached decomposition. Both converged on hierarchical structures where planner agents assess complexity and match subtasks to workers based on demonstrated capability, not just availability.
+
+The key insight for coding agents: **decompose until you can write a test for each subtask's output.** If you can't express the success criteria programmatically, the subtask isn't granular enough.
+
+Every delegation contract should specify four things: **what** the subtask is, **how to verify** it was done correctly (a test suite, type check, lint pass, build check, or human review), **what tools** the agent is allowed to use (scoped permissions), and **what to do if it fails** (retry, reassign to a different agent, or escalate to a human). If you can't fill in the verification field, the subtask isn't granular enough yet.
+
+### 2. Adaptive Execution: Plans Will Break, Build for It
+
+Static execution plans assume the environment won't change mid-task. In coding, this assumption is always wrong. A dependency update breaks the build. A test reveals a deeper architectural issue. A file conflict emerges because two agents touched the same module.
+
+The paper proposes **adaptive coordination cycles** — continuous monitoring that triggers re-delegation based on internal signals (performance degradation, anomalies) or external events (resource changes, specification shifts). This is backed by **checkpoint artifact serialization**: standardized schemas for saving partial work so a different agent can resume without starting over.
+
+This maps directly to how Anthropic's long-running agent harness works in practice. Their [effective harnesses pattern](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) enforces a session initialization ritual: read progress logs, review git history, verify baseline functionality. Each session ends with a descriptive git commit and progress file update. This is checkpoint serialization using Git as the substrate.
+
+```bash
+# Anthropic's agent session loop — checkpoint serialization via Git
+while true; do
+    # 1. Restore context from last checkpoint
+    git pull origin main
+    cat claude-progress.txt  # What was done, what's next
+
+    # 2. Execute one feature (not the whole plan)
+    claude --dangerously-skip-permissions \
+           -p "$(cat AGENT_PROMPT.md)" \
+           --model claude-opus-4-6
+
+    # 3. Checkpoint: serialize state for next agent/session
+    git add -A && git commit -m "feat: implement <feature>"
+    echo "Completed: <feature>. Next: <next-feature>" >> claude-progress.txt
+    git push origin main
+done
+```
+
+The critical pattern: **never rely on a single context window for multi-step work.** Each agent session should be recoverable from its checkpoint artifacts alone.
+
+### 3. Structural Transparency: Verify Everything, Trust Nothing
+
+The paper's strongest claim is that delegation should operate under a **zero-trust model**, borrowing from the principal-agent problem in economics. Don't assume a sub-agent performed correctly because the prompt was well-structured. Verify.
+
+For coding agents, this manifests as multi-layered verification. The most effective pattern emerging in 2026 is **Test-Driven AI Development (TDAID)**: Plan, Red, Green, Refactor, Validate. Tests serve double duty — they're both the specification and the exit criteria for the agent loop.
+
+<InteractiveMermaid chart={`
+flowchart LR
+    P["Plan<br/><i>Define scope</i>"] --> R["Red<br/><i>Write failing test</i>"]
+    R --> G["Green<br/><i>Minimal implementation</i>"]
+    G --> RF["Refactor<br/><i>Clean up</i>"]
+    RF --> V{"Validate<br/><i>All tests pass?</i>"}
+    V -->|"No"| G
+    V -->|"Yes"| D["Done<br/><i>Checkpoint + commit</i>"]
+    classDef phase fill:#a6e3a1,stroke:#40a02b,color:#1e1e2e
+    classDef decision fill:#f9e2af,stroke:#df8e1d,color:#1e1e2e
+    classDef done fill:#89b4fa,stroke:#74c7ec,color:#1e1e2e
+    class P,R,G,RF phase
+    class V decision
+    class D done
+`} />
+
+A key finding from practitioners implementing TDD with coding agents: **context isolation between phases is critical.** When the test writer and implementer share a context window, the implementer's knowledge of the test internals bleeds into its implementation, defeating the purpose of TDD. Claude Code's subagent architecture addresses this by giving each phase its own isolated context:
+
+- `tdd-test-writer` — creates failing tests (the **contract**)
+- `tdd-implementer` — writes minimal code to pass (the **deliverable**)
+- `tdd-refactorer` — evaluates and cleans (the **audit**)
+
+This maps directly to the paper's **recursive verification** pattern: each agent verifies its immediate delegatee's work and submits attestations upstream.
+
+---
+
+<BlogCTA />
+
+### 4. Scalable Coordination: Matching Tasks to the Right Agent
+
+The paper proposes **decentralized market-based coordination** where agents bid on tasks based on capability and cost. While this sounds like infrastructure for the distant future, a simpler version of this pattern already exists in coding agent architectures.
+
+Claude Code's orchestrator-worker model uses exactly this principle. The lead agent (Opus) decomposes queries into subtasks and delegates to worker subagents (Sonnet for cost-efficiency). Each subagent gets a focused prompt with clear objectives, output format requirements, tool restrictions, and task boundaries. Anthropic's own benchmarks show this multi-agent system outperforms a single Opus agent by 90.2% on their internal research eval.
+
+The practical version of market coordination for coding agents today is **capability-scoped delegation**:
+
+```yaml
+# Claude Code custom subagent — capability-scoped
+---
+name: db-migration-specialist
+description: Handles database schema changes and migration scripts
+tools: Read, Edit, Bash, Grep, Glob
+permissionMode: acceptEdits
+hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "./scripts/validate-migration-safety.sh"
+---
+
+You specialize in database migrations. Before making changes:
+1. Read the current schema
+2. Check for existing migrations that conflict
+3. Write reversible migrations only
+4. Run migration dry-run before committing
+
+You CANNOT modify application code. Only migration files and schema definitions.
+```
+
+The key principle: **restrict each agent's blast radius through permission scoping, not just prompt instructions.** Telling an agent "don't modify application code" is fragile. Removing `Write` access to application directories is structural.
+
+### 5. Systemic Resilience: Contain Failures Before They Cascade
+
+The paper introduces **Delegation Capability Tokens (DCTs)** — cryptographic tokens based on Macaroons or Biscuits that enforce least-privilege through "cryptographic caveats." An agent receives a token allowing `READ` on a specific resource but forbidding `WRITE`. Permissions attenuate as they propagate down delegation chains.
+
+This is conceptually identical to how Claude Code's `PreToolUse` hooks work today. You can define validation scripts that intercept tool calls and block unauthorized operations:
+
+```bash
+#!/bin/bash
+# Block destructive Git operations from subagents
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+
+# Block force pushes, hard resets, and branch deletions
+if echo "$COMMAND" | grep -iE 'push --force|reset --hard|branch -D' > /dev/null; then
+  echo "Blocked: Destructive git operation not permitted for this agent" >&2
+  exit 2  # Exit code 2 = block the operation
+fi
+
+exit 0
+```
+
+The paper also proposes **algorithmic circuit breakers** — automated revocation triggered by reputation drops or anomaly detection. In coding agent terms, this is: if an agent produces three consecutive failing builds, stop delegating to it and escalate.
+
+---
+
+## Where Current Systems Fall Short
+
+The paper evaluates existing protocols and finds gaps that directly affect coding agents:
+
+| Protocol | What It Does Well | What's Missing |
+|---|---|---|
+| **MCP** | Universal tool interface ("USB-C for AI") | No semantic permissions, no liability tracking |
+| **A2A** | Peer discovery, status streaming | No cryptographic verification of outputs |
+| **Current agent scaffolds** | Basic orchestration | No formal accountability in delegation chains |
+
+The most actionable gap: **no current system tracks accountability through delegation chains.** When Agent A delegates to Agent B, which sub-delegates to Agent C, and C introduces a bug — who is responsible? The paper proposes transitive accountability with cryptographic attestations. Today's practical equivalent: structured logging with agent attribution at every checkpoint.
+
+---
+
+## Three Patterns to Implement Now
+
+You don't need to wait for DCTs or decentralized agent markets. These patterns from the framework are implementable today:
+
+**1. Contract-first decomposition.** Before delegating any subtask, define the verification criteria. If you can't write a test or check for it, decompose further.
+
+**2. Checkpoint everything.** Use Git commits and progress files as checkpoint artifacts. Every agent session should be resumable by a different agent from the last checkpoint alone.
+
+**3. Scope permissions structurally.** Use tool restrictions and validation hooks, not just prompt instructions, to enforce what agents can and cannot do. Constraints beat instructions.
+
+The paper frames delegation as a first-class concern for the emerging agentic web. For coding agents specifically, the implication is clear: the teams that formalize their delegation patterns — with verifiable contracts, scoped permissions, and checkpoint-based recovery — will build systems that scale. The teams that treat delegation as "just split the task up" will hit the same walls that every flat agent architecture hits.
+
+The gap between AI assistance (60% of developer work) and AI autonomy (0-20% fully delegated) is a delegation engineering problem, not a model capability problem. This framework gives us the vocabulary to close it.
+
+---
+
+**References:**
+- Tomasev, N., Franklin, M., Osindero, S. (2026). *Intelligent AI Delegation*. [arXiv:2602.11865](https://arxiv.org/abs/2602.11865)
+- Anthropic. (2026). *Eight Trends Defining How Software Gets Built in 2026*. [claude.com/blog](https://claude.com/blog/eight-trends-defining-how-software-gets-built-in-2026)
+- Anthropic. (2025). *Building Effective Harnesses for Long-Running Agents*. [anthropic.com/engineering](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+- SWE-bench Leaderboards. [swebench.com](https://www.swebench.com/)
+- Claude Code Documentation: Custom Subagents. [code.claude.com/docs/en/sub-agents](https://code.claude.com/docs/en/sub-agents)
