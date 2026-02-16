@@ -4,7 +4,8 @@ import { SITE_TITLE } from "../config";
 import BlogCard from "../components/BlogCard.astro";
 import { getCollection } from "astro:content";
 import BlogHeroCard from "../components/blog/BlogHeroCard.astro";
-import BlogSubscribe from "../components/blog/BlogSubscribe.astro";
+// TODO: Re-enable once Buttondown subscription is approved
+// import BlogSubscribe from "../components/blog/BlogSubscribe.astro";
 
 const allBlogs = await getCollection("blog");
 // sort blogs by date
@@ -21,7 +22,8 @@ allBlogs.sort(
           <!-- Sidebar: Hero + Subscribe -->
           <aside class="blog-sidebar">
             <BlogHeroCard />
-            <BlogSubscribe />
+            <!-- TODO: Re-enable once Buttondown subscription is approved -->
+            <!-- <BlogSubscribe /> -->
           </aside>
 
           <!-- Blogs Grid -->

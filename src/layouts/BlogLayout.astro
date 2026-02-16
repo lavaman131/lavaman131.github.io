@@ -8,7 +8,8 @@ import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 import ThemeScript from "./ThemeScript.astro";
 import BlogCTA from "../components/blog/BlogCTA.astro";
-import BlogSubscribe from "../components/blog/BlogSubscribe.astro";
+// TODO: Re-enable once Buttondown subscription is approved
+// import BlogSubscribe from "../components/blog/BlogSubscribe.astro";
 
 const { frontmatter } = Astro.props;
 ---
@@ -164,10 +165,10 @@ const { frontmatter } = Astro.props;
           <!-- End-of-Post CTA -->
           <BlogCTA variant="footer" />
 
-          <!-- Email Subscription Form -->
-          <div class="mt-8">
+          <!-- TODO: Re-enable once Buttondown subscription is approved -->
+          <!-- <div class="mt-8">
             <BlogSubscribe />
-          </div>
+          </div> -->
 
           <!-- Back to Blog Navigation -->
           <nav class="mt-8 pt-8 border-t border-ctp-surface0">
