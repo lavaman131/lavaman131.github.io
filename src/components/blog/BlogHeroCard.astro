@@ -45,19 +45,22 @@ const { href = "https://github.com/flora131/atomic" } = Astro.props;
     </div>
     <div class="hero-output">
       <p>
-        Building <strong>Atomic</strong> &mdash; open-source AI coding agents for
-        the hard parts: migrations, large refactors, onboarding onto unfamiliar
-        codebases. Research and plan before you execute, human-in-the-loop by
-        default. <a href={href} target="_blank" rel="noopener noreferrer"
-          >Try it out</a
-        > &mdash; PRs welcome.
+        <strong>Atomic</strong> &mdash; Understand and research any codebase.
+        Plan complex features. Ship them autonomously.
+        <a href={href} target="_blank" rel="noopener noreferrer">Try it out</a>
+        &mdash; PRs welcome.
       </p>
     </div>
-    <div class="hero-link">
+    <!-- RSS feed -->
+    <div class="hero-prompt">
       <span class="prompt-symbol">$</span>
-      <a href={href} target="_blank" rel="noopener noreferrer">
-        open {href.replace("https://", "")}
-      </a>
+      <span class="prompt-cmd">curl -s alexlavaee.me/rss.xml</span>
+    </div>
+    <div class="hero-output">
+      <p>
+        &lt;?xml version="1.0"?&gt; &lt;channel&gt;<strong>Mixture of Experts</strong>&lt;/channel&gt;
+        &mdash; <a href="/rss.xml" target="_blank" rel="noopener noreferrer">RSS</a>
+      </p>
     </div>
   </div>
 </div>
