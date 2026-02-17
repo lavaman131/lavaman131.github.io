@@ -3,6 +3,7 @@ title: "Claude Sonnet 4.6: What Developers Actually Need to Know"
 date: "2026-02-17"
 authors: "Alex Lavaee, Norin Lavaee"
 description: "Sonnet 4.6 scores within 1.2 points of Opus 4.6 on SWE-bench at one-fifth the cost. We break down the benchmarks, architecture changes, pricing math, developer reactions, and what it means for your agentic workflows."
+cover: "../../assets/images/blog/sonnet-4-6-technical-breakdown/cover.png"
 ---
 
 import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
@@ -168,16 +169,16 @@ GPT-5.2 is slightly cheaper on input (\$1.75 vs \$3) but trails significantly on
 
 <InteractiveMermaid chart={`
 graph TD
-    subgraph "SWE-bench Score per Dollar (Higher = Better)"
-        S46["Sonnet 4.6<br/>79.6% @ \\$3/MTok<br/><b>26.5 pts/\\$</b>"]
-        O46["Opus 4.6<br/>80.8% @ \\$15/MTok<br/><b>5.4 pts/\\$</b>"]
+    subgraph "SWE-bench Score per Dollar"
+        S46["Sonnet 4.6<br/>79.6% @ \\$3/MTok<br/>26.5 pts/\\$"]
+        O46["Opus 4.6<br/>80.8% @ \\$15/MTok<br/>5.4 pts/\\$"]
         GPT["GPT-5.2<br/>Lower @ \\$1.75/MTok"]
-        GLM["GLM-5<br/>77.8% @ ~\\$0.15/MTok<br/><b>~519 pts/\\$</b>"]
+        GLM["GLM-5<br/>77.8% @ ~\\$0.15/MTok<br/>~519 pts/\\$"]
     end
-    classDef best fill:#a6e3a1,stroke:#94e2d5,color:#1e1e2e
-    classDef good fill:#89b4fa,stroke:#74c7ec,color:#1e1e2e
-    classDef open fill:#f9e2af,stroke:#fab387,color:#1e1e2e
-    classDef other fill:#cdd6f4,stroke:#bac2de,color:#1e1e2e
+    classDef best fill:#a6e3a1,stroke:#94e2d5,color:#000000
+    classDef good fill:#89b4fa,stroke:#74c7ec,color:#000000
+    classDef open fill:#f9e2af,stroke:#fab387,color:#000000
+    classDef other fill:#cdd6f4,stroke:#bac2de,color:#000000
     class S46 best
     class O46 good
     class GLM open
