@@ -1,0 +1,80 @@
+---
+// Sidebar card with a short note inviting reader feedback.
+---
+
+<div class="contact-card">
+  <div class="contact-body">
+    <p class="contact-text">
+      We write because we like to hear from you. If you have thoughts on what we wrote or want to share something, we are responsive over email:
+      <a href="mailto:lavaalex3@gmail.com">lavaalex3@gmail.com</a> and
+      <a href="mailto:norin.lavaee@gmail.com">norin.lavaee@gmail.com</a>.
+    </p>
+  </div>
+</div>
+
+<style>
+  .contact-card {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 1.25rem;
+    border: 1px solid var(--ctp-surface0, #313244);
+    border-radius: 0.75rem;
+    background: var(--ctp-mantle, #181825);
+    transition:
+      border-color 0.3s ease,
+      background-color 0.3s ease;
+  }
+
+  .contact-card:hover {
+    border-color: var(--ctp-surface1, #45475a);
+  }
+
+  .contact-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .contact-text {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: var(--ctp-subtext1, #bac2de);
+    margin: 0;
+    transition: color 0.3s ease;
+  }
+
+  .contact-text a {
+    color: var(--ctp-blue, #89b4fa);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .contact-text a:hover {
+    color: var(--ctp-sky, #89dceb);
+    text-decoration: underline;
+  }
+
+  /* Light theme overrides */
+  :global([data-theme="latte"]) .contact-card {
+    border-color: var(--ctp-surface0, #ccd0da);
+    background: var(--ctp-mantle, #e6e9ef);
+  }
+
+  :global([data-theme="latte"]) .contact-card:hover {
+    border-color: var(--ctp-surface1, #bcc0cc);
+  }
+
+  :global([data-theme="latte"]) .contact-text {
+    color: var(--ctp-subtext1, #5c5f77);
+  }
+
+  :global([data-theme="latte"]) .contact-text a {
+    color: var(--ctp-blue, #1e66f5);
+  }
+
+  :global([data-theme="latte"]) .contact-text a:hover {
+    color: var(--ctp-sky, #04a5e5);
+  }
+
+</style>
