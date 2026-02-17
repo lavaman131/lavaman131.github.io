@@ -2,7 +2,7 @@
 title: "Claude Sonnet 4.6: What Developers Actually Need to Know"
 date: "2026-02-17"
 authors: "Alex Lavaee, Norin Lavaee"
-description: "Sonnet 4.6 scores within 1.2 points of Opus 4.6 on SWE-bench at one-fifth the cost. We break down the benchmarks, architecture changes, pricing math, developer reactions, and what it means for your agentic workflows."
+description: "Sonnet 4.6 scores within 1.2 points of Opus 4.6 on SWE-bench at roughly 60% of the cost. We break down the benchmarks, architecture changes, pricing math, developer reactions, and what it means for your agentic workflows."
 cover: "../../assets/images/blog/sonnet-4-6-technical-breakdown/cover.png"
 ---
 
@@ -13,19 +13,22 @@ import BlogCTA from "../../components/blog/BlogCTA.astro";
 
 The numbers that matter for developers shipping code: Sonnet 4.6 nearly matches Opus 4.6 on the benchmarks enterprise teams actually use to evaluate models for agentic workflows.
 
-| Benchmark | Sonnet 4.6 | Opus 4.6 | GPT-5.2 | Gap (Sonnet vs Opus) |
+| Benchmark | Sonnet 4.6 | Opus 4.6 | GPT-5.3 Codex | GPT-5.2 |
 |---|---|---|---|---|
-| SWE-bench Verified | 79.6% | 80.8% | Lower | 1.2 pts |
-| OSWorld (Computer Use) | 72.5% | 72.7% | 38.2% | 0.2 pts |
-| GDPval-AA Elo (Office Tasks) | 1633 | 1606 | — | **Sonnet wins** |
-| Agentic Financial Analysis | 63.3% | 60.1% | 59.0% | **Sonnet wins** |
-| ARC-AGI-2 (Novel Reasoning) | — | — | — | ~8 pt gap |
-| BrowseComp (Agentic Search) | — | — | — | ~9 pt gap |
-| Terminal-Bench 2.0 | — | — | — | ~6 pt gap |
+| SWE-bench Verified | 79.6% | 80.8% | — | 80.0% |
+| SWE-Bench Pro (Public) | — | — | 56.8% | 55.6% |
+| OSWorld (Computer Use) | 72.5% | 72.7% | 64.7% | 37.9% |
+| GDPval (Office Tasks) | 1633 Elo | 1606 Elo | 70.9%\* | 1462 Elo |
+| Agentic Financial Analysis | 63.3% | 60.1% | — | 59.0% |
+| Terminal-Bench 2.0 | 59.1% | 65.4% | 77.3% | 62.2% |
+| Cybersecurity CTF | — | — | 77.6% | 67.7% |
+| SWE-Lancer IC Diamond | — | — | 81.4% | 74.6% |
 
-The pattern: Sonnet 4.6 matches or beats Opus on production-oriented benchmarks (office tasks, financial analysis, coding) while Opus retains advantages on tasks requiring novel reasoning, complex terminal work, and deep agentic search. For most teams, the Sonnet-competitive tasks are the ones that show up in daily work.
+\*GDPval score for GPT-5.3 Codex is wins-or-ties percentage; all other GDPval scores are Elo ratings. Higher is better in both metrics.
 
-One caveat on SWE-bench scores: Anthropic's model documentation page lists Sonnet 4.6 at 74.6% (10-trial average) and 80.2% with prompt modification. The 79.6% figure comes from the benchmark table in the announcement post, likely using conditions comparable to how Opus was evaluated. Evaluation methodology matters — always check whether scores use the same conditions before comparing across models.
+Note on SWE-bench variants: Anthropic reports on SWE-bench Verified while OpenAI reports on SWE-Bench Pro — these are different benchmark splits and not directly comparable. Anthropic's model documentation page lists Sonnet 4.6 at 74.6% (10-trial average) and 80.2% with prompt modification on Verified. The 79.6% figure comes from the announcement post under conditions comparable to Opus.
+
+The pattern: Sonnet 4.6 matches or beats Opus on production-oriented benchmarks (office tasks, financial analysis, coding) while Opus retains advantages on novel reasoning (~10 pt gap on ARC-AGI-2), deep agentic search (~9 pt gap on BrowseComp), and terminal work (65.4% vs 59.1% on Terminal-Bench 2.0). GPT-5.3 Codex leads all models on Terminal-Bench 2.0 (77.3%) and cybersecurity CTFs (77.6%), but trails on computer use — 64.7% vs Sonnet 4.6's 72.5% on OSWorld. Notably, GPT-5.2 hits 80.0% on SWE-bench Verified — competitive with Opus 4.6's 80.8% at lower per-token cost, though effective cost per task is often higher due to token consumption (see pricing section). For most teams, the production-oriented tasks where Sonnet competes with Opus are the ones that show up in daily work.
 
 ---
 
@@ -156,34 +159,21 @@ Important constraints:
 
 This is where the release gets consequential for teams running parallel agent sessions at scale.
 
-| Model | Input (per MTok) | Output (per MTok) | SWE-bench | Cost Ratio |
+| Model | Input (per MTok) | Output (per MTok) | SWE-bench | Cost Ratio (per token) |
 |---|---|---|---|---|
-| **Claude Sonnet 4.6** | \$3 | \$15 | 79.6% | **1x** |
-| Claude Opus 4.6 | \$15 | \$75 | 80.8% | 5x |
-| GPT-5.2 | \$1.75 | \$14 | Lower | ~0.9x |
+| **Claude Sonnet 4.6** | \$3 | \$15 | 79.6% (Verified) | **1x** |
+| Claude Opus 4.6 | \$5 | \$25 | 80.8% (Verified) | ~1.7x |
+| GPT-5.3 Codex | \$1.75 | \$14 | 56.8% (Pro) | ~0.9x |
+| GPT-5.2 | \$1.75 | \$14 | 80.0% (Verified) | ~0.9x |
 | GLM-5 (open-source) | ~\$0.15 | — | 77.8% | ~0.05x |
 
-The comparison that matters most: an agent processing 10M tokens/day costs roughly \$45 in Sonnet 4.6 input vs \$150 in Opus 4.6 input. Over a month, that's ~\$1,350 vs ~\$4,500 per agent — and most teams run multiple agents in parallel.
+The comparison that matters most: an agent processing 10M tokens/day costs roughly \$30 in Sonnet 4.6 input vs \$50 in Opus 4.6 input. Over a month, that's ~\$900 vs ~\$1,500 per agent — and most teams run multiple agents in parallel.
 
-GPT-5.2 is slightly cheaper on input (\$1.75 vs \$3) but trails significantly on computer use (38.2% vs 72.5% OSWorld) and agentic capabilities. GLM-5 is dramatically cheaper but lacks computer use, 1M token context, and — according to practitioners — the consistent instruction following needed for production agentic workflows.
+**On paper, GPT-5 series models look ~40% cheaper per token** (\$1.75 vs \$3 input). In practice, the savings often evaporate. GPT-5.2 and GPT-5.3 Codex tend to consume significantly more tokens per task — reasoning tokens (billed at output rates of \$14/MTok) inflate the actual cost, and agentic loops frequently require more iterations to converge. The effective cost per completed task can match or exceed Sonnet 4.6, particularly for complex agentic workflows. When evaluating the GPT-5 series, compare total cost per task, not per-token rates.
 
-<InteractiveMermaid chart={`
-graph TD
-    subgraph "SWE-bench Score per Dollar"
-        S46["Sonnet 4.6<br/>79.6% @ \\$3/MTok<br/>26.5 pts/\\$"]
-        O46["Opus 4.6<br/>80.8% @ \\$15/MTok<br/>5.4 pts/\\$"]
-        GPT["GPT-5.2<br/>Lower @ \\$1.75/MTok"]
-        GLM["GLM-5<br/>77.8% @ ~\\$0.15/MTok<br/>~519 pts/\\$"]
-    end
-    classDef best fill:#a6e3a1,stroke:#94e2d5,color:#000000
-    classDef good fill:#89b4fa,stroke:#74c7ec,color:#000000
-    classDef open fill:#f9e2af,stroke:#fab387,color:#000000
-    classDef other fill:#cdd6f4,stroke:#bac2de,color:#000000
-    class S46 best
-    class O46 good
-    class GLM open
-    class GPT other
-`} />
+GPT-5.2 is competitive on SWE-bench Verified (80.0%) and GPT-5.3 Codex leads on terminal and cybersecurity benchmarks, but both trail on computer use (64.7% and 37.9% vs 72.5% OSWorld). GLM-5 is dramatically cheaper but lacks computer use, 1M token context, and — according to practitioners — the consistent instruction following needed for production agentic workflows.
+
+\*GPT-5.3 Codex scores 56.8% on SWE-Bench Pro, a different and harder benchmark split not directly comparable to Verified. The ~81% estimated Verified score uses GPT-5.2 as a calibration point (80.0% Verified / 55.6% Pro), applying the same ratio: 56.8 / 55.6 × 80.0 ≈ 81.7%.
 
 ---
 
@@ -199,7 +189,7 @@ The progression on OSWorld-Verified tells a story about compound improvement:
 | Sonnet 4.5 | Oct 2025 | 61.4% |
 | **Sonnet 4.6** | **Feb 2026** | **72.5%** |
 
-That's nearly a 5x improvement in 16 months. GPT-5.2 sits at 38.2% — roughly where Sonnet 4 was eight months ago.
+That's nearly a 5x improvement in 16 months. GPT-5.3 Codex reaches 64.7% — closing the gap but still behind Sonnet 4.6's 72.5%. GPT-5.2 sits at 37.9%, roughly where Sonnet 4 was eight months ago.
 
 Why this matters for developers: computer use is the capability that unlocks automation of legacy systems that lack APIs. Insurance portals, government databases, ERP systems, hospital scheduling tools — any software with a GUI but no programmatic interface becomes automatable. Jamie Cuffe, CEO of Pace, reported Sonnet 4.6 hit **94% accuracy** on their complex insurance computer use benchmark: "It reasons through failures and self-corrects in ways we haven't seen before."
 
@@ -265,7 +255,7 @@ Model capability is converging. The moat is increasingly in infrastructure, tool
 
 ## Bottom Line
 
-For teams running parallel agent sessions where cost per autonomous hour matters more than peak capability on the hardest 5% of problems, the 5x Opus premium is hard to justify. Sonnet 4.6 is the obvious default for the majority of production agentic workloads.
+For teams running parallel agent sessions where cost per autonomous hour matters more than peak capability on the hardest 5% of problems, the ~1.7x Opus premium may not be justified — though the gap is narrow enough that many teams will find Opus worth the extra spend. Sonnet 4.6 remains a strong default for the majority of production agentic workloads.
 
 For solo developers or teams where one expert is closely reviewing every output and working on novel, hard problems — Opus still has an edge worth paying for, particularly on complex terminal work, novel reasoning, and deep agentic search.
 
@@ -275,8 +265,9 @@ The practical migration: start with `claude-sonnet-4-6` using adaptive thinking 
 
 ## Key Takeaways
 
-- **SWE-bench Verified**: 79.6% vs Opus 4.6's 80.8% — a 1.2 point gap at 5x lower cost (\$3/\$15 vs \$15/\$75 per MTok)
-- **Computer use**: OSWorld went from 14.9% to 72.5% in 16 months. Sonnet 4.6 is 0.2 points behind Opus here
+- **SWE-bench Verified**: 79.6% vs Opus 4.6's 80.8% — a 1.2 point gap at ~1.7x lower cost (\$3/\$15 vs \$5/\$25 per MTok)
+- **Computer use**: OSWorld went from 14.9% to 72.5% in 16 months. GPT-5.3 Codex reaches 64.7% — closing the gap but still behind
+- **GPT-5 series pricing caveat**: Per-token rates are ~40% cheaper (\$1.75 vs \$3 input), but higher token consumption per task — especially reasoning tokens — often levels out or exceeds effective cost
 - **New architecture features**: Adaptive thinking (4 effort levels), context compaction (beta), and a 1M token context window (beta)
 - **Developer preference**: 70% preferred over Sonnet 4.5 in Claude Code; 59% preferred over Opus 4.5
 - **Open-source pressure**: GLM-5 hits 77.8% SWE-bench at ~\$0.15/MTok input — 20x cheaper, but lacks computer use and 1M context
@@ -290,4 +281,5 @@ The practical migration: start with `claude-sonnet-4-6` using adaptive thinking 
 - [Anthropic Context Compaction Docs](https://platform.claude.com/docs/en/build-with-claude/compaction)
 - [Anthropic 1M Context Window Docs](https://platform.claude.com/docs/en/build-with-claude/context-windows#1m-token-context-window)
 - [Anthropic Model Comparison](https://platform.claude.com/docs/en/docs/about-claude/models)
+- [OpenAI GPT-5.3 Codex Announcement](https://openai.com/index/gpt-5-3-codex/)
 - [VentureBeat: Anthropic's Sonnet 4.6 matches flagship AI performance at one-fifth the cost](https://venturebeat.com/technology/anthropics-sonnet-4-6-matches-flagship-ai-performance-at-one-fifth-the-cost)
