@@ -90,7 +90,7 @@ Here's how a feature moves through the pipeline in Atomic. Each phase produces a
 
 **Phase 2: Specify** (`/create-spec`) -- The research feeds into a technical specification -- an RFC-style document with an executive summary, goals and non-goals, proposed architecture (with Mermaid diagrams), detailed design, alternatives considered, and open questions. This is the contract between your intent and the agent's execution. You review and iterate on it. The spec is explicit enough that a fresh agent session can implement from it without any conversation history.
 
-**Phase 3: Implement** (`/ralph`) -- This is where Atomic's autonomous execution engine takes over. Ralph reads the spec and automatically decomposes it into an ordered list of discrete tasks, each with verification criteria and identified dependencies. Then it spawns a worker sub-agent for the highest-priority pending task and loops: implement, test, validate, advance. Each worker follows test-driven development and SOLID principles by default. If a worker completes a task, Ralph picks up the next one. The loop continues until all tasks are done, a maximum iteration limit is hit, or you interrupt with `Ctrl+C` (which saves session state for later resumption with `/ralph --resume <session-id>`). Multiple Ralph sessions can run concurrently on different features.
+**Phase 3: Implement** (`/ralph`) -- This is where Atomic's autonomous execution engine takes over. Ralph reads the spec and automatically decomposes it into an ordered list of discrete tasks, each with verification criteria and identified dependencies. Then it spawns a worker sub-agent for the highest-priority pending task and loops: implement, test, validate, advance. Each worker follows test-driven development and SOLID principles by default. If a worker completes a task, Ralph picks up the next one. The loop continues until all tasks are done, a maximum iteration limit is hit, or you interrupt with `Ctrl+C`. Multiple Ralph sessions can run concurrently on different features.
 
 **Phase 4: Review and Ship** (`/gh-create-pr`) -- A fresh agent session reviews the implementation against the spec. This is the writer/reviewer separation -- the reviewing agent has no bias toward the code it's evaluating. Once approved, the PR is created and shipped.
 
@@ -169,7 +169,7 @@ Here's a concrete workflow you can adopt incrementally. Start with Step 1 and ad
 
 ### Step 1: Set Up Agent Instructions
 
-Create a CLAUDE.md (or AGENTS.md) in your repository root:
+Create a CLAUDE.md (or AGENTS.md) in your repository root. Tools like [Atomic](https://github.com/flora131/atomic) can generate these files automatically -- its `/init` command analyzes your codebase and produces a CLAUDE.md/AGENTS.md following best practices learned from Anthropic, so you don't have to start from a blank page. Whether you generate or handwrite it, the structure should look like:
 
 ```markdown
 # Project Overview
@@ -253,6 +253,7 @@ The quality concern is real -- models make wrong assumptions, bloat abstractions
 - **Pre-commit hooks**: Linting, formatting, type checking, secret scanning
 - **CI/CD integration**: Run Claude Code in headless mode (`-p` flag) for automated tasks like issue triage or boilerplate generation
 - **Test-first requirements**: Include test specifications in your task definitions. No task is complete without passing tests.
+- **Coverage as a guardrail**: Use code coverage tools to verify that AI-generated tests actually exercise the code they claim to test. Coverage alone doesn't guarantee quality, but _lack_ of coverage guarantees blind spots. A practical way to decide what meaningful coverage looks like for your codebase: ask the model to identify the hot paths -- the 15-20% of your code where 80% of the logic lives. These are the functions with the most branching, the deepest call chains, and the highest blast radius if they break. Focus your coverage requirements there first, and expand outward. This turns coverage from a vanity metric into a targeted quality signal.
 
 ---
 
