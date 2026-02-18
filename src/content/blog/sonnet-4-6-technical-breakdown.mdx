@@ -159,13 +159,13 @@ Important constraints:
 
 This is where the release gets consequential for teams running parallel agent sessions at scale.
 
-| Model | Input (per MTok) | Output (per MTok) | SWE-bench | Cost Ratio (per token) |
+| Model | Input (per MTok) | Output (per MTok) | SWE-bench | Cost Ratio (vs Sonnet) |
 |---|---|---|---|---|
 | **Claude Sonnet 4.6** | \$3 | \$15 | 79.6% (Verified) | **1x** |
 | Claude Opus 4.6 | \$5 | \$25 | 80.8% (Verified) | ~1.7x |
-| GPT-5.3 Codex | \$1.75 | \$14 | 56.8% (Pro) | ~0.9x |
-| GPT-5.2 | \$1.75 | \$14 | 80.0% (Verified) | ~0.9x |
-| GLM-5 (open-source) | ~\$0.15 | — | 77.8% | ~0.05x |
+| GPT-5.3 Codex | \$1.75\*\* | \$14\*\* | 56.8% (Pro) | ~0.6x input / ~0.9x output |
+| GPT-5.2 | \$1.75 | \$14 | 80.0% (Verified) | ~0.6x input / ~0.9x output |
+| GLM-5 (open-source) | ~\$1.00 | ~\$3.20 | 77.8% | ~0.3x input / ~0.2x output |
 
 The comparison that matters most: an agent processing 10M tokens/day costs roughly \$30 in Sonnet 4.6 input vs \$50 in Opus 4.6 input. Over a month, that's ~\$900 vs ~\$1,500 per agent — and most teams run multiple agents in parallel.
 
@@ -174,6 +174,8 @@ The comparison that matters most: an agent processing 10M tokens/day costs rough
 GPT-5.2 is competitive on SWE-bench Verified (80.0%) and GPT-5.3 Codex leads on terminal and cybersecurity benchmarks, but both trail on computer use (64.7% and 37.9% vs 72.5% OSWorld). GLM-5 is dramatically cheaper but lacks computer use, 1M token context, and — according to practitioners — the consistent instruction following needed for production agentic workflows.
 
 \*GPT-5.3 Codex scores 56.8% on SWE-Bench Pro, a different and harder benchmark split not directly comparable to Verified. The ~81% estimated Verified score uses GPT-5.2 as a calibration point (80.0% Verified / 55.6% Pro), applying the same ratio: 56.8 / 55.6 × 80.0 ≈ 81.7%.
+
+\*\*GPT-5.3 Codex API pricing has not been officially published by OpenAI as of Feb 17, 2026. Figures shown are estimated based on GPT-5.2 pricing.
 
 ---
 
@@ -240,7 +242,7 @@ Quick reference for integrating Sonnet 4.6 into your stack:
 
 ## Where Open-Source Stands
 
-GLM-5 deserves mention because it represents where the open-source frontier is heading. At 77.8% SWE-bench and roughly \$0.15/MTok input (20x cheaper than Sonnet 4.6), the raw coding capability gap is narrowing fast.
+GLM-5 deserves mention because it represents where the open-source frontier is heading. At 77.8% SWE-bench and roughly \$1.00/MTok input (3x cheaper than Sonnet 4.6), the raw coding capability gap is narrowing fast.
 
 But capability convergence isn't the full story. No open model currently offers:
 - Computer use (GUI automation)
@@ -270,7 +272,7 @@ The practical migration: start with `claude-sonnet-4-6` using adaptive thinking 
 - **GPT-5 series pricing caveat**: Per-token rates are ~40% cheaper (\$1.75 vs \$3 input), but higher token consumption per task — especially reasoning tokens — often levels out or exceeds effective cost
 - **New architecture features**: Adaptive thinking (4 effort levels), context compaction (beta), and a 1M token context window (beta)
 - **Developer preference**: 70% preferred over Sonnet 4.5 in Claude Code; 59% preferred over Opus 4.5
-- **Open-source pressure**: GLM-5 hits 77.8% SWE-bench at ~\$0.15/MTok input — 20x cheaper, but lacks computer use and 1M context
+- **Open-source pressure**: GLM-5 hits 77.8% SWE-bench at ~\$1.00/MTok input — 3x cheaper, but lacks computer use and 1M context
 
 ---
 
