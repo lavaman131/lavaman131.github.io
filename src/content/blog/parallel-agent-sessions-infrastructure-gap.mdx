@@ -1,0 +1,275 @@
+---
+title: "Designing the Multi-Agent Development Environment"
+date: "2026-02-25"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "The biggest constraint in multi-agent development isn't model capability. It's that nobody's built the orchestration, window management, and resource isolation layers end to end. A technical deep dive into what each tool does architecturally, where it breaks, and what the missing product looks like."
+cover: "../../assets/images/blog/parallel-agent-sessions-infrastructure-gap/cover.png"
+---
+
+import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+import BlogCTA from "../../components/blog/BlogCTA.astro";
+
+I run anywhere from five to ten parallel agent sessions daily. Often many at once. The biggest bottleneck isn't model capability.
+
+It's that nobody's built the orchestration and environment layer end to end to manage them effectively.
+
+Managing all the output is hard. Context-switching between terminals. Port conflicts when dev servers collide. Knowing when and where to focus attention. Every developer running serious multi-agent workflows has felt this — and most are stitching together bash scripts, tmux, and custom solutions to make it work.
+
+The problem breaks down into three layers, and each one is at a different stage of maturity.
+
+<InteractiveMermaid chart={`
+flowchart TD
+    subgraph L1["Layer 1: Agent Orchestration"]
+        A1["Spawn & coordinate agents"]
+        A2["Inter-agent messaging"]
+        A3["Task tracking & dependencies"]
+    end
+    subgraph L2["Layer 2: Window Management"]
+        B1["Terminal multiplexing"]
+        B2["Spatial layout & navigation"]
+        B3["Attention routing"]
+    end
+    subgraph L3["Layer 3: Resource Isolation"]
+        C1["Filesystem isolation"]
+        C2["Port allocation"]
+        C3["Database state isolation"]
+        C4["Environment variables"]
+    end
+    L1 --> L2
+    L2 --> L3
+    style L1 fill:#89b4fa,stroke:#74c7ec,color:#1e1e2e
+    style L2 fill:#f9e2af,stroke:#f2cdcd,color:#1e1e2e
+    style L3 fill:#f38ba8,stroke:#eba0ac,color:#1e1e2e
+`} />
+
+Layer 1 is where the most visible progress is happening. Layer 2 is fragmented and platform-locked. Layer 3 is mostly unsolved.
+
+## Agent orchestration: four approaches, no convergence
+
+The agent orchestration layer is evolving fast, but every major platform has taken a different architectural approach. None of them are compatible. None of them cover the full problem.
+
+### Claude Code Agent Teams
+
+Claude Code shipped [Agent Teams](https://docs.anthropic.com/en/docs/claude-code/agent-teams) as a research preview in February 2026. The architecture is straightforward: one session acts as a lead agent, spawning teammates that are each full Claude Code instances with their own context windows.
+
+The interesting design choice is the messaging system. It's entirely file-based — no database, no message broker, no IPC. When an agent sends a message, it writes to the recipient's inbox JSON file at `~/.claude/teams/{team-name}/inboxes/{recipient}.json`. The recipient's poller picks it up on an interval.
+
+```
+~/.claude/teams/{team-name}/
+  config.json              # Team metadata and member list
+  inboxes/
+    team-lead.json         # Leader's inbox
+    worker-1.json          # Worker 1's inbox
+    worker-2.json          # Worker 2's inbox
+
+~/.claude/tasks/{team-name}/
+  1.json                   # Task with status, owner, dependencies
+  2.json
+  3.json
+```
+
+Why file-based? Because Claude Code supports three spawn backends — in-process, tmux split-pane, and iTerm2 split-pane. When a teammate is a separate OS process in a tmux pane, a file on disk is the only shared surface available. This is pragmatic engineering, but it creates real coordination overhead. Every message means read the whole inbox file, deserialize, push an entry, serialize, write it back. It's O(N) per message.
+
+The task list supports dependency tracking (`blockedBy` / `blocks` relationships) and file-lock based claiming to prevent race conditions. Teammates go idle after every turn and send idle notifications approximately every three seconds. Leadership can't be transferred, and there's no session resumption — if the lead dies, coordination state is gone.
+
+To enable it:
+
+```json
+{
+  "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+}
+```
+
+For filesystem isolation, Claude Code supports git worktrees via a `--worktree` flag or `isolation: "worktree"` in subagent configuration. Each worktree gets its own branch and working directory while sharing repository history. But Agent Teams teammates use a shared working directory by default — worktree-per-teammate is not documented for teams.
+
+### OpenAI Codex
+
+The [Codex macOS app](https://openai.com/index/introducing-the-codex-app/), launched February 2, 2026, organizes agents around a thread model with three primitives: Threads (durable session containers), Turns (a unit of agent work from user input), and Items (atomic input/output with lifecycle events).
+
+The architecture runs through an App Server — a long-lived process with a stdio reader, message processor, thread manager, and core threads. Communication uses bidirectional JSON-RPC streamed as JSONL over stdio. The thread manager spins up one core session per thread, meaning multiple agents run in parallel by default.
+
+Codex's strongest differentiator is its sandboxing. On macOS, it uses Seatbelt policies via `sandbox-exec`. On Linux, Landlock (kernel 5.13+) for filesystem access control plus seccomp-BPF for syscall filtering, with namespace isolation for process, network, mount, and user contexts. Three modes: `workspace-write` (read/edit/execute within working directory, network blocked), `read-only`, and `danger-full-access`.
+
+For isolation, Codex creates separate git worktree checkouts per agent thread. Multiple agents can modify the same files without collision because their changes exist in different worktrees until deliberately merged. Cloud execution adds another layer — agents run in isolated containers with a two-phase runtime: a setup phase with network enabled for dependencies, then an agent phase that runs offline by default.
+
+OpenAI considered MCP for the protocol but found that richer session semantics (streaming diffs, approval flows, thread persistence) didn't map cleanly onto MCP's tool-oriented model. They still support MCP for simpler workflows but recommend the App Server protocol for full-fidelity integrations.
+
+### Cursor
+
+[Cursor 2.0](https://cursor.com/blog/2-0) (October 2025) introduced native parallel agent support — up to eight local agents running simultaneously in isolated git worktrees. Each agent operates in its own copy of the codebase with a separate working directory, index, and HEAD on a different branch, sharing the same object database.
+
+The critical limitation: **agents don't coordinate with each other.** When launching parallel agents, they all receive the same prompt by default. The community built a workaround using a `.cursor/worktrees.json` configuration that assigns each agent a unique task via an atomic locking mechanism — numbered task claim files that prevent race conditions. Without it, eight agents do the same work eight times.
+
+Cursor's `.cursor/environment.json` defines the execution environment for cloud and background agents:
+
+```json
+{
+  "snapshot": "POPULATED_FROM_SETTINGS",
+  "install": "npm install",
+  "terminals": [
+    {
+      "name": "Run dev server",
+      "command": "npm run dev"
+    }
+  ]
+}
+```
+
+This handles install scripts, background processes (dev servers, compilers), and environment variables. Disk snapshotting caches the state after setup so subsequent agents skip package installs. Cloud agents (launched February 2026) go further with full VMs, and Cursor reports that ~35% of their own PRs are generated by cloud agents.
+
+Known worktree limitations are telling: no LSP support in worktrees (agents can't lint), and in a 20-minute session with a ~2GB codebase, automatic worktree creation consumed 9.82 GB of disk space. Build artifacts make it worse.
+
+[Cursor 2.5](https://cursor.com/changelog/2-5) (February 2026) added async subagents that can spawn their own subagents, creating a tree of coordinated work. This is a step toward real orchestration, but the fundamental problem remains — there's no inter-agent messaging primitive like Claude Code's inbox system.
+
+### Sidecar: the meta-layer
+
+That all of these capabilities had to be supplemented by an external tool tells you where the gap is.
+
+[Sidecar](https://github.com/marcus/sidecar) is a Go-based TUI built on Charm's Bubble Tea framework that sits on top of your agents to manage them. At v0.74.1 with ~800 GitHub stars, it's young but the concepts matter.
+
+The core features:
+
+- **Workspaces** backed by git worktrees with dedicated tmux sessions per agent. Press `n` to create a workspace, `a` to launch an agent inside it. The agent doesn't know it's in a worktree.
+- **Kanban board** for tracking agent status across columns: Active, Waiting, Done, Paused.
+- **Cross-tool session history** via an adapter pattern that reads Claude Code JSONL files, Cursor's SQLite databases, Codex JSONL, and Gemini CLI data — normalizing everything into a common `Session` / `Message` model.
+- **Merge workflow** with diff review, merge strategy selection (merge commit, squash, rebase), and GitHub PR creation via `gh` CLI.
+
+Sidecar supports nine agents: Claude Code, Codex, Cursor CLI, Gemini CLI, Kiro, OpenCode, Amp Code, Warp, and Pi Agent. It auto-detects your git repo and active agent sessions with zero mandatory configuration.
+
+The rough edges are real — 47 open issues, UI rendering problems at non-standard terminal sizes, application freezes during merge operations, and incomplete `.gitignore` updates. But the architectural pattern is the one that matters: a unified management layer that treats agents from different platforms as interchangeable workers.
+
+<BlogCTA />
+
+## Window management: your window manager is now developer infrastructure
+
+Spawning terminals constantly turns your window manager into developer infrastructure. This wasn't the design intent of any existing window manager, and it shows.
+
+Traditional tiling window managers (i3, sway, dwm) pack windows into a fixed grid that fills the entire screen. Open a new terminal and all existing windows resize to accommodate it. Close one and the remaining windows expand. When you're cycling through five to ten agent sessions, every new spawn reshuffles your entire layout. The spatial memory you built — "my editor is in the left half, agent output is top-right" — gets destroyed.
+
+### niri's scrollable tiling
+
+[niri](https://github.com/niri-wm/niri) takes an architecturally different approach. Instead of packing windows into a fixed grid, it arranges them as columns on an infinite horizontal strip. New windows appear to the right of the currently focused window. Existing windows never resize. When windows exceed screen capacity, older ones scroll off-screen to the left.
+
+The fundamental difference: in i3/sway, the screen is a **container** that windows fill. In niri, the screen is a **viewport** into an infinite strip.
+
+This matters for agent workflows:
+
+- **No disruptive resizing.** Open a new agent terminal and your editor stays exactly the same size. The new terminal appears to the right.
+- **Stable spatial memory.** Windows never move or resize on their own, so you develop muscle memory for where things are.
+- **Topic-based grouping.** Place your editor, agent terminals, and documentation browser on the same workspace as a horizontal strip. Scroll between them instead of switching workspaces.
+- **IPC for automation.** niri exposes a socket that scripts can use to query window state, move windows, and automate layouts. You could script a "spawn agent" workflow that opens a terminal at a specific position in the strip.
+
+niri is a Wayland compositor written in Rust with 20,400+ GitHub stars, built on the Smithay library. It supports tabbed columns for grouping terminals, an overview mode to zoom out across all windows, and configurable gaps between columns.
+
+The problem: niri is **Linux-only and Wayland-only**. macOS has [Paneru](https://github.com/karinushka/paneru) (a Rust-based scrollable tiler with 940 stars, v0.3.3) and [PaperWM.spoon](https://github.com/mogenson/PaperWM.spoon) (a Hammerspoon plugin with the limitation that macOS can't move windows fully off-screen). Windows has nothing equivalent. The options are fragmented and platform-locked, which means no developer can adopt this pattern without also choosing a platform.
+
+## Resource isolation: the deepest technical gap
+
+This is where the infrastructure genuinely doesn't exist.
+
+Git worktrees solve filesystem isolation. Every tool in the previous section uses them. But they solve only one dimension of the problem.
+
+<InteractiveMermaid chart={`
+flowchart LR
+    subgraph Solved["Solved by Git Worktrees"]
+        FS["Filesystem isolation"]
+        BR["Branch isolation"]
+    end
+    subgraph Unsolved["Not Solved"]
+        PT["Port allocation"]
+        DB["Database state"]
+        ENV[".env files"]
+        MEM["Memory contention"]
+        CACHE["Build cache conflicts"]
+    end
+    style Solved fill:#a6e3a1,stroke:#a6e3a1,color:#1e1e2e
+    style Unsolved fill:#f38ba8,stroke:#f38ba8,color:#1e1e2e
+`} />
+
+### Port conflicts
+
+Two dev servers can't bind the same port. If Agent A starts `npm run dev` on port 3000 and Agent B does the same in a different worktree, one of them fails. There is no standard mechanism for automatic port allocation across isolated agent environments.
+
+Codex's `environment.json` lets you define terminals with ports, but there's no dynamic port negotiation between agents. Cursor's cloud agents each get their own VM, which sidesteps the problem entirely — but at the cost of full VM overhead per agent. For local parallel execution, nobody has a solution.
+
+The workaround is manual: each agent gets a different port in its configuration. This doesn't scale and requires forethought about which agents might run concurrently.
+
+### Database state
+
+Two agents running migrations against the same database corrupt shared state. Agent A applies migration 003, Agent B applies migration 004, Agent A rolls back migration 003 — now the database is in an inconsistent state that neither agent intended.
+
+The Cursor docs explicitly acknowledge this: "Worktrees share the same local database, Docker daemon, and cache directories. Two agents modifying database state simultaneously creates race conditions."
+
+The proper solution would be per-agent database instances — a lightweight database orchestrator that spins up isolated Postgres or SQLite instances per worktree. This doesn't exist as a product. Some developers use Docker Compose per worktree, but that requires manual setup and significant resource overhead.
+
+### Environment variables
+
+`.env` files point every agent at identical resources. If your `.env` contains `DATABASE_URL=postgres://localhost:5432/myapp`, every agent in every worktree connects to the same database. Same for Redis URLs, API endpoints, S3 buckets, and any other shared resource.
+
+Worktrees do give each agent its own copy of `.env` (since it's a file in the working directory), but the values inside still point to the same infrastructure. Without a layer that dynamically provisions and assigns isolated resource instances per agent, the isolation is cosmetic.
+
+### What would real isolation look like?
+
+The missing piece is a resource orchestrator that works alongside git worktrees:
+
+<InteractiveMermaid chart={`
+flowchart TD
+    SPAWN["Agent Spawn Request"] --> WORKTREE["Create Git Worktree"]
+    WORKTREE --> ALLOC["Resource Allocator"]
+    ALLOC --> PORT["Assign Unique Port Range"]
+    ALLOC --> DBINST["Provision Database Instance"]
+    ALLOC --> ENVGEN["Generate .env with Isolated Resources"]
+    PORT --> AGENT["Launch Agent in Isolated Environment"]
+    DBINST --> AGENT
+    ENVGEN --> AGENT
+    AGENT --> WORK["Agent Does Work"]
+    WORK --> MERGE["Merge Changes"]
+    MERGE --> CLEANUP["Release Resources"]
+    style SPAWN fill:#89b4fa,stroke:#74c7ec,color:#1e1e2e
+    style ALLOC fill:#f9e2af,stroke:#f2cdcd,color:#1e1e2e
+    style AGENT fill:#a6e3a1,stroke:#a6e3a1,color:#1e1e2e
+    style CLEANUP fill:#cba6f7,stroke:#b4befe,color:#1e1e2e
+`} />
+
+On agent spawn: create a worktree, allocate a unique port range, provision a lightweight database instance, generate a `.env` file with isolated resource URLs, and launch the agent. On completion: merge changes and release resources.
+
+Cloud-based solutions (Codex cloud, Cursor cloud agents) get this for free because each agent runs in its own VM. But cloud execution has latency, cost, and cold-start penalties. For local development — where iteration speed matters most — we have nothing.
+
+## Nobody owns the full stack
+
+Here's the coverage map:
+
+<InteractiveMermaid chart={`
+flowchart TD
+    subgraph Tools["Current Tool Coverage"]
+        CC["Claude Code Agent Teams<br/>Agent orchestration ✓<br/>Inter-agent messaging ✓<br/>Resource isolation ✗"]
+        CX["Codex App<br/>Thread management ✓<br/>OS-level sandboxing ✓<br/>Resource isolation (cloud only) ✓"]
+        CR["Cursor<br/>Parallel agents ✓<br/>Cloud VMs ✓<br/>Local isolation ✗"]
+        SC["Sidecar<br/>Cross-tool management ✓<br/>Kanban tracking ✓<br/>Resource isolation ✗"]
+        NR["niri<br/>Window management ✓<br/>Linux only ✗"]
+    end
+    subgraph Gap["The Gap"]
+        G1["No unified orchestration + isolation"]
+        G2["No cross-platform window management"]
+        G3["No local resource isolation"]
+    end
+    Tools --> Gap
+    style Gap fill:#f38ba8,stroke:#eba0ac,color:#1e1e2e
+`} />
+
+Claude Code has the richest agent-to-agent communication but no resource isolation beyond worktrees. Codex has the best sandboxing story but locks full isolation to cloud execution. Cursor has the most agents running in parallel but no inter-agent coordination. Sidecar provides the unified management view but depends on all the underlying tools to handle isolation. niri solves the window management problem but only on Linux.
+
+The teams making multi-agent workflows work today stitch together bash scripts, tmux, and custom solutions. The full stack — agent orchestration, window management, and resource isolation in a single integrated product — doesn't exist.
+
+We haven't seen this product yet but there are people working on it and I anticipate an influx of solutions in this area soon.
+
+## References
+
+- [Claude Code Agent Teams](https://docs.anthropic.com/en/docs/claude-code/agent-teams) — Anthropic documentation
+- [Introducing the Codex App](https://openai.com/index/introducing-the-codex-app/) — OpenAI
+- [Unlocking the Codex Harness: App Server Architecture](https://openai.com/index/unlocking-the-codex-harness/) — OpenAI
+- [Cursor 2.0](https://cursor.com/blog/2-0) — Parallel agents and Composer model
+- [Cursor 2.5](https://cursor.com/changelog/2-5) — Async subagents and plugin marketplace
+- [Sidecar](https://github.com/marcus/sidecar) — TUI for managing AI coding agents
+- [niri](https://github.com/niri-wm/niri) — Scrollable-tiling Wayland compositor
+- [Paneru](https://github.com/karinushka/paneru) — Scrollable tiling for macOS
