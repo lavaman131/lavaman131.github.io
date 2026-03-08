@@ -74,7 +74,7 @@ Anthropic took a flatter but still hierarchical approach. Rather than recursive 
 
 > Agents just picked the "next most obvious" problem. Some specialized. One handled duplicate code, another focused on performance, a few critiqued design like a Rust expert would, and others updated docs.
 
-The key insight is the same: **dedicated ownership prevents responsibility diffusion**. Whether you achieve it through recursive planners (Cursor) or role specialization (Anthropic), the agent that owns a problem must have full autonomy over its domain.
+The key insight is the same: **dedicated ownership prevents responsibility diffusion**. Whether you achieve it through recursive planners (Cursor) or role specialization (Anthropic), the agent that owns a problem must have full autonomy over its domain. Google DeepMind has formalized this into a [delegation framework for coding agent architecture](/blog/intelligent-agent-delegation) that provides a rigorous model for how task decomposition should work.
 
 Both teams also discovered that a centralized integrator role backfires. Cursor explicitly removed theirs:
 
@@ -205,7 +205,7 @@ This maps directly to the **principle of least privilege** from security enginee
 
 ## Primitive 5: Infrastructure as the Bottleneck
 
-Both teams found that the model was capable enough. The surrounding infrastructure determined success or failure.
+Both teams found that the model was capable enough. The surrounding infrastructure determined success or failure. For a deep dive into the specific infrastructure gaps that emerge when running agents in parallel, see our post on [designing the multi-agent development environment](/blog/parallel-agent-sessions-infrastructure-gap).
 
 ### Cursor: Disk I/O and Tool Contention
 

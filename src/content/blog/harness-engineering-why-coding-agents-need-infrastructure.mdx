@@ -25,7 +25,7 @@ Anthropic orchestrated 16 parallel Claude Opus 4.6 agents across 2,000 sessions 
 
 Five independent teams. Same conclusion: **the bottleneck is infrastructure, not intelligence.**
 
-This post is a technical deep dive into what that infrastructure actually looks like — the converging patterns, the concrete implementations, and how [Atomic](https://github.com/flora131/atomic), an open-source CLI I built, operationalizes them.
+This post is a technical deep dive into what that infrastructure actually looks like — the converging patterns, the concrete implementations, and how [Atomic](https://github.com/flora131/atomic), an open-source CLI I built, operationalizes them. If you're new to these patterns, start with our earlier post on [how we shipped 100k LOC in two weeks with coding agents](/blog/ai-coding-infrastructure), which introduced the foundational layer that harness engineering builds on.
 
 ---
 
@@ -407,7 +407,7 @@ This is the same principle that applies to every production system. You wouldn't
 
 Harness engineering isn't a temporary workaround while we wait for better models. Better models make it *more* important — because they unlock more autonomy, and more autonomy demands better guardrails. Carlini saw this firsthand: Opus 4.5 could produce a functional compiler. Opus 4.6 could compile the Linux kernel. But only with a redesigned harness for each capability level.
 
-The four pillars — context architecture, agent specialization, persistent memory, structured execution — aren't Atomic-specific patterns. They're converging best practices that every serious agentic engineering team has arrived at independently. Atomic just packages them into an open-source CLI you can install today.
+The four pillars — context architecture, agent specialization, persistent memory, structured execution — aren't Atomic-specific patterns. They're converging best practices that every serious agentic engineering team has arrived at independently. For a deeper look at how these pillars manifest as a layered architecture of tools, hooks, skills, and subagents, see our post on [the rise of the meta-framework layer](/blog/evolving-coding-agent-infrastructure). Atomic just packages them into an open-source CLI you can install today.
 
 Open source. Local-first. No cloud dependency.
 

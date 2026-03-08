@@ -14,7 +14,7 @@ import BlogCTA from "../../components/blog/BlogCTA.astro";
 
 AI coding agents are powerful, but they struggle with large codebases. They lack procedural memory, forget context between sessions, and can hallucinate completion without actually finishing work. For the ~70% of developers on Windows, the situation is even worse where most agentic tooling is optimized for Unix environments.
 
-After shipping 100k+ lines of production code using AI agents, I built [Atomic](https://github.com/flora131/atomic) to solve these problems. But rather than just telling you to use it, this post breaks down the underlying patterns so you can understand them, adopt the pieces that fit your workflow, or build your own version entirely.
+After [shipping 100k+ lines of production code using AI agents](/blog/ai-coding-infrastructure), I built [Atomic](https://github.com/flora131/atomic) to solve these problems. But rather than just telling you to use it, this post breaks down the underlying patterns so you can understand them, adopt the pieces that fit your workflow, or build your own version entirely.
 
 We'll cover:
 
@@ -1021,7 +1021,7 @@ Reliable AI-assisted development comes down to a few key patterns:
 
 These aren't complex to implement, but they require deliberate design. The Atomic repo demonstrates one way to combine them.
 
-The goal is to ship production code reliably, whether you're manually stepping through each phase or running autonomous overnight loops.
+The goal is to ship production code reliably, whether you're manually stepping through each phase or running autonomous overnight loops. For a look at how five independent teams converged on these same infrastructure patterns, see our deep dive on [harness engineering](/blog/harness-engineering-why-coding-agents-need-infrastructure).
 
 PRs and Github issues to Atomic are welcome: [github.com/flora131/atomic](https://github.com/flora131/atomic)
 

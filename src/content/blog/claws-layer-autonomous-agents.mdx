@@ -58,11 +58,11 @@ Karpathy's framing is clear. Claws are "a new layer on top of LLM agents" handli
 
 The models can already do far more than most people ask of them. What's missing is the layer that gives them the right context, the right constraints, and the ability to persist work across sessions.
 
-A couple months ago, I started building this exact layer—a meta-framework CLI that sits on top of coding agents to handle orchestration, session management, and context persistence. I called it [Atomic](https://github.com/flora131/atomic) and open-sourced it. Karpathy just gave the concept a name. The Claws layer he's describing is what I've been building and running.
+A couple months ago, I started building this exact layer—a meta-framework CLI that sits on top of coding agents to handle orchestration, session management, and context persistence. I called it [Atomic](https://github.com/flora131/atomic) and open-sourced it. (For the full backstory, see [how we shipped 100k LOC in two weeks with coding agents](/blog/ai-coding-infrastructure).) Karpathy just gave the concept a name. The Claws layer he's describing is what I've been building and running.
 
 ## The pattern that makes autonomy work
 
-The technical pattern isn't complicated. It's five primitives:
+The technical pattern isn't complicated. It's five primitives (which closely mirror the [five architectural primitives every agent swarm rediscovers](/blog/five-primitives-agent-swarms)):
 
 **Hooks and guardrails.** Deterministic checks that run before, during, and after agent actions. Pre-commit validation. Lint enforcement. Test suite gates. These are hard constraints that let the agent run autonomously _because_ the guardrails catch problems the model misses. Anthropic's data backs this up: experienced users don't remove guardrails as they gain trust. They add more precise ones.
 

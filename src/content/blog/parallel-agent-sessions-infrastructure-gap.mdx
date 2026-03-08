@@ -50,7 +50,7 @@ The agent orchestration layer is evolving fast, but every major platform has tak
 
 ### Claude Code Agent Teams
 
-Claude Code shipped [Agent Teams](https://docs.anthropic.com/en/docs/claude-code/agent-teams) as a research preview in February 2026. The architecture is straightforward: one session acts as a lead agent, spawning teammates that are each full Claude Code instances with their own context windows.
+Claude Code shipped [Agent Teams](https://docs.anthropic.com/en/docs/claude-code/agent-teams) as a research preview in February 2026. (For the full technical breakdown of Agent Teams alongside Codex and Fleet Mode, see our [deep dive on Opus 4.6, Codex, and agent teams](/blog/opus-codex-agent-teams-deep-dive).) The architecture is straightforward: one session acts as a lead agent, spawning teammates that are each full Claude Code instances with their own context windows.
 
 The interesting design choice is the messaging system. It's entirely file-based — no database, no message broker, no IPC. When an agent sends a message, it writes to the recipient's inbox JSON file at `~/.claude/teams/{team-name}/inboxes/{recipient}.json`. The recipient's poller picks it up on an interval.
 
@@ -233,7 +233,7 @@ flowchart TD
 
 On agent spawn: create a worktree, allocate a unique port range, provision a lightweight database instance, generate a `.env` file with isolated resource URLs, and launch the agent. On completion: merge changes and release resources.
 
-Cloud-based solutions (Codex cloud, Cursor cloud agents) get this for free because each agent runs in its own VM. But cloud execution has latency, cost, and cold-start penalties. For local development — where iteration speed matters most — we have nothing.
+Cloud-based solutions (Codex cloud, Cursor cloud agents) get this for free because each agent runs in its own VM — see our breakdown of the [cloud VMs powering autonomous coding agents](/blog/cloud-vms-autonomous-agent-infrastructure) for how that isolation works under the hood. But cloud execution has latency, cost, and cold-start penalties. For local development — where iteration speed matters most — we have nothing.
 
 ## Nobody owns the full stack
 
