@@ -359,7 +359,7 @@ These four releases point to the same conclusion from different angles.
 - **GPT-5.3 Codex helped build itself**: Early versions debugged their own training runs, managed deployment, and diagnosed evaluation results—the first model OpenAI describes as instrumental in its own creation.
 - **Agent teams are the real architectural shift**: Claude Code now spawns coordinated agent teams with file-based peer-to-peer messaging, isolated context windows, and specialized roles—moving from manual subagent management to automatic orchestration.
 - **Copilot CLI Fleet Mode complements from the platform side**: The experimental `/fleet` command spawns parallel background agents that decompose goals, execute concurrently via Git worktrees, and deliver results as draft PRs—a non-blocking approach paired with GitHub's broader Agent HQ multi-provider orchestration.
-- **Model capability is converging, orchestration is diverging**: The benchmark gaps between frontier models are narrowing. The differentiator is increasingly how agents coordinate, not raw model intelligence.
+- **Model capability is converging, orchestration is diverging**: The benchmark gaps between frontier models are narrowing. The differentiator is increasingly how agents coordinate, not raw model intelligence. For a deep dive into the infrastructure gaps that emerge when running these agent teams in parallel, see our post on [designing the multi-agent development environment](/blog/parallel-agent-sessions-infrastructure-gap). And for the recurring architectural patterns across multi-agent systems, see [five primitives every agent swarm rediscovers](/blog/five-primitives-agent-swarms).
 
 ## References
 

@@ -134,7 +134,7 @@ flowchart LR
 
 This isn't screen-scraping or DOM parsing. The agent operates the full desktop environment — navigating web pages, manipulating tools, interpreting visual output, and making decisions based on what it sees.
 
-The practical effect: an agent building a frontend feature can open the page in a browser, click the button it just implemented, verify the UI renders correctly, and capture a screenshot as proof. If something is broken, it loops back, fixes the code, and re-verifies.
+The practical effect: an agent building a frontend feature can open the page in a browser, click the button it just implemented, verify the UI renders correctly, and capture a screenshot as proof. If something is broken, it loops back, fixes the code, and re-verifies. This verification feedback loop is exactly the kind of [engineering discipline that AI agents demand](/blog/engineering-discipline-ai-agents) — and it consistently produces higher-quality output than error-free sessions without verification.
 
 Cursor's blog showed a concrete example: an agent that needed to test a marketplace page behind a feature flag. The agent temporarily bypassed the feature flag gating, loaded the page in a browser, clicked through the UI to verify functionality, then reverted the flag bypass before pushing.
 
