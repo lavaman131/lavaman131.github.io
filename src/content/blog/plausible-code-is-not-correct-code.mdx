@@ -175,22 +175,6 @@ The pattern I keep seeing: refactor a monolithic file into focused modules of 30
 - **One responsibility per module.** The model reasons better when scope is constrained. A module that handles parsing, validation, _and_ persistence is three modules.
 - **Explicit interfaces.** Define clear input/output contracts between modules. This gives the model — and your reviewers — boundaries to reason within.
 
-```typescript
-// Bad: God module the agent can't reason about
-// user-service.ts (2,400 lines)
-export class UserService {
-  // Authentication, authorization, profile management,
-  // notification preferences, billing integration,
-  // activity logging, and data export all in one class
-}
-
-// Good: Focused modules the agent handles reliably
-// auth.ts (~200 lines) - Authentication only
-// permissions.ts (~150 lines) - Authorization only
-// profile.ts (~300 lines) - Profile CRUD only
-// notifications.ts (~200 lines) - Notification preferences only
-```
-
 This isn't just about AI. It's good engineering. But with AI agents, the penalty for poor architecture is immediate and measurable — failed generation attempts, hallucinated dependencies, and bugs that cascade across entangled concerns.
 
 ### 2. Planning: Specs Before Code
