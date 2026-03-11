@@ -1,0 +1,188 @@
+---
+title: "Your Agent's Bottleneck Isn't the Model. It's the Context."
+date: "2026-03-10"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "AI coding agents burn through hundreds of thousands of tokens grepping files and hallucinating APIs. A new class of context infrastructure tools is emerging to fix both problems — for your codebase and for external libraries."
+cover: "../../assets/images/blog/context-infrastructure-agent-bottleneck/cover.png"
+---
+
+import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+import BlogCTA from "../../components/blog/BlogCTA.astro";
+
+Your AI coding agent doesn't have a model problem. It has a context problem.
+
+It greps through your codebase file by file, burning hundreds of thousands of tokens to answer a question that a structured index could resolve in a few hundred. It hallucinates API methods that don't exist, references deprecated parameters, and builds suboptimal implementations — because it's working from training data, not from actual source code. And this isn't limited to external libraries. Even for general implementation patterns — how to structure error handling, which algorithm to reach for, how to design a module boundary — the agent defaults to whatever it learned during training, which may not be the best or most current approach.
+
+Better models won't fix this. A model with a larger context window still wastes tokens if the retrieval mechanism is "read every file and hope." A model trained on more data still hallucinates when the library it needs shipped a breaking change six months after the training cutoff.
+
+The fix is infrastructure. And in early 2026, a new class of tools is emerging to build it.
+
+## Key Takeaways
+
+- **Model quality does not solve context quality.** Bigger context windows and stronger models still fail when retrieval is brute-force file reading or stale training data.
+- **Internal and external context failures produce the same outcome: bad code.** Poor codebase understanding and outdated library knowledge both degrade research, planning, and implementation quality.
+- **Structured indexing can reduce token burn by orders of magnitude.** AST-aware and semantic indexing approaches consistently outperform file-by-file grep workflows for the same information needs.
+- **Fresh, grounded external context beats memory.** Tools like Context Hub and Better Context improve reliability by grounding generation in current docs or source code instead of model recall.
+- **Context infrastructure is now a first-class engineering investment.** Teams getting the best agent output are optimizing research and context pipelines, not just swapping to newer models.
+
+---
+
+## Two Gaps, Same Failure Mode
+
+Agents face two distinct context problems that produce the same downstream result: bad code.
+
+<InteractiveMermaid
+  chart={`
+flowchart TD
+    A["AI Coding Agent"] --> B{"Needs to understand code?"}
+    B -->|Internal codebase| C["Greps file by file"]
+    B -->|External library| D["Relies on training data"]
+    B -->|Implementation patterns| D
+    C --> E["Burns 100K+ tokens"]
+    D --> F["Hallucinates APIs / uses deprecated methods / applies suboptimal patterns"]
+    E --> G["Incomplete understanding"]
+    F --> G
+    G --> H["Bad research"]
+    H --> I["Bad plan"]
+    I --> J["Bad code"]
+    style E fill:#ef5350,color:#fff
+    style F fill:#ef5350,color:#fff
+    style J fill:#ef5350,color:#fff
+`}
+/>
+
+**Internal context**: the agent doesn't understand your codebase cost-effectively. It explores by reading files sequentially, summarizing what it finds, and passing results back. This works, but it's wildly inefficient. A question about your project's authentication flow might require the agent to read dozens of files before it pieces together the answer.
+
+**External context and implementation patterns**: the agent doesn't have access to accurate, current documentation for the libraries and APIs it uses — and more broadly, it relies on training data for general implementation decisions. It falls back on patterns it learned during training, which may be months or years stale. For libraries, the result is code that calls methods that no longer exist, passes parameters in the wrong order, or misses entirely that a simpler, better-supported approach was added in the latest release. For implementation patterns more generally, the agent may reach for a suboptimal algorithm, structure code in ways that don't match current best practices, or miss idioms that the ecosystem has converged on since the training cutoff.
+
+Both problems feed into the same failure chain: bad research produces bad plans, and bad plans produce bad code. Dex Horthy, founder of [HumanLayer](https://www.ycombinator.com/companies/humanlayer), articulated this clearly in his [Advanced Context Engineering](https://hlyr.dev/blog/advanced-context-engineering) post: a bad line of code is a bad line of code, but a bad line in a _plan_ leads to hundreds of bad lines of code, and bad _research_ leads to thousands. Upstream errors cascade and amplify downstream.
+
+His conclusion is blunt: the contents of your context window are the only lever you have to affect output quality.
+
+The tools emerging in early 2026 are making that lever easier to pull.
+
+---
+
+## The Internal Context Problem: Stop Grepping, Start Indexing
+
+The brute-force approach to codebase exploration — spawn a sub-agent, let it grep through files, summarize what it found — technically works. But the token costs are staggering.
+
+A developer built an MCP server called [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) that indexes repositories into a persistent knowledge graph using Tree-sitter and SQLite. In project-reported benchmarking published in the repository README and discussed on [Hacker News](https://news.ycombinator.com/item?id=47234516), five structural queries consumed approximately 3,400 tokens via the indexed approach versus approximately 412,000 tokens via file-by-file grep exploration. That's roughly a 120x reduction for the same information. This is not an independent or official benchmark.
+
+The approach matters more than the specific tool. Instead of letting the agent read raw files, you pre-process the codebase into a structured representation — an AST-aware index, a knowledge graph, a vector store — and let the agent query that structure directly.
+
+[CocoIndex-Code](https://github.com/cocoindex-io/cocoindex-code), built by Linghua Jin (ex-Google tech lead), takes this approach with vector embeddings and AST-aware chunking. It uses Tree-sitter to parse code into meaningful chunks — functions, classes, logical blocks — rather than arbitrary text splits, then indexes them into local SQLite with vector search. The agent queries semantic representations instead of grepping raw files. Jin reports approximately 70% token savings in her own usage, though this figure is self-reported and hasn't been independently benchmarked.
+
+Aristidis Vasilopoulos formalized the broader pattern in a recent paper, [Codified Context: Infrastructure for AI Agents in a Complex Codebase](https://arxiv.org/abs/2602.20478). Drawing on 283 development sessions with a large C# distributed system, Vasilopoulos describes an infrastructure framework comprising a constitution (project-wide rules), nineteen specialized domain-expert agents, and thirty-four specification documents. The key insight: structuring context as queryable infrastructure rather than ad hoc file reading fundamentally changes agent effectiveness.
+
+<InteractiveMermaid
+  chart={`
+flowchart LR
+    subgraph Before ["Before: Brute-Force Exploration"]
+        A1["Agent"] --> B1["Read file 1"]
+        A1 --> C1["Read file 2"]
+        A1 --> D1["Read file 3"]
+        A1 --> E1["...Read file N"]
+        B1 --> F1["Summarize"]
+        C1 --> F1
+        D1 --> F1
+        E1 --> F1
+        F1 --> G1["~412K tokens"]
+    end
+    subgraph After ["After: Structured Index"]
+        A2["Agent"] --> B2["Query index"]
+        B2 --> C2["Get relevant chunks"]
+        C2 --> D2["~3.4K tokens"]
+    end
+    style G1 fill:#ef5350,color:#fff
+    style D2 fill:#66bb6a,color:#000
+`}
+/>
+
+---
+
+## The External Context Problem: Training Data Isn't Documentation
+
+The internal problem is expensive. The external problem is dangerous.
+
+When an agent needs to use a library it wasn't trained on — or was trained on an outdated version of — it has three options: hallucinate, use stale knowledge, or give up. None of these produce correct code.
+
+Two tools are attacking this from different angles.
+
+<BlogCTA />
+
+### Context Hub: Curated Docs with a Feedback Loop
+
+Andrew Ng's team built [Context Hub](https://github.com/andrewyng/context-hub), an open-source CLI tool that gives coding agents access to curated, versioned API documentation. The core design is straightforward: a registry of markdown documentation files optimized for LLM consumption, fetchable via a simple CLI.
+
+```bash
+# Install
+npm install -g @aisuite/chub
+
+# Search for available docs
+chub search stripe
+
+# Fetch language-specific API docs
+chub get openai/chat --lang py
+
+# Fetch a specific reference file (saves tokens)
+chub get stripe/api --file webhooks
+```
+
+What makes it interesting is the feedback loop. Agents can attach annotations to documentation that persist across sessions. If an agent discovers that Stripe's webhook verification requires raw body access, it can annotate that finding, and every future session benefits from that knowledge automatically. Agents can also vote documentation up or down, creating real-world usage signals that flow back to documentation authors.
+
+This solves the freshness problem through curation rather than training. The documentation is maintained as open markdown files in the repository — inspectable, version-controlled, and community-contributed.
+
+### Better Context: Skip the Docs, Read the Source
+
+[Better Context](https://github.com/davis7dotsh/better-context), built by Ben Davis, takes a more radical approach: it skips documentation entirely and queries actual library source code.
+
+The reasoning is pragmatic. Documentation is frequently outdated, incomplete, or misleading. The implementation is the only source of truth. When you need to know how a function actually behaves — what edge cases it handles, what exceptions it throws, what the default parameters are — reading the source code gives you the definitive answer.
+
+Better Context is a CLI tool and web interface that lets you ask AI-powered questions about libraries and frameworks, grounding the answers in real implementation files rather than documentation. It supports multiple AI providers and models.
+
+These two approaches aren't competing. They're complementary. Context Hub works well when documentation is actively maintained and the API surface is the primary concern. Better Context works well when documentation is stale or when you need implementation-level detail that docs don't cover. Both are better than the status quo of hoping the model remembers correctly.
+
+---
+
+## The Evidence: Context Quality Drives Output Quality
+
+This isn't theoretical. Multiple practitioners are converging on the same finding: improving context infrastructure directly improves agent output.
+
+Dex Horthy demonstrated this through his Research-Plan-Implement methodology at HumanLayer. Working on [BAML](https://github.com/BoundaryML/baml), a 300,000 LOC Rust codebase, he and a colleague reported shipping 35,000 lines in 7 hours by investing heavily in the research phase before letting the agent plan or write code. The key was front-loading context quality — understanding the codebase deeply before generating a single line ([source](https://hlyr.dev/blog/advanced-context-engineering)).
+
+Calvin French-Owen, co-founder of Segment, reached a similar conclusion from a different direction. In his [February 2026 retrospective](https://calv.info/agents-feb-2026) on coding agents, he described a workflow where the planning and context-gathering phase — not the code generation — was the bottleneck that determined output quality. He identified context coordination as one of the primary barriers to continuous agent execution.
+
+The pattern is consistent: the agents that produce the best code are the ones with the best context, not the ones with the most capable models.
+
+---
+
+## What This Means for Your Stack
+
+If you're building with AI coding agents today, the practical takeaway is straightforward.
+
+**For internal context**: treat this as an infrastructure choice with two valid options, some below.
+
+**Option 1: Index your codebase.** Tools like [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) and [CocoIndex-Code](https://github.com/cocoindex-io/cocoindex-code) pre-process your repository into structured indexes — knowledge graphs, vector stores, AST-aware chunks — so the agent can query for relevant context directly instead of grepping file by file. This can reduce token usage by 100x+ for structural queries. If you can maintain the index, this is usually the highest-throughput path.
+
+**Option 2: Deep codebase research with skills and subagents.** Even without a pre-built index, you can still get high-quality context by structuring _how_ the agent explores the codebase. Instead of letting it grep blindly, use a systematic research workflow that dispatches specialized subagents to map architecture, trace dependencies, and document conventions before any code gets written. [Atomic's research-codebase skill](https://github.com/flora131/atomic/tree/main/.claude/skills/research-codebase) is one example: it uses a set of [coordinated subagents](https://github.com/flora131/atomic/tree/main/.claude/agents) to build contextual understanding before planning and implementation.
+
+Both approaches serve the same goal: closing the gap between what the agent _sees_ and what it needs to _understand_. Pick based on your team's constraints, but avoid unstructured file-by-file discovery as the default.
+
+**For external context**: don't rely on training data for library knowledge. Use tools like Context Hub or Better Context to give your agent access to current, accurate API documentation or source code. This is especially critical for fast-moving libraries where the API surface changes between releases.
+
+**For workflow**: invest in the research phase. Horthy's Research-Plan-Implement framework and French-Owen's planning-first workflow both point the same direction — the quality of your agent's output is bounded by the quality of its understanding, and understanding is bounded by context.
+
+We spent 2025 assuming models would get good enough to figure it out on their own. The evidence from early 2026 suggests otherwise. The agents that work well are the ones with good context infrastructure underneath them. The model is the engine, but context is the fuel. Better fuel produces better output — regardless of the engine.
+
+---
+
+## References
+
+1. DeusData. [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp). GitHub. Benchmarked across 64 real-world repositories.
+2. Linghua Jin. [CocoIndex-Code](https://github.com/cocoindex-io/cocoindex-code). GitHub. AST-based code MCP with semantic search.
+3. Andrew Ng et al. [Context Hub](https://github.com/andrewyng/context-hub). GitHub.
+4. Ben Davis. [Better Context](https://github.com/davis7dotsh/better-context). GitHub. Source-code-based library exploration.
+5. Dex Horthy. [Advanced Context Engineering for Coding Agents](https://hlyr.dev/blog/advanced-context-engineering). HumanLayer Blog. August 29, 2025.
+6. Aristidis Vasilopoulos. [Codified Context: Infrastructure for AI Agents in a Complex Codebase](https://arxiv.org/abs/2602.20478). arXiv. February 24, 2026.
+7. Calvin French-Owen. [Coding Agents in Feb 2026](https://calv.info/agents-feb-2026). February 17, 2026.
