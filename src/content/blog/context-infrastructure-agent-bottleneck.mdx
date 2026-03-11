@@ -22,6 +22,7 @@ The fix is infrastructure. And in early 2026, a new class of tools is emerging t
 - **Model quality does not solve context quality.** Bigger context windows and stronger models still fail when retrieval is brute-force file reading or stale training data.
 - **Internal and external context failures produce the same outcome: bad code.** Poor codebase understanding and outdated library knowledge both degrade research, planning, and implementation quality.
 - **Structured indexing can reduce token burn by orders of magnitude.** AST-aware and semantic indexing approaches consistently outperform file-by-file grep workflows for the same information needs.
+- **Retrieval execution is becoming its own layer.** Search can run as a dedicated subagent (for example, WarpGrep) backed by fast primitives such as ripgrep instead of bloating the parent agent's context.
 - **Fresh, grounded external context beats memory.** Tools like Context Hub and Better Context improve reliability by grounding generation in current docs or source code instead of model recall.
 - **Context infrastructure is now a first-class engineering investment.** Teams getting the best agent output are optimizing research and context pipelines, not just swapping to newer models.
 
@@ -101,6 +102,20 @@ flowchart LR
 
 ---
 
+## The Retrieval Execution Layer: Search as a Subagent
+
+Indexes are one answer to the internal context problem. Another emerging answer is retrieval execution: move search into a dedicated execution layer that can run many targeted tool calls and return only the relevant spans to the parent agent.
+
+Morph's [WarpGrep](https://docs.morphllm.com/sdk/components/warp-grep) packages this as a dedicated code-search subagent. In Morph's documented protocol, the search agent runs a bounded multi-turn tool loop (`ripgrep`, `read`, `list_directory`, then `finish`) and sends back narrowed snippets rather than every intermediate step. The design goal is to keep the main coding agent focused on planning and synthesis while retrieval-specific work happens in a separate context window.
+
+That separation is the key architectural shift. With indexing, you precompute structure and query it. With retrieval execution, you orchestrate live search calls efficiently at runtime. In practice, teams often combine both: indexed retrieval for high-recall structural queries, and execution-layer search for fast, tactical narrowing when the agent needs exact lines or surrounding implementation detail.
+
+Open-source primitives are what make this layer practical. [ripgrep](https://github.com/BurntSushi/ripgrep) is widely used because it is fast on large repos, respects ignore files by default, and composes cleanly with tool-driven workflows. Local and remote search systems frequently expose `rg`-style lexical search as the first pass, then follow with targeted file reads or higher-level ranking.
+
+As with any fast-moving tooling category, treat benchmark and quality claims carefully. Morph's speed and quality numbers are vendor-reported, and behavior can vary across repository size, language mix, and tool adapter quality.
+
+---
+
 ## The External Context Problem: Training Data Isn't Documentation
 
 The internal problem is expensive. The external problem is dangerous.
@@ -161,11 +176,13 @@ The pattern is consistent: the agents that produce the best code are the ones wi
 
 If you're building with AI coding agents today, the practical takeaway is straightforward.
 
-**For internal context**: treat this as an infrastructure choice with two valid options, some below.
+**For internal context**: treat this as an infrastructure choice with three valid options.
 
 **Option 1: Index your codebase.** Tools like [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) and [CocoIndex-Code](https://github.com/cocoindex-io/cocoindex-code) pre-process your repository into structured indexes — knowledge graphs, vector stores, AST-aware chunks — so the agent can query for relevant context directly instead of grepping file by file. This can reduce token usage by 100x+ for structural queries. If you can maintain the index, this is usually the highest-throughput path.
 
-**Option 2: Deep codebase research with skills and subagents.** Even without a pre-built index, you can still get high-quality context by structuring _how_ the agent explores the codebase. Instead of letting it grep blindly, use a systematic research workflow that dispatches specialized subagents to map architecture, trace dependencies, and document conventions before any code gets written. [Atomic's research-codebase skill](https://github.com/flora131/atomic/tree/main/.claude/skills/research-codebase) is one example: it uses a set of [coordinated subagents](https://github.com/flora131/atomic/tree/main/.claude/agents) to build contextual understanding before planning and implementation.
+**Option 2: Add a retrieval execution layer.** Tools like [Morph WarpGrep](https://docs.morphllm.com/sdk/components/warp-grep) run code search as a dedicated subagent that executes concrete search/read tools and returns a compact result set to the parent agent. This is useful when you want lower setup overhead than full indexing, but still want retrieval to be structured and bounded instead of ad hoc file-by-file exploration.
+
+**Option 3: Deep codebase research with skills and subagents.** Even without a pre-built index, you can still get high-quality context by structuring _how_ the agent explores the codebase. Instead of letting it grep blindly, use a systematic research workflow that dispatches specialized subagents to map architecture, trace dependencies, and document conventions before any code gets written. [Atomic's research-codebase skill](https://github.com/flora131/atomic/tree/main/.claude/skills/research-codebase) is one example: it uses a set of [coordinated subagents](https://github.com/flora131/atomic/tree/main/.claude/agents) to build contextual understanding before planning and implementation.
 
 Both approaches serve the same goal: closing the gap between what the agent _sees_ and what it needs to _understand_. Pick based on your team's constraints, but avoid unstructured file-by-file discovery as the default.
 
@@ -186,3 +203,8 @@ We spent 2025 assuming models would get good enough to figure it out on their ow
 5. Dex Horthy. [Advanced Context Engineering for Coding Agents](https://hlyr.dev/blog/advanced-context-engineering). HumanLayer Blog. August 29, 2025.
 6. Aristidis Vasilopoulos. [Codified Context: Infrastructure for AI Agents in a Complex Codebase](https://arxiv.org/abs/2602.20478). arXiv. February 24, 2026.
 7. Calvin French-Owen. [Coding Agents in Feb 2026](https://calv.info/agents-feb-2026). February 17, 2026.
+8. Morph. [WarpGrep Overview](https://docs.morphllm.com/sdk/components/warp-grep). Morph Documentation.
+9. Morph. [WarpGrep API Reference](https://docs.morphllm.com/api-reference/endpoint/warpgrep). Morph Documentation.
+10. Morph. [WarpGrep Tool Integrations](https://docs.morphllm.com/sdk/components/warp-grep/tool). Morph Documentation.
+11. Morph. [WarpGrep Examples](https://github.com/morphllm/examples/blob/main/warpgrep/README.md). GitHub.
+12. Andrew Gallant. [ripgrep](https://github.com/BurntSushi/ripgrep). GitHub.
