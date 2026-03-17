@@ -226,30 +226,6 @@ const {
     overflow: visible !important;
   }
 
-  /* Force dark text on nodes with colored backgrounds for readability */
-  .mermaid-content :global(.node .nodeLabel),
-  .mermaid-content :global(.node .nodeLabel p) {
-    color: #1e1e2e !important;
-  }
-
-  /* Force readable edge label text in dark mode */
-  .mermaid-content :global(.edgeLabel),
-  .mermaid-content :global(.edgeLabel p),
-  .mermaid-content :global(.edgeLabel span) {
-    color: #cdd6f4 !important;
-  }
-
-  /* Force readable cluster/subgraph label text in dark mode */
-  .mermaid-content :global(.cluster-label),
-  .mermaid-content :global(.cluster-label .nodeLabel) {
-    color: #cdd6f4 !important;
-  }
-
-  /* Remove edge label background boxes for cleaner appearance */
-  .mermaid-content :global(.labelBkg) {
-    background-color: transparent !important;
-  }
-
   /* Light theme adjustments */
   :global([data-theme="latte"]) .interactive-mermaid-container {
     border-color: var(--ctp-surface0, #ccd0da);
@@ -268,25 +244,6 @@ const {
       var(--ctp-mantle, #e6e9ef) 100%
     );
   }
-
-  /* Light theme: dark text for edge labels */
-  :global([data-theme="latte"]) .mermaid-content :global(.edgeLabel),
-  :global([data-theme="latte"]) .mermaid-content :global(.edgeLabel p),
-  :global([data-theme="latte"]) .mermaid-content :global(.edgeLabel span) {
-    color: #4c4f69 !important;
-  }
-
-  /* Light theme: dark text for cluster/subgraph labels */
-  :global([data-theme="latte"]) .mermaid-content :global(.cluster-label),
-  :global([data-theme="latte"]) .mermaid-content :global(.cluster-label .nodeLabel) {
-    color: #4c4f69 !important;
-  }
-
-  /* Light theme: dark text on node labels */
-  :global([data-theme="latte"]) .mermaid-content :global(.node .nodeLabel),
-  :global([data-theme="latte"]) .mermaid-content :global(.node .nodeLabel p) {
-    color: #1e1e2e !important;
-  }
 </style>
 
 <script>
@@ -294,7 +251,6 @@ const {
     getTransform: () => { scale: number; x: number; y: number };
     zoomAbs: (x: number, y: number, scale: number) => void;
     moveTo: (x: number, y: number) => void;
-    dispose: () => void;
     on: (event: string, callback: () => void) => void;
   }
 
@@ -310,23 +266,32 @@ const {
     render: (id: string, code: string) => Promise<{ svg: string }>;
   }
 
-  declare function panzoom(
-    element: HTMLElement,
-    options: PanZoomOptions
-  ): PanZoomInstance;
+  type MermaidTheme = "latte" | "mocha";
 
-  declare const mermaid: MermaidAPI;
+  interface MermaidWindow extends Window {
+    mermaid?: MermaidAPI;
+    panzoom?: (element: HTMLElement, options: PanZoomOptions) => PanZoomInstance;
+  }
+
+  const MERMAID_SRC = "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js";
+  const PANZOOM_SRC = "https://unpkg.com/panzoom@9.4.3/dist/panzoom.min.js";
+
+  const fitToViewByContainer = new WeakMap<HTMLElement, () => void>();
+  const panzoomByContainer = new WeakMap<HTMLElement, PanZoomInstance>();
 
   let mermaidIdCounter = 0;
+  let themeObserverAttached = false;
+  let renderQueue: Promise<void> = Promise.resolve();
 
-  async function renderMermaidCharts() {
-    const containers = document.querySelectorAll<HTMLElement>(
-      ".interactive-mermaid-container"
-    );
+  function getCurrentTheme(): MermaidTheme {
+    return document.documentElement.getAttribute("data-theme") === "latte"
+      ? "latte"
+      : "mocha";
+  }
 
-    // Initialize mermaid with dark theme support
-    const isDarkTheme = document.documentElement.getAttribute("data-theme") !== "latte";
-    mermaid.initialize({
+  function getMermaidConfig(theme: MermaidTheme): Record<string, unknown> {
+    const isDarkTheme = theme === "mocha";
+    return {
       startOnLoad: false,
       theme: isDarkTheme ? "dark" : "default",
       fontSize: 18,
@@ -336,36 +301,70 @@ const {
         rankSpacing: 70,
         padding: 35,
       },
-      themeVariables: isDarkTheme ? {
-        primaryColor: "#89b4fa",
-        primaryTextColor: "#1e1e2e",
-        primaryBorderColor: "#74c7ec",
-        lineColor: "#bac2de",
-        secondaryColor: "#a6e3a1",
-        tertiaryColor: "#1e1e2e",
-        background: "#1e1e2e",
-        mainBkg: "#89b4fa",
-        nodeBorder: "#74c7ec",
-        clusterBkg: "rgba(137, 180, 250, 0.1)",
-        clusterBorder: "#89b4fa",
-        titleColor: "#cdd6f4",
-        edgeLabelBackground: "transparent",
-      } : {
-        primaryColor: "#89b4fa",
-        primaryTextColor: "#1e1e2e",
-        primaryBorderColor: "#74c7ec",
-        lineColor: "#6c6f85",
-        secondaryColor: "#a6e3a1",
-        tertiaryColor: "#eff1f5",
-        background: "#eff1f5",
-        mainBkg: "#89b4fa",
-        nodeBorder: "#74c7ec",
-        clusterBkg: "rgba(137, 180, 250, 0.08)",
-        clusterBorder: "#7287fd",
-        titleColor: "#4c4f69",
-        edgeLabelBackground: "transparent",
-      },
+      themeVariables: isDarkTheme
+        ? {
+            primaryColor: "#89b4fa",
+            primaryTextColor: "#1e1e2e",
+            primaryBorderColor: "#74c7ec",
+            lineColor: "#bac2de",
+            secondaryColor: "#a6e3a1",
+            tertiaryColor: "#1e1e2e",
+            background: "#1e1e2e",
+            mainBkg: "#89b4fa",
+            nodeBorder: "#74c7ec",
+            clusterBkg: "rgba(137, 180, 250, 0.1)",
+            clusterBorder: "#89b4fa",
+            titleColor: "#cdd6f4",
+            edgeLabelBackground: "#1e1e2e",
+          }
+        : {
+            primaryColor: "#89b4fa",
+            primaryTextColor: "#1e1e2e",
+            primaryBorderColor: "#74c7ec",
+            lineColor: "#6c6f85",
+            secondaryColor: "#a6e3a1",
+            tertiaryColor: "#eff1f5",
+            background: "#eff1f5",
+            mainBkg: "#89b4fa",
+            nodeBorder: "#74c7ec",
+            clusterBkg: "rgba(137, 180, 250, 0.08)",
+            clusterBorder: "#7287fd",
+            titleColor: "#4c4f69",
+            edgeLabelBackground: "#eff1f5",
+          },
+    };
+  }
+
+  function getMermaidApi(): MermaidAPI {
+    const mermaidApi = (window as MermaidWindow).mermaid;
+    if (!mermaidApi) {
+      throw new Error("Mermaid is not available on window");
+    }
+    return mermaidApi;
+  }
+
+  function getPanzoomApi() {
+    const panzoomApi = (window as MermaidWindow).panzoom;
+    if (!panzoomApi) {
+      throw new Error("Panzoom is not available on window");
+    }
+    return panzoomApi;
+  }
+
+  function queueRender(task: () => Promise<void>): Promise<void> {
+    renderQueue = renderQueue.then(task).catch((error) => {
+      console.error("Failed to queue Mermaid render:", error);
     });
+    return renderQueue;
+  }
+
+  async function renderMermaidCharts(theme: MermaidTheme): Promise<void> {
+    const mermaidApi = getMermaidApi();
+    const containers = document.querySelectorAll<HTMLElement>(
+      ".interactive-mermaid-container"
+    );
+
+    mermaidApi.initialize(getMermaidConfig(theme));
 
     for (const container of containers) {
       const chartCode = container.dataset.chart;
@@ -375,21 +374,30 @@ const {
 
       try {
         const uniqueId = `mermaid-${mermaidIdCounter++}`;
-        const { svg } = await mermaid.render(uniqueId, chartCode);
+        const { svg } = await mermaidApi.render(uniqueId, chartCode);
         renderTarget.innerHTML = svg;
       } catch (error) {
         console.error("Failed to render Mermaid chart:", error);
         renderTarget.innerHTML = `<pre style="color: var(--ctp-red, #f38ba8); padding: 1rem;">Error rendering diagram: ${error}</pre>`;
       }
     }
+
+    requestAnimationFrame(() => {
+      containers.forEach((container) => {
+        fitToViewByContainer.get(container)?.();
+      });
+    });
   }
 
   function initializePanzoom() {
     const containers = document.querySelectorAll<HTMLElement>(
       ".interactive-mermaid-container"
     );
+    const panzoomApi = getPanzoomApi();
 
     containers.forEach((container) => {
+      if (panzoomByContainer.has(container)) return;
+
       const viewport = container.querySelector<HTMLElement>(".mermaid-viewport");
       const content = container.querySelector<HTMLElement>(".mermaid-content");
       const zoomInBtn = container.querySelector<HTMLButtonElement>(".zoom-in");
@@ -402,19 +410,21 @@ const {
 
       if (!viewport || !content) return;
 
+      const safeViewport = viewport;
+      const safeContent = content;
+
       const initialZoom = parseFloat(container.dataset.initialZoom || "1");
       const minZoom = parseFloat(container.dataset.minZoom || "0.5");
       const maxZoom = parseFloat(container.dataset.maxZoom || "3");
 
-      // Initialize panzoom
-      const pz = panzoom(content, {
-        maxZoom: maxZoom,
-        minZoom: minZoom,
+      const pz = panzoomApi(safeContent, {
+        maxZoom,
+        minZoom,
         zoomSpeed: 0.065,
         smoothScroll: false,
       });
+      panzoomByContainer.set(container, pz);
 
-      // Update zoom level display
       function updateZoomLevel() {
         const transform = pz.getTransform();
         const percentage = Math.round(transform.scale * 100);
@@ -426,66 +436,50 @@ const {
       pz.on("zoom", updateZoomLevel);
       pz.on("transform", updateZoomLevel);
 
-      // Zoom controls
       zoomInBtn?.addEventListener("click", () => {
         const transform = pz.getTransform();
         const newScale = Math.min(transform.scale * 1.25, maxZoom);
-        const rect = viewport.getBoundingClientRect();
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        pz.zoomAbs(cx, cy, newScale);
+        const rect = safeViewport.getBoundingClientRect();
+        pz.zoomAbs(rect.width / 2, rect.height / 2, newScale);
       });
 
       zoomOutBtn?.addEventListener("click", () => {
         const transform = pz.getTransform();
         const newScale = Math.max(transform.scale / 1.25, minZoom);
-        const rect = viewport.getBoundingClientRect();
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        pz.zoomAbs(cx, cy, newScale);
+        const rect = safeViewport.getBoundingClientRect();
+        pz.zoomAbs(rect.width / 2, rect.height / 2, newScale);
       });
 
       zoomResetBtn?.addEventListener("click", () => {
-        const rect = viewport.getBoundingClientRect();
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        pz.zoomAbs(cx, cy, initialZoom);
-        // Center the content
-        const contentRect = content.getBoundingClientRect();
+        const rect = safeViewport.getBoundingClientRect();
+        pz.zoomAbs(rect.width / 2, rect.height / 2, initialZoom);
+        const contentRect = safeContent.getBoundingClientRect();
         const offsetX = (rect.width - contentRect.width * initialZoom) / 2;
         const offsetY = (rect.height - contentRect.height * initialZoom) / 2;
         pz.moveTo(offsetX, offsetY);
       });
 
-      // Fit to view function - reusable for button and auto-fit
       function fitToView() {
-        const svg = content.querySelector("svg");
+        const svg = safeContent.querySelector<SVGElement>("svg");
         if (!svg) return;
 
-        const viewportRect = viewport.getBoundingClientRect();
+        const viewportRect = safeViewport.getBoundingClientRect();
         const svgRect = svg.getBoundingClientRect();
         const transform = pz.getTransform();
 
-        // Calculate the actual SVG dimensions at scale 1
         const svgWidth = svgRect.width / transform.scale;
         const svgHeight = svgRect.height / transform.scale;
-
-        // Calculate scale to fit with some padding
         const padding = 40;
         const scaleX = (viewportRect.width - padding) / svgWidth;
         const scaleY = (viewportRect.height - padding) / svgHeight;
         const fitScale = Math.min(scaleX, scaleY, maxZoom);
         const clampedScale = Math.max(fitScale, minZoom);
 
-        // Apply fit zoom
-        const cx = viewportRect.width / 2;
-        const cy = viewportRect.height / 2;
-        pz.zoomAbs(cx, cy, clampedScale);
+        pz.zoomAbs(viewportRect.width / 2, viewportRect.height / 2, clampedScale);
 
-        // Center after zoom
         setTimeout(() => {
           const newSvgRect = svg.getBoundingClientRect();
-          const newViewportRect = viewport.getBoundingClientRect();
+          const newViewportRect = safeViewport.getBoundingClientRect();
           const offsetX =
             (newViewportRect.width - newSvgRect.width) / 2 -
             (newSvgRect.left - newViewportRect.left);
@@ -498,49 +492,86 @@ const {
         }, 50);
       }
 
+      fitToViewByContainer.set(container, fitToView);
       zoomFitBtn?.addEventListener("click", fitToView);
 
-      // Auto-fit on load after a delay to ensure SVG is fully rendered
       setTimeout(fitToView, 300);
     });
   }
 
-  // Load external libraries
+  function attachThemeObserver() {
+    if (themeObserverAttached) return;
+    themeObserverAttached = true;
+
+    let previousTheme = getCurrentTheme();
+    const observer = new MutationObserver(() => {
+      const nextTheme = getCurrentTheme();
+      if (nextTheme === previousTheme) return;
+      previousTheme = nextTheme;
+      void queueRender(async () => {
+        await renderMermaidCharts(nextTheme);
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+  }
+
   function loadScript(src: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const existing = document.querySelector(`script[src="${src}"]`);
-      if (existing) {
+      const globalWindow = window as MermaidWindow;
+      const script = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
+      const alreadyAvailable =
+        (src === MERMAID_SRC && Boolean(globalWindow.mermaid)) ||
+        (src === PANZOOM_SRC && Boolean(globalWindow.panzoom));
+
+      if (alreadyAvailable) {
         resolve();
         return;
       }
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Failed to load ${src}`));
-      document.head.appendChild(script);
+
+      if (script) {
+        const onLoad = () => {
+          script.removeEventListener("load", onLoad);
+          script.removeEventListener("error", onError);
+          resolve();
+        };
+        const onError = () => {
+          script.removeEventListener("load", onLoad);
+          script.removeEventListener("error", onError);
+          reject(new Error(`Failed to load ${src}`));
+        };
+        script.addEventListener("load", onLoad);
+        script.addEventListener("error", onError);
+        return;
+      }
+
+      const newScript = document.createElement("script");
+      newScript.src = src;
+      newScript.onload = () => resolve();
+      newScript.onerror = () => reject(new Error(`Failed to load ${src}`));
+      document.head.appendChild(newScript);
     });
   }
 
   async function initializeAll() {
     try {
-      // Load both libraries
-      await Promise.all([
-        loadScript("https://unpkg.com/panzoom@9.4.3/dist/panzoom.min.js"),
-        loadScript("https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"),
-      ]);
-
-      // First render the charts, then initialize panzoom
-      await renderMermaidCharts();
+      await Promise.all([loadScript(PANZOOM_SRC), loadScript(MERMAID_SRC)]);
+      await queueRender(async () => {
+        await renderMermaidCharts(getCurrentTheme());
+      });
       initializePanzoom();
+      attachThemeObserver();
     } catch (error) {
       console.error("Failed to initialize InteractiveMermaid:", error);
     }
   }
 
-  // Initialize when DOM is ready
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initializeAll);
+    document.addEventListener("DOMContentLoaded", initializeAll, { once: true });
   } else {
-    initializeAll();
+    void initializeAll();
   }
 </script>
