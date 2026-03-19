@@ -226,6 +226,24 @@ const {
     overflow: visible !important;
   }
 
+  /* Dark mode (mocha): edge label text must be light on dark background */
+  :global(.mocha) .mermaid-content :global(.edgeLabel p),
+  :global(.mocha) .mermaid-content :global(.edgeLabel span) {
+    color: #cdd6f4 !important;
+  }
+
+  :global(.mocha) .mermaid-content :global(.edgeLabel .label-container) {
+    background-color: #313244 !important;
+  }
+
+  /* Dark mode (mocha): node text must be dark on colored node backgrounds */
+  :global(.mocha) .mermaid-content :global(.node .label p),
+  :global(.mocha) .mermaid-content :global(.node .label span),
+  :global(.mocha) .mermaid-content :global(.node foreignObject p),
+  :global(.mocha) .mermaid-content :global(.node foreignObject span) {
+    color: #1e1e2e !important;
+  }
+
   /* Light theme adjustments */
   :global([data-theme="latte"]) .interactive-mermaid-container {
     border-color: var(--ctp-surface0, #ccd0da);
@@ -243,6 +261,24 @@ const {
       var(--ctp-base, #eff1f5) 0%,
       var(--ctp-mantle, #e6e9ef) 100%
     );
+  }
+
+  /* Light mode (latte): edge label text */
+  :global(.latte) .mermaid-content :global(.edgeLabel p),
+  :global(.latte) .mermaid-content :global(.edgeLabel span) {
+    color: #4c4f69 !important;
+  }
+
+  :global(.latte) .mermaid-content :global(.edgeLabel .label-container) {
+    background-color: #eff1f5 !important;
+  }
+
+  /* Light mode (latte): node text */
+  :global(.latte) .mermaid-content :global(.node .label p),
+  :global(.latte) .mermaid-content :global(.node .label span),
+  :global(.latte) .mermaid-content :global(.node foreignObject p),
+  :global(.latte) .mermaid-content :global(.node foreignObject span) {
+    color: #1e1e2e !important;
   }
 </style>
 
@@ -293,7 +329,7 @@ const {
     const isDarkTheme = theme === "mocha";
     return {
       startOnLoad: false,
-      theme: isDarkTheme ? "dark" : "default",
+      theme: "base",
       fontSize: 18,
       flowchart: {
         useMaxWidth: false,
@@ -308,14 +344,21 @@ const {
             primaryBorderColor: "#74c7ec",
             lineColor: "#bac2de",
             secondaryColor: "#a6e3a1",
-            tertiaryColor: "#1e1e2e",
+            secondaryTextColor: "#1e1e2e",
+            secondaryBorderColor: "#40a02b",
+            tertiaryColor: "#cba6f7",
+            tertiaryTextColor: "#1e1e2e",
+            tertiaryBorderColor: "#8839ef",
             background: "#1e1e2e",
             mainBkg: "#89b4fa",
             nodeBorder: "#74c7ec",
+            nodeTextColor: "#1e1e2e",
+            textColor: "#cdd6f4",
+            labelTextColor: "#cdd6f4",
             clusterBkg: "rgba(137, 180, 250, 0.1)",
             clusterBorder: "#89b4fa",
             titleColor: "#cdd6f4",
-            edgeLabelBackground: "#1e1e2e",
+            edgeLabelBackground: "#313244",
           }
         : {
             primaryColor: "#89b4fa",
@@ -323,10 +366,17 @@ const {
             primaryBorderColor: "#74c7ec",
             lineColor: "#6c6f85",
             secondaryColor: "#a6e3a1",
-            tertiaryColor: "#eff1f5",
+            secondaryTextColor: "#1e1e2e",
+            secondaryBorderColor: "#40a02b",
+            tertiaryColor: "#cba6f7",
+            tertiaryTextColor: "#1e1e2e",
+            tertiaryBorderColor: "#8839ef",
             background: "#eff1f5",
             mainBkg: "#89b4fa",
             nodeBorder: "#74c7ec",
+            nodeTextColor: "#1e1e2e",
+            textColor: "#4c4f69",
+            labelTextColor: "#4c4f69",
             clusterBkg: "rgba(137, 180, 250, 0.08)",
             clusterBorder: "#7287fd",
             titleColor: "#4c4f69",

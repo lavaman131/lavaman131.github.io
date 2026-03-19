@@ -132,6 +132,15 @@
   height: auto;
 }
 
+/* Prevent content-typography from overriding Mermaid text colors inside SVG foreignObject */
+.content-typography .interactive-mermaid-container p,
+.content-typography .interactive-mermaid-container span,
+.content-typography .interactive-mermaid-container div {
+  color: inherit;
+  margin: 0;
+  line-height: normal;
+}
+
 @media (max-width: 768px) {
   .content-typography table {
     @apply text-xs;
