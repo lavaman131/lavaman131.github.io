@@ -1,0 +1,98 @@
+---
+title: "My Honest Take on the Coding Agent Landscape"
+date: "2026-03-22"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "An honest assessment after going deep with Factory's Droids, Devin, Claude Code, Cursor, Windsurf, Codex, and a dozen more. The features blend together, the cycle of hope and disappointment repeats, and the thing that's actually missing isn't another desktop app or a better model."
+cover: "../../assets/images/blog/honest-take-coding-agent-landscape/cover.png"
+---
+
+import BlogCTA from "../../components/blog/BlogCTA.astro";
+
+Here's my honest take of the current coding agent landscape.
+
+I've tried Factory's Droids, Cognition's Devin, Claude Code, OpenCode, Github Copilot, Zed, Cursor, Windsurf, Augment Code, Codex, Ona, and probably the repo that you sent your friend that's some cool new open source coding agent too. All the desktop apps, all the CLIs, cloud and local.
+
+I didn't get my aha moment though. I felt like there's just so much that's the same. The features all blend together. I read quite prescriptively the news cycle so when I see hype headlines that claim this is the first time this coding agent supports x feature I think back to how 6 other coding agents supported this feature a couple of months ago. I get disheartened about where the accountability and the honesty is in building for the engineer truly not the hype.
+
+---
+
+## I Went Deep
+
+And before someone says I'm tool-hopping — I'm not. I went deep. I didn't just kick tires on twelve tools in a weekend. I spent real time with each one. I built workflows, wrote custom rules files, structured my context carefully. I know what a good `AGENTS.md` file looks like. I know how to scope tasks for agents. I know the best practice of keeping files small and modular so agents can reason about them. I did the work.
+
+The ceiling I hit wasn't a skill ceiling — it was a capability ceiling. And those are different things.
+
+Yes it's cool how I can now dispatch agents from my phone, in the cloud, locally — I have all of this at my fingertips. But it's just like fire that I keep burning myself with.
+
+---
+
+## The Cycle
+
+Can anyone else relate? You pick up a new coding tool, it's working, you get excited, a week passes by, your use case is more complex, the tool starts faltering, you review the code — it's too much slop — so you rewrite the code, make it more modularized, start over, again. Then the cycle repeats once more, the code still wasn't good enough for the agent to find consistent patterns, you see regressions, features that were working before not anymore. Sure it's better than the first time you did it but still not quite there, still a little bit off. So you go back, maybe write code manually, try to course correct, then go back to the coding agent.
+
+---
+
+## "It Works Fine for Us at Scale"
+
+I know some of you are going to say this works fine for you at scale. And I believe you. But be honest about what "works" means in your setup. It usually means your team invested heavily in guardrails, CI pipelines, human review layers, custom tooling around the agent. You built an entire support system to make the agent reliable. That's not the agent working. That's you working to make the agent work. There's a difference and it actually proves the point I'm making.
+
+---
+
+## "The Problem Is Your Codebase"
+
+I also know someone's going to say the problem is my codebase not the tool. That if my repo were more modular, better documented, smaller files, cleaner separation of concerns, the agent would perform fine. Okay maybe. But think about what you're saying. You're saying I should restructure my codebase to accommodate the tool. The tool should adapt to the codebase. That's the whole promise. If I need to rewrite my architecture before the agent can be useful then the agent isn't solving my problem — it's creating a prerequisite to solving my problem.
+
+---
+
+## Stochastic Meets Deterministic
+
+Makes you think — LLMs are naturally stochastic. Is writing code deterministic? Now I know someone's going to say this is a false dichotomy because humans are stochastic too. We write bugs. We introduce regressions. We produce slop. Fair. But humans accumulate context over time. A human engineer who's been in your codebase for six months doesn't reinvent an implementation that already exists three files over. They don't hallucinate a pattern that contradicts the architecture. The error types are different and that matters.
+
+It's not about whether agents make mistakes — it's about whether they make the kinds of mistakes that erode trust in ways that are hard to recover from.
+
+Is what we believe to be good only taste or is there something more to it that we can codify in language and say this is a function that was written well versus this is a function that was not.
+
+---
+
+## The Harness Layer
+
+So then you build a harness and infrastructure. I built one called Atomic. It works really well for me but I still face the problems above. So I tweak the harness, play with adding different tools, think about more problems. I know how this reads. Guy builds a thing and then writes a post about the problem his thing solves. I get it. But I'm telling you honestly — Atomic doesn't fully solve it either. If it did I wouldn't be writing this post. I'm sharing what I built because I think the harness layer matters and because I want to be transparent about where I'm spending my time, not because I think I've cracked it.
+
+---
+
+## "Just Wait for the Next Model"
+
+And to the people saying just wait for the next model, the next generation will solve all of this — maybe. But I've been hearing that for a while now. Every model release is a step function better and a step function short of the promise. The harness layer isn't a bet against model improvement — it's a bet that even great models need structure. Even brilliant engineers need process. A better model inside a bad workflow still produces inconsistent results. If the next model generation makes harnesses obsolete I'll celebrate. Until then I'm building for the reality I have not the one that's coming.
+
+---
+
+## What Are We Actually Building For?
+
+Why are we shipping a way to DM Claude Code when all I would want is for Claude Code to be able to work in my repo that is more than 100k lines of code and not reinvent an implementation that already exists, not make up best practices? I keep building for myself because I see the potential and still frustration without a good way to use it.
+
+There are solutions I have in my head for this and have been playing with them. They're doing well but I'm tinkering early hours into the morning. Why is it that our developer tools aren't being made for the things we need? Why are the experiences such a high bar to get started with and we're — I guess — okay with it? Because we love coding?
+
+---
+
+## "That's Just How Professional Tools Work"
+
+Some people will say that's just how professional tools work. Kubernetes doesn't just work. Terraform doesn't just work. Git doesn't just work. Complex tools for complex domains have learning curves and that's fine. But here's the thing — those tools are deterministic. When I write a terraform config and apply it I know what's going to happen. The learning curve is about understanding the system. With AI coding tools the learning curve is about managing unpredictability. Those aren't the same kind of hard and we shouldn't treat them the same way.
+
+---
+
+## The Other Side
+
+I love for something to just work. Not something I need to write scripts to start using or terraform and create millions of templates for. Just something that works. Not every product should be a fight to use to make it worthwhile. It should just work.
+
+I can't quite put it into words but something is missing on the experience side of the developer ecosystem and it's not just another desktop app. It's not just a better model either. It's something in between. Something that actually knows your repo, not just indexes it. Something that respects the architecture that's already there instead of proposing a new one every session. Something that understands every part of your environment and your functional intent. Something that makes week two feel as good as day one.
+
+And when it works — when it really works — you know. It's not the fake quick rush of watching slop get generated. I'm talking about the moment the agent does something genuinely intelligent. It understood what you were doing. It respected what was already there. It made a decision you would have made. And you feel it like electricity and you think *holy shit this is it*. I've had that moment.
+
+We're not there yet fully. But I think we can be and I see the other side.
+
+---
+
+<br />
+
+*This is not at all a dig or frustration at the incredibly talented engineers working on these coding agents. It is certainly not easy or trivial to build a coding agent or its infrastructure at scale. That should not be forgotten while we also acknowledge that there is much work to still be done to keep ourselves honest and make sure we keep building in service of all developers.*
+
