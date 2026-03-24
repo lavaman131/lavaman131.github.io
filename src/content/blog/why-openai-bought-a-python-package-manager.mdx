@@ -12,6 +12,7 @@ import BlogCTA from "../../components/blog/BlogCTA.astro";
 
 - OpenAI (Astral, Promptfoo, Rockset) and Anthropic (Bun, Vercept) are acquiring the execution layer underneath their coding agents — not developer tools for developers, but infrastructure for agents.
 - The bottleneck shifted from model speed to tooling speed: uv is 10-100x faster than pip, ruff lints CPython in under 300ms, Bun's test runner is 11x faster than Jest.
+- Anthropic's own engineering team [demonstrated this bottleneck in practice](https://www.anthropic.com/engineering/harness-design-long-running-apps): a multi-agent harness looping through plan-build-evaluate cycles for hours, where wall-clock time is dominated by execution — not model inference.
 - Reliability matters more than speed: deterministic dependency resolution (`uv --frozen`, `bun ci`) eliminates the environment drift that makes agents fail in CI.
 - AI-generated code has measurably higher defect rates (Snyk: 36-40% contain security vulnerabilities), making sub-second quality gates a requirement for autonomous code generation.
 - The IDE becomes a host platform for multiple agents, each with its own vertically integrated toolchain. The engineering skill that matters most: constructing intent, building self-improving agent environments, and managing agents at scale.
@@ -41,6 +42,24 @@ The math is straightforward. When Codex generates code in 2 seconds but pip take
 uv resolves and installs Python dependencies 10-100x faster than pip. Ruff lints the entire CPython codebase in under 300 milliseconds. Bun's test runner executes large test suites 11x faster than Jest.
 
 At the scale these companies operate — Claude Code alone hit a $1 billion annual run-rate — per-operation savings compound into material cost reductions. Every second shaved off dependency resolution, linting, or test execution across millions of weekly agent sessions directly reduces compute spend.
+
+---
+
+## The Harness Pattern: Where the Bottleneck Lives
+
+Anthropic's engineering team [published a post today](https://www.anthropic.com/engineering/harness-design-long-running-apps) showing what this bottleneck looks like in practice.
+
+They built a multi-agent harness — a GAN-inspired architecture where three specialized agents loop through plan-build-evaluate cycles to autonomously develop full applications. A planner expands a short prompt into a multi-sprint specification. A generator implements features iteratively using a React, Vite, FastAPI, and PostgreSQL stack. An evaluator navigates the live, running application through Playwright — clicking through UI elements, testing API endpoints, and checking database state the way a user would.
+
+Each evaluation cycle involves real execution: Vite rebuilds, Playwright navigations, server starts, database queries, screenshot captures. The evaluator runs 5 to 15 iterations per generation across multiple sprints. A single harness run stretches to four to six hours and costs $124–200.
+
+The wall-clock time isn't dominated by model inference. It's dominated by execution. As the post notes:
+
+> "Because the evaluator was actively navigating the page rather than scoring a static screenshot, each cycle took real wall-clock time. Full runs stretched up to four hours."
+
+That's the bottleneck these acquisitions are designed to eliminate. When every build-test-evaluate cycle hits the execution layer — the runtimes, the package managers, the test runners — the speed of that layer is a first-order cost driver. It's the same logic that led Anthropic to acquire Bun: in a system where agents are repeatedly rebuilding and interacting with applications, the speed of each cycle compounds into hours and hundreds of dollars.
+
+The Anthropic team's closing observation reinforces the point: *"The space of interesting harness combinations doesn't shrink as models improve. Instead, it moves."* The harness pattern isn't going away. The execution layer underneath it is only becoming more critical.
 
 ---
 
@@ -143,5 +162,6 @@ The competition between AI companies has moved from model benchmarks to infrastr
 - [OpenAI acquires Promptfoo](https://promptfoo.dev/blog/promptfoo-joining-openai) (350K+ developers, 50+ vulnerability types)
 - [Anthropic acquires Bun](https://anthropic.com/news/anthropic-acquires-bun) ($1B Claude Code run-rate)
 - [Anthropic acquires Vercept](https://techcrunch.com/2026/02/25/anthropic-acquires-vercept)
+- [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps) (multi-agent plan-build-evaluate architecture)
 - AI-generated code defect rates: [Snyk](https://snyk.io), [CodeRabbit](https://coderabbit.ai)
 - ["Agents took over VS Code in 2025"](https://visualstudiomagazine.com) — Burke Holland, Microsoft
