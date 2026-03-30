@@ -1,9 +1,9 @@
 ---
-title: "From RPI to qRSPI: Rebuilding the First Structured Workflow for Coding Agents"
+title: "From RPI to QRSPI: Rebuilding the First Structured Workflow for Coding Agents"
 date: "2026-03-30"
 authors: "Alex Lavaee, Norin Lavaee"
-description: "Dex Horthy's Research-Plan-Implement was the first widely-adopted structured workflow for AI coding agents. Three failure modes forced a complete redesign into qRSPI. Here's what changed, what practitioners are validating, and what it reveals about where AI-assisted development is headed."
-cover: "../../assets/images/blog/from-rpi-to-qrspi/cover.png"
+description: "Dex Horthy's Research-Plan-Implement was the first widely-adopted structured workflow for AI coding agents. Three failure modes forced a complete redesign into QRSPI. Here's what changed, what practitioners are validating, and what it reveals about where AI-assisted development is headed."
+cover: "../../assets/images/blog/from-rpi-to-QRspi/cover.png"
 ---
 
 import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
@@ -12,7 +12,7 @@ import BlogCTA from "../../components/blog/BlogCTA.astro";
 ## Key Takeaways
 
 - **The first widely-adopted coding agent workflow had to be rebuilt.** Dex Horthy's Research-Plan-Implement (RPI) hit three failure modes — instruction budget overflow, magic word dependencies, and a plan-reading illusion — that only surface at real-world scale.
-- **qRSPI replaces three stages with eight — five for alignment, three for execution.** The key design moves: hide the feature ticket during research so the agent gathers codebase facts without premature opinions, then perform "brain surgery" on the agent's understanding through structured design discussion before a single line of code is planned.
+- **QRSPI replaces three stages with eight — five for alignment, three for execution.** The key design moves: hide the feature ticket during research so the agent gathers codebase facts without premature opinions, then perform "brain surgery" on the agent's understanding through structured design discussion before a single line of code is planned.
 - **Context window utilization has a hard ceiling.** Practitioners independently validate the same finding: keep context under 40%, start fresh at 60%. Bigger windows don't help if you fill them with noise.
 - **Vertical slices beat horizontal layers for agent work.** Mock API → front-end → database with checkpoints produces more reliable outcomes than completing all database work, then all API work, then all front-end work.
 - **The differentiator is shifting from models to harness configuration.** Context management, instruction budgets, sub-agent architecture, and deterministic hooks matter more than which frontier model you're using.
@@ -73,9 +73,9 @@ But plans that read well don't necessarily build well. Architectural debt accumu
 
 <BlogCTA />
 
-## qRSPI: The Replacement
+## QRSPI: The Replacement
 
-The replacement is a framework Horthy calls CRISPY (technically qRSPI) — eight stages that front-load alignment before a single line of code is written. The jump from three to eight sounds like added complexity. It is. But each new stage replaces ad-hoc work that was happening anyway — just happening badly.
+The replacement is a framework Horthy calls CRISPY (technically QRSPI) — eight stages that front-load alignment before a single line of code is written. The jump from three to eight sounds like added complexity. It is. But each new stage replaces ad-hoc work that was happening anyway — just happening badly.
 
 <InteractiveMermaid chart={`
 flowchart LR
@@ -152,7 +152,7 @@ The key insight: sub-agents aren't "the researcher" and "the planner" as charact
 
 ## Community Response: Validation and Pushback
 
-The community response to qRSPI has been mixed but deeply engaged — which is itself a signal about where the field is.
+The community response to QRSPI has been mixed but deeply engaged — which is itself a signal about where the field is.
 
 **Validation.** Hacker News engineers confirm context degradation from firsthand experience. The 40% threshold resonates with practitioners who've watched agent quality collapse in long sessions. Engineers on DEV Community who adopted RPI independently — often after hallucination disasters with unstructured prompting — recognize the failure modes because they hit the same walls.
 
@@ -164,13 +164,13 @@ The deeper engagement pattern: practitioners aren't debating whether structured 
 
 ## The Deeper Signal
 
-The evolution from RPI to qRSPI illustrates a pattern that goes beyond any single framework.
+The evolution from RPI to QRSPI illustrates a pattern that goes beyond any single framework.
 
 Differentiation in AI-assisted development is shifting from which model you use to how you configure and constrain the agent. Context management. Instruction budgets. Sub-agent architecture. Deterministic hooks. Verification pipelines. These are the variables that determine whether an agent produces reliable output or plausible-looking code that quietly falls apart.
 
 The model is the engine. The harness is what makes it work.
 
-And harnesses, like any engineering artifact, improve through iteration. RPI was a good first answer. qRSPI is a better second answer. The fact that it needed to be rebuilt isn't a failure — it's exactly how engineering disciplines mature. You ship, you discover where it breaks at scale, and you rebuild with what you learned.
+And harnesses, like any engineering artifact, improve through iteration. RPI was a good first answer. QRSPI is a better second answer. The fact that it needed to be rebuilt isn't a failure — it's exactly how engineering disciplines mature. You ship, you discover where it breaks at scale, and you rebuild with what you learned.
 
 We're still early. The workflows we're building today will get rebuilt too. The teams that iterate fastest — informed by real failure data, not theoretical frameworks — will build the most reliable systems.
 
@@ -180,6 +180,6 @@ That's not a limitation. That's the process working.
 
 ## References
 
-- Dex Horthy, "CRISPY / qRSPI Framework Talk": [youtube.com/watch?v=YwZR6tc7qYg](https://youtube.com/watch?v=YwZR6tc7qYg)
+- Dex Horthy, "CRISPY / QRSPI Framework Talk": [youtube.com/watch?v=YwZR6tc7qYg](https://youtube.com/watch?v=YwZR6tc7qYg)
 - HumanLayer, "Skill Issue: Harness Engineering for Coding Agents": [humanlayer.dev/blog/skill-issue-harness-engineering-for-coding-agents](https://humanlayer.dev/blog/skill-issue-harness-engineering-for-coding-agents)
 - The Humans in the Loop Interview (Mar 26, 2026): [thehumansintheloop.substack.com](https://thehumansintheloop.substack.com)
