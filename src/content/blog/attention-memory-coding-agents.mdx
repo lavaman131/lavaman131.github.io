@@ -115,7 +115,7 @@ The technical backbone is dual storage: ChromaDB for semantic vector search and 
 - **L0** (identity, ~50 tokens) and **L1** (critical facts, ~120 tokens) load on every startup
 - **L2** (room recall) and **L3** (deep search) fire only on demand
 
-The result: wing+room filtering boosts retrieval from 60.9% to **94.8% R@10**. Everything runs locally with no cloud dependency.
+In benchmarks, wing+room metadata filtering improves retrieval from 60.9% to 94.8% R@10 — though this leverages standard ChromaDB metadata filtering rather than a novel retrieval mechanism. The real value is the spatial organization model itself, which gives agents a structured way to scope queries. Everything runs locally with no cloud dependency.
 
 ### Hippo Memory: forgetting as a feature
 
