@@ -1,0 +1,154 @@
+---
+title: "Claude Opus 4.7: Anthropic's Agentic Reliability Release, Explained"
+date: "2026-04-16"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "Anthropic shipped Opus 4.7 today. The headline is SWE-Bench Verified at 87.6%, but the real story for software engineers is what changed in how the model behaves on long-running, autonomous work — loop resistance, self-verification, and finer-grained control over reasoning effort and token budget."
+cover: "../../assets/images/blog/claude-opus-4-7-technical-breakdown/cover.png"
+---
+
+import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+import BlogCTA from "../../components/blog/BlogCTA.astro";
+
+## Key Takeaways
+
+- **Opus 4.7 posts the strongest coding numbers of any generally-available frontier model: 87.6% on SWE-Bench Verified (up from 80.8% on Opus 4.6) and 64.3% on SWE-Bench Pro (up from 53.4%)**<a href="#ref-1">[1]</a><a href="#ref-2">[2]</a>. On CursorBench it hits 70% versus Opus 4.6's 58%. The benchmark jump is real, but it's not the most interesting change.
+- **The release is about agent reliability, not just capability.** Anthropic's own framing emphasizes that Opus 4.7 achieves the highest *quality-per-tool-call* ratio they've measured, with markedly lower rates of looping and better recovery from mid-run tool failures<a href="#ref-1">[1]</a>. For engineers running long autonomous jobs, that matters more than a benchmark delta.
+- **Two new surfaces to learn: `xhigh` effort level and Task Budgets (public beta).** `xhigh` sits between `high` and `max` and is the new default in Claude Code. Task Budgets let you cap token spend across a multi-step run so the model prioritizes work instead of burning compute on the first sub-task<a href="#ref-1">[1]</a>.
+- **`/ultrareview` is a dedicated code-review session** — a separate run that re-reads the diff with a reviewer's mindset and flags bugs and design issues. Pro and Max users get three free ultrareviews to try it<a href="#ref-1">[1]</a>.
+- **Drop-in migration: same API shape, same `$5 / $25` per million tokens as Opus 4.6.** The model ID is `claude-opus-4-7`, available on the Claude API, Amazon Bedrock, Google Cloud Vertex AI, and Microsoft Foundry<a href="#ref-1">[1]</a>. Prompts from 4.6 generally work, though the stricter instruction-following may require some retuning.
+
+---
+<br />
+Anthropic released Claude Opus 4.7 today. On paper it's an incremental point release in the Claude 4.x line, priced identically to Opus 4.6 and exposed through the same API surface<a href="#ref-1">[1]</a>. But reading through the release notes, the third-party benchmark coverage, and the partner reports, a different story emerges: this isn't a benchmark release with a reliability footnote. It's a reliability release with a benchmark footnote.
+
+For software engineers shipping production AI features — especially anyone running coding agents, code review pipelines, or multi-step autonomous workflows — the changes in Opus 4.7 map directly onto the failure modes that actually waste engineering time. Looping agents. Silent error recovery that wasn't. Ballooning token spend on a six-hour run. This post walks through what's new, what the numbers actually say, what early partners are reporting, and where Opus 4.7 should and shouldn't land in your stack.
+
+---
+
+## The benchmark picture
+
+Opus 4.7 leads the publicly-available frontier field on most coding benchmarks, but the delta is uneven across workloads. Here's the cleanest view of the numbers Anthropic and third parties have reported so far:
+
+| Benchmark | Opus 4.7 | Opus 4.6 | Notable peer |
+|---|---|---|---|
+| SWE-Bench Verified | 87.6% | 80.8% | Gemini 3.1 Pro: 80.6%<a href="#ref-2">[2]</a> |
+| SWE-Bench Pro | 64.3% | 53.4% | GPT-5.4: 57.7%; Gemini 3.1 Pro: 54.2%<a href="#ref-2">[2]</a> |
+| GPQA Diamond | 94.2% | — | GPT-5.4 Pro: 94.4%; Gemini 3.1 Pro: 94.3%<a href="#ref-2">[2]</a> |
+| CursorBench | 70% | 58% | —<a href="#ref-1">[1]</a> |
+| Finance Agent | 0.813 | 0.767 | State-of-the-art<a href="#ref-1">[1]</a> |
+| Visual acuity | 98.5% | 54.5% | —<a href="#ref-1">[1]</a> |
+| BrowseComp (agentic search) | 79.3% | — | GPT-5.4 Pro: 89.3%<a href="#ref-2">[2]</a> |
+
+Two numbers deserve particular attention. On SWE-Bench Pro — the harder, larger, multi-repo variant that tracks real production-style issues — Opus 4.7 moves from 53.4% to 64.3%, an ~11-point jump. The visual acuity benchmark moves from 54.5% to 98.5%, which is the quantitative shadow of Anthropic's other vision claim: Opus 4.7 accepts images up to 2,576 pixels on the long edge, roughly 3× the resolution Opus 4.6 could ingest<a href="#ref-1">[1]</a>. Engineers generating UI mockups, reading dense dashboards, or inspecting failing screenshots should feel this immediately.
+
+One weakness worth flagging: Opus 4.7 trails GPT-5.4 meaningfully on BrowseComp (79.3% vs 89.3%)<a href="#ref-2">[2]</a>. If your agent's bottleneck is navigating the open web — research agents, browser-based RPA, deep-research workflows — Claude is not the clear winner here.
+
+Anthropic also ran third-party evaluations with partners, and those are the numbers most aligned with real production work. On Rakuten-SWE-Bench (an internal benchmark constructed from actual Rakuten production tasks), Opus 4.7 resolves 3× more tasks than Opus 4.6, with double-digit improvements in code quality and test quality scores<a href="#ref-1">[1]</a>. Databricks reports 21% fewer errors on OfficeQA Pro, their document-reasoning benchmark, when the model is working from source documents<a href="#ref-1">[1]</a>.
+
+---
+
+## What actually changed in how the model works
+
+The benchmark gains matter, but the new control surfaces and behavioral changes are where Opus 4.7 will show up in daily engineering work.
+
+### `xhigh`: a new reasoning effort level
+
+Claude's effort parameter already exposed `minimal`, `low`, `medium`, `high`, and `max`. Opus 4.7 inserts a new `xhigh` level between `high` and `max`<a href="#ref-1">[1]</a>. The practical point is that `max` is expensive and often latency-prohibitive for interactive work, while `high` sometimes under-reasons on hard tasks. `xhigh` gives you a middle rung. Anthropic has raised the Claude Code default to `xhigh` across all plans, which means existing Claude Code users will feel slightly slower, slightly smarter behavior by default starting today.
+
+### Adaptive extended thinking
+
+In Opus 4.6, extended thinking was effectively all-or-nothing — enabling it meant the model invested reasoning effort even on trivial queries, paying for itself sometimes and burning tokens for nothing other times. Opus 4.7 makes extended thinking context-aware. With it enabled, the model decides per-query how much depth a problem warrants: simple questions return quickly, complex ones get proportionally more reasoning<a href="#ref-4">[4]</a>. The practical effect is that you can leave extended thinking on without paying a flat latency tax on every request — meaningful for production deployments where request difficulty varies widely across the workload.
+
+### Task Budgets (public beta)
+
+Task Budgets let you hand the model a token budget for a multi-step task so it can prioritize work across sub-tasks rather than burning through its budget on step one<a href="#ref-1">[1]</a>. This is a meaningful primitive for anyone running long agent jobs in production — the classic failure mode where an agent exhausts context on exploration and then has nothing left for execution now has a native knob.
+
+### `/ultrareview`
+
+The `/ultrareview` slash command kicks off a dedicated review session that re-reads a diff and surfaces bugs and design issues that a careful human reviewer would catch<a href="#ref-1">[1]</a>. Unlike asking Claude to review its own work inline, this runs as a separate session with a reviewer's prompt posture. Pro and Max users get three free ultrareviews to try; beyond that it's metered as normal usage.
+
+### Agentic reliability: the less-flashy changes
+
+The behavioral deltas are the ones that don't fit cleanly on a benchmark chart. Anthropic reports that Opus 4.7 loops on roughly 1 in 18 queries less often than prior Opus versions, keeps executing through tool failures that used to halt Opus 4.6, and devises its own verification steps before reporting a task complete<a href="#ref-1">[1]</a>. The concrete example Anthropic published — having the model build a Rust text-to-speech engine from scratch (neural model, SIMD kernels, browser demo) and then feed its own output through a speech recognizer to check that it matched the Python reference — is the clearest expression of what "verifies its own outputs" means in practice<a href="#ref-1">[1]</a>.
+
+### More conservative tool use
+
+Opus 4.7 is noticeably more reluctant to call tools autonomously than Opus 4.6. It defaults to answering from its training knowledge unless you point it at a source<a href="#ref-4">[4]</a>. This is the right default for production agents — fewer surprise tool calls, lower variance in cost and latency — but it changes how you should prompt. If you want the model to search the web, query a connector, or read from a specific knowledge source, name the source explicitly in the prompt ("search the web for X," "check the Slack channel," "read the file at this path"). Inspect the thinking trace afterward to verify which sources actually got used.
+
+<InteractiveMermaid chart={`
+flowchart LR
+    A["Task arrives"] --> B["xhigh reasoning<br/>(new default in Claude Code)"]
+    B --> C["Long-running multi-step work"]
+    C --> D{"Token spend<br/>getting large?"}
+    D -->|"yes"| E["Task Budgets<br/>redistribute effort"]
+    D -->|"no"| F["Continue"]
+    E --> F
+    F --> G{"Tool call<br/>fails?"}
+    G -->|"yes"| H["Graceful recovery<br/>(keeps going)"]
+    G -->|"no"| I["Continue"]
+    H --> I
+    I --> J["Self-verify output<br/>before reporting done"]
+    J --> K["/ultrareview<br/>(separate review session)"]
+    K --> L["Ship"]
+
+    style B fill:#fab387,stroke:#e09a6f,color:#1e1e2e
+    style E fill:#fab387,stroke:#e09a6f,color:#1e1e2e
+    style H fill:#fab387,stroke:#e09a6f,color:#1e1e2e
+    style J fill:#fab387,stroke:#e09a6f,color:#1e1e2e
+    style K fill:#fab387,stroke:#e09a6f,color:#1e1e2e
+    style L fill:#a6e3a1,stroke:#82c97e,color:#1e1e2e
+`} />
+
+---
+
+## What early partners are reporting
+
+Early-access partners' reports give a more grounded picture than benchmarks alone. The useful signal across their summaries is remarkably consistent: the improvements they highlight are about *reliability under autonomy*, not raw capability ceilings<a href="#ref-1">[1]</a><a href="#ref-3">[3]</a>.
+
+Rakuten's engineering leadership has emphasized that the uplift on their internal benchmark translated into real movement in the quality metrics their teams care about — not just pass/fail on tasks, but code quality and test quality rising together<a href="#ref-1">[1]</a>. Databricks' framing of the OfficeQA Pro gain is practical: their users work against source documents, and a 21% drop in errors means fewer hallucinated citations and fewer manual re-runs<a href="#ref-1">[1]</a>.
+
+Three other partner reports from the enterprise early-access group paint a consistent picture<a href="#ref-3">[3]</a>. A financial technology platform observed the model catching its own logical errors during the planning phase rather than during execution — a behavioral shift that matters because plan-time errors are orders of magnitude cheaper than execution-time errors. A code review platform saw a greater-than-10% improvement in bug detection recall while holding precision steady, which is a harder combination to get than either metric alone. An autonomous workflow company reported ~14% gains in task success alongside a third the tool errors at fewer tokens — a rare case where quality and efficiency moved in the same direction.
+
+The common thread: the behaviors that get better are the ones that make the difference between "impressive demo" and "safe to leave running overnight."
+
+---
+
+## How to actually use this as a software engineer
+
+If you're building with Claude today, here's the practical playbook.
+
+**Migrate opportunistically, not urgently.** The API is drop-in compatible, pricing is unchanged, and the model ID is `claude-opus-4-7`<a href="#ref-1">[1]</a>. Run a shadow evaluation on your existing agent traces before flipping production traffic — not because migration is risky, but because the stricter instruction-following can expose prompts that were implicitly relying on Opus 4.6's looser interpretation. Concretely: Opus 4.7 takes directives more literally, so repeated emphasis ("be brief, really brief, don't ramble") and defensive padding ("skip the obvious parts") now execute more precisely than you may have intended<a href="#ref-4">[4]</a>. Prefer a single clear instruction over layered emphasis, and audit project- or system-level prompts that grew through accretion.
+
+**Default to `xhigh`, not `max`.** For interactive coding work, `xhigh` is the sweet spot that the Claude Code team has already chosen as their new default. Save `max` for tasks you know need it and can afford to wait on.
+
+**Reach for Task Budgets on anything multi-step.** If you're orchestrating agents that run for more than a few minutes — research, refactors, migration scripts, data pipeline debugging — Task Budgets are the right primitive to prevent the classic "spent 80% of tokens exploring, 20% executing" failure. Start conservative; the knob rewards iteration.
+
+**Put `/ultrareview` in your PR flow, but not as a rubber stamp.** The most useful place for `/ultrareview` is between "Claude implemented it" and "human merges it" — a separate review session that catches the class of bugs a tired reviewer misses. It is not a replacement for a human reviewer on anything with security, compliance, or customer-data implications.
+
+**Don't reach for Opus 4.7 for open-web research agents.** The BrowseComp gap to GPT-5.4 is real and meaningful<a href="#ref-2">[2]</a>. If your agent's job is navigating the open web, run an A/B on both models before committing.
+
+**Be explicit about which sources you want the model to consult.** Because Opus 4.7 leans toward answering from its own knowledge before reaching for tools<a href="#ref-4">[4]</a>, prompts that worked on 4.6 by implicitly assuming "Claude will obviously search the web for this" can return stale or training-cutoff answers on 4.7. Name the source in the prompt: `search the web for…`, `query the connector…`, `read this file at…`. This is also a quiet quality-of-life win — your traces become easier to audit when tool selection is in the prompt instead of the model's discretion.
+
+**Watch the vision path — and skip the pre-processing.** If your stack uses Claude to look at mockups, screenshots, PDFs of dashboards, or generated UIs, the 3× resolution jump and the visual acuity benchmark jump (54.5% → 98.5%) are the changes most likely to show up as noticeably better outputs without any prompt changes<a href="#ref-1">[1]</a>. The corollary: pipelines that pre-cropped, downsampled, or upscaled images to work around 4.6's resolution limits should be retired<a href="#ref-4">[4]</a>. Send the original — Opus 4.7 reads small axis labels, dense table cells, and footnotes natively.
+
+**Read the system card.** Anthropic published the Opus 4.7 system card alongside the release<a href="#ref-1">[1]</a>. Notable: low rates of deception and sycophancy, and stronger resistance to prompt injection than Opus 4.6, but modestly weaker on overly-detailed harm-reduction advice on controlled substances. If your deployment has safety-sensitive surfaces, read it before you ship.
+
+---
+
+## What Opus 4.7 signals about the direction
+
+A useful frame for thinking about this release: Anthropic is optimizing harder for *autonomy reliability* than for peak capability. The agentic-search gap to GPT-5.4 is notable because it's the one place where Anthropic clearly chose not to catch up in this release. The numbers they did move — quality-per-tool-call, loop resistance, mid-run error recovery, self-verification — are the ones that determine whether an agent is shippable, not just demonstrable.
+
+For software engineers, that's a meaningful product posture. The next year of AI engineering work is going to be dominated by "can I actually trust this thing to run without me watching?" The features in Opus 4.7 — `xhigh` as a cheaper path to deep reasoning, Task Budgets as a primitive for long runs, `/ultrareview` as a separate-session review gate, and the underlying reliability behaviors — are all calibrated to that question. Worth adopting, worth instrumenting, worth testing before you trust it on anything that matters.
+
+---
+
+## References
+
+<a id="ref-1"></a>\[1\] Anthropic, "Introducing Claude Opus 4.7." April 16, 2026. [Link](https://www.anthropic.com/news/claude-opus-4-7)
+
+<a id="ref-2"></a>\[2\] OfficeChai, "Anthropic Releases Claude Opus 4.7, Beats GPT-5.4, Gemini 3.1 Pro On Most Benchmarks." April 16, 2026. [Link](https://officechai.com/ai/ckaude-opus-4-7-benchmarks/)
+
+<a id="ref-3"></a>\[3\] Anthropic, "Claude Opus 4.7 — product page." April 16, 2026. [Link](https://www.anthropic.com/claude/opus)
+
+<a id="ref-4"></a>\[4\] Anthropic, "Working with Claude Opus 4.7." April 16, 2026. [Link](https://claude.com/resources/tutorials/working-with-claude-opus-4-7)
