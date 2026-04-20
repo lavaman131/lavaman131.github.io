@@ -1,0 +1,161 @@
+---
+title: "Open Claude Design: A Weekend Harness Built on Atomic"
+date: "2026-04-20"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "Anthropic shipped Claude Design on April 17. Three days later we shipped an open-source replica built as an Atomic workflow — 5 phases, the same pipeline ported across three coding agents (Claude, Copilot CLI, opencode). Here's what that reveals about building thin harnesses around coding agents."
+---
+
+import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+import BlogCTA from "../../components/blog/BlogCTA.astro";
+
+Anthropic released [Claude Design](https://www.anthropic.com/news/claude-design-anthropic-labs) on April 17, 2026 — a conversational tool for producing prototypes, slides, and marketing collateral, with a design-system import step, a refinement loop, and a Claude Code handoff bundle at the end.
+
+Three days later we shipped [**open-claude-design**](https://github.com/flora131/atomic/tree/main/src/sdk/workflows/builtin/open-claude-design): an open-source replica implemented as a built-in [Atomic](https://github.com/flora131/atomic) workflow. Five deterministic phases, the same pipeline ported across **three different coding agents** (Claude Agent SDK, Copilot CLI, opencode) — roughly 500 lines of typescript orchestration per provider. The full source lives at [`src/sdk/workflows/builtin/open-claude-design`](https://github.com/flora131/atomic/tree/main/src/sdk/workflows/builtin/open-claude-design).
+
+We didn't rebuild Claude Code to do this. We built a thin harness *around* it.
+
+That distinction is the point of this post.
+
+## The pipeline
+
+Claude Design's UX is a conversation, but underneath it's a pipeline. We reverse-engineered the phases from the [announcement](https://www.anthropic.com/news/claude-design-anthropic-labs) and from the partner quotes ("20+ prompts to 2 prompts" is a tell — there's a deterministic skeleton under the chat).
+
+<InteractiveMermaid
+  chart={`
+flowchart TD
+    A["Phase 1: Design System Onboarding<br/>parallel headless fan-out + HIL approval"] --> B["Phase 2: Import<br/>URL / file / codebase capture (headless)"]
+    B --> C["Phase 3: Generation<br/>first design version (visible)"]
+    C --> D["Phase 4: Refinement Loop<br/>≤5 iterations, HIL + parallel critique"]
+    D -->|approved / 'ship it'| E["Phase 5: Export + Handoff<br/>Claude Code / Copilot CLI / opencode"]
+    D -->|iterate| D
+    style A fill:#42a5f5,color:#fff
+    style B fill:#42a5f5,color:#fff
+    style C fill:#66bb6a,color:#000
+    style D fill:#ffa726,color:#000
+    style E fill:#66bb6a,color:#000
+`}
+/>
+
+Headless stages (blue) run on Sonnet with `bypassPermissions` for cost and speed — but only in the Claude provider, where the Agent SDK lets us pin a per-stage model. The Copilot CLI and opencode providers don't expose that knob, so their headless stages inherit whatever orchestrator model the user invoked the workflow with. Visible stages (green) inherit the orchestrator model (Opus) across all three providers and surface to the user. The refinement loop (orange) is a bounded human-in-the-loop cycle with early exit on completion signal phrases (`"approved"`, `"ship it"`, `"done"`).
+
+Inside Phase 4, the refinement quality comes from pairing two tools: the [`impeccable`](https://github.com/flora131/atomic/tree/main/.claude/skills/impeccable) skill drives the creative pass (taste, hierarchy, distinctive aesthetics over generic AI defaults), while the [Playwright CLI](https://playwright.dev/) captures screenshots of the rendered output so a critique sub-agent can inspect what actually shipped, not what the model *thinks* shipped. Visual grounding + structured critique closes the loop that a text-only refinement would leave open — the agent sees its own mistakes instead of hallucinating past them.
+
+The full topology — including the three parallel codebase-analysis sub-agents in Phase 1 and the parallel critique + screenshot validation in Phase 4 — is laid out in the [workflow source](https://github.com/flora131/atomic/tree/main/src/sdk/workflows/builtin/open-claude-design).
+
+## The workflow SDK is the whole trick
+
+Here's a trimmed version of the Claude provider for Phase 1 — the parallel fan-out followed by a human-in-the-loop approval stage:
+
+```typescript
+// Layer 1: three headless agents analyze the codebase in parallel
+const [locator, analyzer, patterns] = await Promise.all([
+  ctx.stage(
+    { name: "ds-locator", headless: true },
+    {}, {},
+    async (s) => s.session.query(
+      buildDesignLocatorPrompt({ root }),
+      { agent: "codebase-locator", ...HEADLESS_OPTS },
+    ),
+  ),
+  ctx.stage(
+    { name: "ds-analyzer", headless: true },
+    {}, {},
+    async (s) => s.session.query(
+      buildDesignAnalyzerPrompt({ root }),
+      { agent: "codebase-analyzer", ...HEADLESS_OPTS },
+    ),
+  ),
+  ctx.stage(
+    { name: "ds-patterns", headless: true },
+    {}, {},
+    async (s) => s.session.query(
+      buildDesignPatternPrompt({ root }),
+      { agent: "codebase-pattern-finder", ...HEADLESS_OPTS },
+    ),
+  ),
+]);
+
+// Layer 2: visible agent reviews the findings with the user
+await ctx.stage(
+  { name: "design-system-builder" },
+  {}, {},
+  async (s) => s.session.query(
+    buildDesignSystemBuilderPrompt({
+      root,
+      locatorOutput: locator.result,
+      analyzerOutput: analyzer.result,
+      patternsOutput: patterns.result,
+    }),
+  ),
+);
+```
+
+Three things to notice:
+
+1. **`ctx.stage` is just a function around a session.** The orchestration is plain TypeScript — `Promise.all`, `for` loops, early `break` on signal phrases. No DSL. No YAML. No graph declaration.
+2. **`s.session.query` calls the coding agent's native harness.** We're not reimplementing Claude Code's tool loop, its permission model, or its subagent dispatch — we're calling into them. `agent: "codebase-locator"` points at an existing Atomic subagent; `HEADLESS_OPTS` sets `bypassPermissions` and forces Sonnet.
+3. **The orchestrator picks the minimum toolset for each stage.** Headless analyzers get `bypassPermissions`. Visible stages inherit Opus. The refinement loop gets `AskUserQuestion`. Each stage sees only what it needs.
+
+The headless model is also a knob, not a fixed choice. The `HEADLESS_OPTS` constant pins the sub-agents to Sonnet by default because the analysis stages are well-scoped and cost-sensitive, but you can swap it to Opus for harder codebases, or drop the `model` field entirely to inherit whatever the orchestrator is running. One line, repo-wide — pick your point on the cost/performance curve.
+
+Prompts are the other knob, and usually the more important one. Each stage's instructions are a plain TypeScript function — `buildDesignLocatorPrompt`, `buildDesignAnalyzerPrompt`, the refinement critique prompt — so tailoring outputs to your stack means editing a string, not reconfiguring the pipeline. Want the analyzer to look specifically for shadcn tokens, or the generator to prefer Tailwind over inline styles, or the critique to hammer on accessibility over aesthetics? Edit the prompt. Swapping models gets you capacity; adjusting the instructions is what dials in taste, framework conventions, and the specific shape of output you want for your project. The two knobs are complementary — you'll almost always reach for the prompt first.
+
+<BlogCTA />
+
+## The workflow-creator skill got us 90% of the way there
+
+The non-obvious part was the pipeline shape, not the code. Once we knew what phases we wanted, the [`workflow-creator`](https://github.com/flora131/atomic/tree/main/.claude/skills/workflow-creator) skill scaffolds the `defineWorkflow().run().compile()` structure, the `ctx.stage` calls, the `WorkflowInput` schema, and the provider split (Claude vs. Copilot vs. opencode).
+
+Our actual work was:
+
+- **Phase 1 product analysis** — watched the Claude Design demo, read the announcement, listed the phases.
+- **Scaffold via workflow-creator** — described the five phases and the topology, got back a working provider skeleton.
+- **Tweak prompts and behavior** — adjusted the stage prompts, model assignments, and early-exit conditions until the pipeline produced what we wanted.
+- **Test across the three agents** — ran the same workflow under Claude, Copilot CLI, and opencode.
+
+The research artifacts — [the product analysis](https://github.com/flora131/atomic/blob/flora131/feature/open-claude-design/research/docs/2026-04-17-claude-design-product-analysis.md), [the SDK mapping](https://github.com/flora131/atomic/blob/flora131/feature/open-claude-design/research/docs/2026-04-17-open-claude-design.md), [the RFC](https://github.com/flora131/atomic/blob/flora131/feature/open-claude-design/specs/2026-04-17-open-claude-design.md) — all live alongside the [workflow source on GitHub](https://github.com/flora131/atomic/tree/main/src/sdk/workflows/builtin/open-claude-design).
+
+## Same pipeline, three coding agents
+
+Because the SDK's only abstraction over the agent is `s.session.query(...)`, porting to a different coding agent is mechanical. The Copilot CLI provider is the same five phases; it just passes different stage options and deals with Copilot's [`SessionEvent[]`](https://docs.github.com/en/copilot/how-tos/use-copilot-for-common-tasks/use-copilot-in-the-cli) message format on the way out:
+
+```sh
+atomic workflow -n open-claude-design -a claude    --prompt "Landing page for a dev tool"
+atomic workflow -n open-claude-design -a copilot   --prompt "Landing page for a dev tool"
+atomic workflow -n open-claude-design -a opencode  --prompt "Landing page for a dev tool"
+```
+
+One workflow, three harnesses, identical CLI surface.
+
+## Why "thin harness" is the right frame
+
+The temptation when you want agent X to do task Y is to build a new agent. It's the wrong instinct. Coding agents are already harnesses — they have a tool loop, a permission model, subagents, skills, MCP. Rebuilding that is how you end up with a 50K-line framework that's worse than what you wrapped.
+
+A thin harness inverts the relationship:
+
+- **You don't own the agent's inner loop.** Claude Code keeps its tool-use cycle. Copilot CLI keeps its session machinery. opencode keeps its own runtime. Your code never reimplements any of them.
+- **You own the outer pipeline.** Which stages run, in what order, under what model, with what permissions, with what early-exit conditions. This is the part that's actually workflow-specific.
+- **The abstraction is one function.** `s.session.query(prompt, opts)`. Everything above it — `Promise.all`, `for`, `if` — is TypeScript you already know.
+- **You pick the minimum toolset per stage.** Headless analyzers don't get write permissions. Visible creative stages inherit Opus. Each stage sees what it needs and nothing more — the cheapest way to keep a long pipeline coherent.
+
+**What you give up.** Claude Design's chat UX streams tokens straight into a rendered preview — it feels fast because the product is purpose-built around that loop. A CLI workflow with discrete phases and HIL gates won't match that feel, and shouldn't try. You're trading perceived latency for a pipeline you can read, fork, and re-point at any coding agent. If you want the streaming feel back, that's what the next paragraph is for — the workflow SDK doesn't care whether the frontend is a CLI, a web app, or a chat surface.
+
+Claude Design is a product. Open Claude Design is a recipe. The recipe runs on whatever coding agent you already trust, in your own repo, against your own design system, exported to whatever you want. You can read every line.
+
+And because the pipeline is just TypeScript, you can fork it, add a phase, swap a model, change the early-exit conditions, or bolt a `vercel deploy` step onto Phase 5. Or go further — build your own harness entirely, wrap it in whatever UX you want (a web app, a desktop shell, a chat surface, a VS Code extension), and let the workflow SDK be the thing underneath. The CLI is one frontend; nothing stops you from writing another. That's the part that matters. Not the workflow — the fact that building the next workflow, or the next harness around it, is a weekend.
+
+This is what coding at scale looks like from here on out: teams won't just *use* coding agents, they'll build thin harnesses like open-claude-design to orchestrate them across every dev workflow they run.
+
+---
+
+## References
+
+<a id="ref-1"></a>\[1\] "open-claude-design — workflow source." Atomic, GitHub. [Link](https://github.com/flora131/atomic/tree/main/src/sdk/workflows/builtin/open-claude-design)
+
+<a id="ref-2"></a>\[2\] Anthropic, "Claude Design — Anthropic Labs." April 17, 2026. [Link](https://www.anthropic.com/news/claude-design-anthropic-labs)
+
+<a id="ref-3"></a>\[3\] "Atomic — agent workflow toolkit." GitHub. [Link](https://github.com/flora131/atomic)
+
+<a id="ref-4"></a>\[4\] "Atomic workflow architecture." alexlavaee.me, 2026. [Link](/blog/atomic-workflow)
+
+<a id="ref-5"></a>\[5\] "Harness engineering: why coding agents need infrastructure." alexlavaee.me, 2026. [Link](/blog/harness-engineering-why-coding-agents-need-infrastructure)
