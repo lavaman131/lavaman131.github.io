@@ -8,6 +8,18 @@ description: "Anthropic shipped Claude Design on April 17. Three days later we s
 import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
 import BlogCTA from "../../components/blog/BlogCTA.astro";
 
+<div style={{ marginTop: '2rem', marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
+  <iframe
+    width="750"
+    height="422"
+    src="https://www.youtube.com/embed/FtnbwW95pgE"
+    title="Open Claude Design — Atomic workflow demo"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  />
+</div>
+
 Anthropic released [Claude Design](https://www.anthropic.com/news/claude-design-anthropic-labs) on April 17, 2026 — a conversational tool for producing prototypes, slides, and marketing collateral, with a design-system import step, a refinement loop, and a Claude Code handoff bundle at the end.
 
 Three days later we shipped [**open-claude-design**](https://github.com/flora131/atomic/tree/main/src/sdk/workflows/builtin/open-claude-design): an open-source replica implemented as a built-in [Atomic](https://github.com/flora131/atomic) workflow. Five deterministic phases, the same pipeline ported across **three different coding agents** (Claude Agent SDK, Copilot CLI, opencode) — roughly 500 lines of typescript orchestration per provider. The full source lives at [`src/sdk/workflows/builtin/open-claude-design`](https://github.com/flora131/atomic/tree/main/src/sdk/workflows/builtin/open-claude-design).
