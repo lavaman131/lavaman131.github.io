@@ -1,0 +1,120 @@
+---
+title: "Atomic's Workflow SDK: Deterministically Extending Coding Agents"
+date: "2026-04-22"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "Coding agents are brilliant inside a session and fragile outside it. Atomic is an open-source TypeScript SDK that wraps deterministic workflows around Claude Code, Copilot CLI, or opencode — without reimplementing their harness. Here's the gap it closes and why a general agent framework isn't the answer."
+cover: "../../assets/images/blog/atomic-workflow-sdk-coding-agent-orchestration/cover.png"
+---
+
+import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+import BlogCTA from "../../components/blog/BlogCTA.astro";
+
+Coding agents are great at day-to-day work. What they still can't do reliably — and what keeps you babysitting every step — is finish a long-running, complex task while following *your* team's specific guardrails. After thousands of hours shipping with coding agents, I've landed on what actually helps me amplify what coding agents already do well into long-running, ambiguous tasks and am open-sourcing it.
+
+## Neither a coding agent nor a general framework closes this gap
+
+Coding agents alone can't do it. By design, they ship as strong harnesses built for day-to-day coding — and they're genuinely good at the hard parts of that job: context management, memory, tool orchestration, and sub-agent dispatch inside a session. What they can't reliably do is follow *your* specific guardrails on long-running, ambiguous, complex work. For example, there's no built-in way to migrate a 300-file React 17→19 upgrade in the dependency order your senior engineers mapped out, run your team's regression gate between each batch, pause for human review on the files you flagged as high-risk, and keep the branch green end-to-end.
+
+The second you reach for a general agent framework to get that structure, you're wrapping the coding-agent SDK inside *their* graph nodes. Thousands of lines of net-new code to rebuild a tool loop, permission model, sub-agent dispatcher, and context manager — all things your coding agent already has, except worse.
+
+Others skip the framework and build a custom harness around the raw model. Same problem at a different layer: you get *structure*, not *your* guardrails — the constraints, review bars, and team-specific requirements that actually determine whether the output is usable.
+
+None of these paths give you an easy way to put **gutters** around the coding agent. Workflows are gutters: guardrails that keep the agent on your team's path through long-running or ambiguous work, so you're not watching every step.
+
+## The problem
+
+Inside a session, a coding agent can add a feature, fix a bug, refactor a module. It's fine.
+
+Outside a session is where the failures live:
+
+- **On-call triage:** an alert fires; the agent loses the trace context the moment the session resets.
+- **Complex refactors in large codebases:** constraints drift by the third or fourth session.
+- **Team review standards:** every engineer prompts the agent slightly differently, so every engineer gets slightly different results.
+
+Most of your time goes into babysitting.
+
+## What Atomic does
+
+[Atomic](https://github.com/flora131/atomic) is a TypeScript SDK that *enhances* a coding agent by wrapping configurable, deterministic structure around it. The agent's harness — tool-use, context management, sub-agents, permission model — stays intact and keeps doing what it's good at. Atomic adds the outer pipeline that encodes your specific guardrails, so the agent's execution actually follows them on long-running, ambiguous work.
+
+A workflow is plain TypeScript:
+
+```ts
+import { defineWorkflow } from "@bastani/atomic/workflows";
+
+export default defineWorkflow({ name: "review-and-fix", /* ... */ })
+  .for<"claude">()
+  .run(async (ctx) => {
+    const review = await ctx.stage({ name: "review" }, {}, {}, async (s) => {
+      await s.session.query("Review the diff against our UX standards.");
+      s.save(s.sessionId);
+    });
+
+    await ctx.stage({ name: "fix" }, {}, {}, async (s) => {
+      const findings = await s.transcript(review);
+      await s.session.query(`Address the findings in ${findings.path}.`);
+      s.save(s.sessionId);
+    });
+  })
+  .compile();
+```
+
+<br/>
+
+Every `ctx.stage` is a real coding-agent session in its own tmux pane — Claude Code, Copilot CLI, or opencode, interchangeable with a single flag. Data flows between stages only through explicit transcript reads. Topology — parallel fan-out, serial dependencies — comes from `await` and `Promise.all`, not a graph DSL. `.compile()` freezes the graph, so the only variance between runs is the LLM's output.
+
+That's the entire mental model. You're aligning the coding agent's execution with your team's explicit goals, so long-running and ambiguous work finally becomes tractable.
+
+## Try it yourself
+
+The non-obvious part of any of this is the *shape* of the pipeline — which stages, which run parallel, where the human gate goes. Ask Atomic's `workflow-creator` skill to encode your workflow in natural language; it hands you a working skeleton in minutes. That's our actual dev loop — not hand-writing topology.
+
+<InteractiveMermaid
+  chart={`
+flowchart TD
+    T["PR opened"] --> F["Fan-out: parallel coding-agent sessions<br/>(accessibility · spacing · copy · reuse)"]
+    F --> AGG["Aggregate findings"]
+    AGG --> HIL{"HIL approval"}
+    HIL -->|approve| M["Merge unblocks"]
+    HIL -->|changes requested| FIX["Ralph loop<br/>plan → implement → review → debug"]
+    FIX --> AGG
+    style F fill:#42a5f5,color:#fff
+    style HIL fill:#ffa726,color:#000
+    style M fill:#66bb6a,color:#000
+`}
+/>
+
+Workflows teams have already built:
+
+1. **UX review gate on every PR.** On `pull_request.opened`, dispatch a fleet of coding-agent sessions specialized on your design system, each reviewing the diff along a different axis (accessibility, spacing, copy, reuse). Merge is blocked until a human approves.
+2. **50-persona feedback gate pre-PR.** Before a feature PR opens, dispatch 50 headless sessions in parallel — each primed with a distinct persona (the skeptical CFO, the power-user admin, the first-time mobile user, the accessibility-dependent reviewer). Feedback rolls into one report with tasks. A human picks what to implement; Atomic's built-in Ralph loop (planner → orchestrator → worker → reviewer → debugger) executes and raises back to the human.
+3. **Support ticket → root cause → draft PR.** A webhook drops tickets into the workflow. Agents research the codebase, write the root cause back onto the ticket, and attempt a fix in a sandboxed branch. A human gate reviews the diff and evidence; the PR only opens on approval.
+4. **Production regression triage.** A workflow listens to observability alerts, pulls the failing trace, deep-researches the codebase, and dispatches a session to localize the regression against recent commits. High-confidence fix? Draft PR with a repro. Low-confidence? On-call gets a ranked shortlist of suspects instead of a raw stack trace.
+
+Every one of these lives in your repo as a TypeScript file. You run it, diff it, fork it, code-review it. Sharing across the team is merging the file.
+
+<BlogCTA />
+
+## Sandboxed by default
+
+Workflows run with the coding agent's permission checks disabled — which is how you get one-shot execution without constant approval prompts, and why you should never run them on your host. Atomic ships three devcontainer features on GHCR (Claude, Copilot, opencode) with Bun, the CLI, playwright-cli, and config templates pre-baked. "Try this workflow" is `code .` plus rebuild-and-reopen-in-container, not an hour of setup.
+
+## Systems, not prompts
+
+Move from prompting to systems thinking. Define the pipeline once. Run it the same way every time. Stop babysitting.
+
+---
+
+## References
+
+<a id="ref-1"></a>\[1\] "Atomic — open-source TypeScript SDK for coding-agent workflows." GitHub. [Link](https://github.com/flora131/atomic)
+
+<a id="ref-2"></a>\[2\] "Atomic example workflows." GitHub. [Link](https://github.com/flora131/atomic/tree/main/.atomic/workflows)
+
+<a id="ref-3"></a>\[3\] "Atomic SDK source." GitHub. [Link](https://github.com/flora131/atomic/tree/main/src/sdk)
+
+<a id="ref-4"></a>\[4\] "Open Claude Design: a weekend harness built on Atomic." alexlavaee.me, 2026. [Link](/blog/open-claude-design-atomic-harness)
+
+<a id="ref-5"></a>\[5\] "Harness engineering: why coding agents need infrastructure." alexlavaee.me, 2026. [Link](/blog/harness-engineering-why-coding-agents-need-infrastructure)
+
+<a id="ref-6"></a>\[6\] "Atomic: automated procedures and memory for AI coding agents." alexlavaee.me, 2025. [Link](/blog/atomic-workflow)
