@@ -59,6 +59,8 @@ export default defineWorkflow({ name: "review-and-fix", /* ... */ })
   .compile();
 ```
 
+<br/>
+
 Every `ctx.stage` is a real coding-agent session in its own tmux pane — Claude Code, Copilot CLI, or opencode, interchangeable with a single flag. Data flows between stages only through explicit transcript reads. Topology — parallel fan-out, serial dependencies — comes from `await` and `Promise.all`, not a graph DSL. `.compile()` freezes the graph, so the only variance between runs is the LLM's output.
 
 That's the entire mental model. You're aligning the coding agent's execution with your team's explicit goals, so long-running and ambiguous work finally becomes tractable.
