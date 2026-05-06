@@ -1,0 +1,71 @@
+---
+title: "The Coding Benchmark We Actually Need"
+date: "2026-05-06"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "The benchmarks worth caring about measure the GDP a coding agent can generate, not how much of SQLite it can recall. ProgramBench gets one key thing right while other design choices deserve scrutiny. Here's how to combine its best idea with real outcome measurement to build the benchmark we actually need."
+cover: "../../assets/images/blog/programbench-memorization-vs-engineering/cover.png"
+---
+
+import BlogCTA from "../../components/blog/BlogCTA.astro";
+
+The benchmarks worth caring about measure something a customer would pay for. "Can this agent ship a product that generates revenue" is the question worth asking. "Can this agent reproduce SQLite from memory under adversarial constraints" is not.
+
+That's the lens for evaluating coding agents going forward, and ProgramBench<a href="#ref-1">[1]</a> is a useful place to ground it, because it gets one key thing right that's worth carrying forward, while other parts of the design are worth scrutinizing. The setup: hand a coding agent a compiled binary, the user-facing docs, and a sandbox. Rebuild the program from scratch. Pass all the behavioral tests. No web access. No `objdump`, `strings`, or `hexdump`. No source. Across 200 tasks and 248,000 behavioral tests, **every frontier model scored 0% fully resolved**<a href="#ref-1">[1]</a>. The tasks range from jq on the small end to SQLite, PHP, and FFmpeg on the large end. Claude Opus 4.7 leads the "almost resolved" column at 3.0%. GPT-5.4, Gemini 3.1 Pro, and Haiku 4.5 all sit at 0/0.
+
+The framing is that this is a hard reverse-engineering test, but what it actually measures is memorization, and that's the wrong thing to be testing.
+
+---
+
+## Why ProgramBench measures memorization, not capability
+
+Real reverse-engineering looks like the workflow any dev uses to rebuild something they don't fully understand: poking at the product to see how it behaves, reading the docs, searching the web for similar projects, pulling up reference implementations and design-system examples, searching for half-remembered error strings, and reading the upstream changelog to figure out why a behavior changed. ProgramBench's rules forbid all of that. The agent gets a binary it can execute and a manual it can read. That's it.
+
+Strip those tools out and what's left is: produce, from training data alone, a clean-room implementation of FFmpeg that matches the reference on a quarter-million tests. The model is recalling whether it saw enough of the original codebase during pretraining to reconstruct it, when what we actually want to know is whether it can reason about the binary.
+
+Doing well on this would tell us the model memorized the training set, which isn't what we're trying to measure. Doing poorly tells us only that current frontier models can't perfectly memorize SQLite, which we already knew.
+
+The benchmark authors will say that's the point: forbid the obvious tools so the model can't cheat. But "cheating" here means "using the workflow that real engineers use." The constraint makes the test cleaner to grade, but it stops the benchmark from measuring anything a customer would pay for.
+
+---
+
+## The one part worth keeping: free-form implementation
+
+ProgramBench does get one thing right, and it's worth calling out because it's the part worth carrying forward into a better benchmark. The input format. No method signatures to fill in. No class skeletons. No PRD. No natural-language description of the intended file layout. Just: here's the binary, here's the manual, build the thing.
+
+That matters. Most coding benchmarks rely on partial structure to make grading tractable. SWE-Bench<a href="#ref-2">[2]</a> hands you a repo plus a failing test. HumanEval gives you a docstring and a function signature. Even the harder agent benchmarks pass in a problem statement that a human has already broken down. ProgramBench is the rare benchmark that forces the model to architect from zero.
+
+The free-form input is the right idea. The rest of the design isn't.
+
+---
+
+<BlogCTA />
+
+## A proposal: free-form input, real outcomes, real tools
+
+Here's the redesign. Keep ProgramBench's free-form input. Drop the no-tools rule. Replace test pass rates with a metric a customer would actually pay for.
+
+Take Vending-Bench 2<a href="#ref-3">[3]</a>: a year-long simulation where the agent runs a vending machine business starting with $500, negotiates suppliers, manages inventory, and gets scored on the bank balance at year-end. Andon Labs explicitly designed it to measure long-horizon coherence, the failure mode where agents drift, forget, or go bankrupt over thousands of tool calls.
+
+Now hybridize Vending-Bench's outcome-based scoring with ProgramBench's free-form input and SWE-Bench's real-world software framing. Drop the agent into an empty repo. Give it a market hypothesis and the tools real engineers use, including the web, package managers, debuggers, and the works. Let it ship a SaaS app. Score it on **generated ARR after 90 days of simulated operation**, with a synthetic customer pool that buys, churns, and files support tickets against whatever the agent builds.
+
+That benchmark would test what coding agents are actually for: building things that work, in a real environment, with the tools real engineers use, against an outcome a customer would pay for. Memorization helps a little. Architecture, debugging, customer empathy, and long-horizon execution help a lot more. And critically, the score moves with the thing we actually want, GDP value generated, not with how much of the training set the model already saw during pretraining.
+
+---
+
+## What the 0% actually tells us
+
+ProgramBench's headline number is a benchmark design choice. Forbid web access, forbid decompilation, forbid source, and you've forbidden the workflow. The remaining test measures recall under adversarial constraints, which is interesting research but not a useful signal for production routing decisions, and not a measure of value any customer would pay for.
+
+Run a coding agent in the environment it's actually deployed in. Score it on outcomes a customer cares about. The benchmarks that survive the next two years will look more like Vending-Bench than ProgramBench. They will be long-horizon, tool-rich, free-form on the input side, and graded on revenue rather than test pass rates.
+
+The free-form input idea is worth keeping. Combine it with outcome-based scoring and you have the benchmark we actually need.
+
+---
+
+## References
+
+<a id="ref-1"></a>\[1\] ProgramBench, "Rebuilding programs from scratch: a benchmark for coding agents." 2026. [Link](https://programbench.com/)
+
+<a id="ref-2"></a>\[2\] SWE-Bench, "Can Language Models Resolve Real-World GitHub Issues?" [Link](https://www.swebench.com/)
+
+<a id="ref-3"></a>\[3\] Andon Labs, "Vending-Bench 2: Long-horizon agent coherence over a one-year simulated business." [Link](https://andonlabs.com/evals/vending-bench-2)
