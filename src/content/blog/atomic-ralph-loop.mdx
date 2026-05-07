@@ -1,0 +1,115 @@
+---
+title: "Atomic's Ralph Loop: a deterministic plan → orchestrate → review for long-running, ambiguous work"
+date: "2026-05-07"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "Geoffrey Huntley's Ralph primitive opened up a rich ecosystem of looped coding agents. Atomic's built-in Ralph builds on that lineage with RFC-driven planning, schema-enforced dual review, deterministic file-grouped finding clusters, and a captured branch changeset injected into both reviewers — designed for unattended long-running work where every step needs to be inspectable after the fact."
+cover: "../../assets/images/blog/atomic-ralph-loop/cover.png"
+---
+
+import InteractiveMermaid from "../../components/blog/InteractiveMermaid.astro";
+
+Geoffrey Huntley's [original Ralph essay](https://ghuntley.com/ralph/) introduced a primitive I keep coming back to: a coding agent in a `while true` loop reading the same prompt over and over until the work is done. The pattern is genuinely powerful, and the ecosystem around it has grown a lot since. Huntley's own [follow-up](https://ghuntley.com/loop/) generalizes it well beyond coding. The [official Claude Code ralph-wiggum plugin](https://github.com/anthropics/claude-code/blob/main/plugins/ralph-wiggum/README.md) ships a Stop-hook variant. [Wiggum CLI](https://wiggum.app/ralph-loop/) checkpoints distinct phases with a TUI on top. [Vercel's ralph-loop-agent](https://github.com/vercel-labs/ralph-loop-agent) adds completion verification and token-budget stops. Adjacent tools push the same idea from neighboring angles: [Aider's architect/editor mode](https://aider.chat/2024/09/26/architect.html) splits planning and editing across two models and posts SOTA numbers on its own benchmark, [Cline's Plan & Act](https://docs.cline.bot/core-workflows/plan-and-act) keeps a human approving every diff, [OpenHands](https://arxiv.org/pdf/2511.03690) wraps an action-observation loop with critic models and stuck-loop detection, and recent essays on patterns like [ASDLC's Ralph Loop](https://asdlc.io/patterns/ralph-loop/) sketch out adversarial dual-review approaches that closely match where I ended up. I've learned a lot from all of this, and Atomic's Ralph borrows openly from the lineage.
+
+What I personally wanted — and didn't quite see assembled in one place for my own workflow — was a loop I could leave running unattended on a 30-file refactor overnight where every step is inspectable in the morning: the RFC, the task DAG, the captured diff, both reviewers' transcripts. This post is the design of the Ralph loop that ships in [Atomic](https://github.com/flora131/atomic), what it inherits from the work above, and the small set of choices that make it a little different.
+
+## What goes wrong with a naive Ralph
+
+A `while true` over one prompt has three structural problems, and all three show up around iteration four:
+
+1. **The reviewer is the same brain that wrote the code.** It signs off on its own bugs. Self-review converges on confidence, not correctness.
+2. **There's no plan that survives the session reset.** Each iteration starts cold, constraints drift, later iterations contradict earlier ones.
+3. **Symptoms get patched instead of root causes.** The reviewer finds five errors in five files. The next iteration fixes five places. The shared underlying defect ships unchanged.
+
+A lot of tools handle a subset of these well. Aider's architect/editor pair separates the planning model from the editing model. Claude Code's plan mode persists a plan that survives `/clear` and supports iterative re-planning. Cline's Plan & Act keeps a human approving every diff. Devin loops autonomously inside its sandbox. What I wanted on top of these foundations was an unattended loop with two independent reviewers gating termination and a captured artifact for every step — so I could walk away for hours and still reconstruct exactly what happened when I came back.
+
+## The shape
+
+Atomic's Ralph is one outer loop with five stages per iteration. Three are visible (you can attach to the `tmux` session and watch); two are headless because the SDK enforces structured output and there's nothing for a human to steer.
+
+<InteractiveMermaid
+  chart={`
+flowchart TD
+    Start(["spec or RFC path"]) --> P["Planner<br/>visible"]
+    P --> O["Orchestrator<br/>visible<br/>RFC → DAG → parallel workers"]
+    O --> S["Code Simplifier<br/>visible"]
+    S --> D["Infra Discovery<br/>3 headless sub-agents, parallel"]
+    D --> R["Dual Reviewer<br/>2 headless, schema-enforced"]
+    R --> Verdict{"both say<br/>'patch is correct'?"}
+    Verdict -->|yes| Done(["done"])
+    Verdict -->|no| Cluster["Findings grouped by file<br/>→ planner triages root causes"]
+    Cluster --> P
+    style P fill:#42a5f5,color:#fff
+    style O fill:#42a5f5,color:#fff
+    style R fill:#ab47bc,color:#fff
+    style Verdict fill:#ffa726,color:#000
+    style Done fill:#66bb6a,color:#000
+`}
+/>
+
+The loop terminates on one of two conditions: both reviewers return `overall_correctness: "patch is correct"`, or `max_loops` (default 10) elapses. There is no third "looks fine" branch.
+
+## Determinism is wired in, not prompted
+
+The two design decisions that buy the most reliability:
+
+**Schema-enforced dual reviewers.** Each iteration spawns two reviewers in parallel, each using its provider SDK's structured-output mode (Claude Agent SDK `outputFormat: { type: "json_schema" }`, OpenCode `format: json_schema`, Copilot via `defineTool`). The schema is a `Zod` object I compile to JSON Schema once:
+
+```ts
+export const ReviewResultSchema = z.object({
+  findings: z.array(ReviewFindingSchema),
+  overall_correctness: z.enum(["patch is correct", "patch is incorrect"]),
+  overall_explanation: z.string(),
+  overall_confidence_score: z.number().min(0).max(1).optional(),
+});
+```
+
+The merge rule is conservative: **either reviewer flagging `"patch is incorrect"` fails the iteration, and either reviewer failing to produce schema-valid output is treated as "needs another pass."** This sounds obvious. The first version had a bug where a missing structured output defaulted to "correct" and the loop exited after one pass. Nothing was actually verified, but the workflow happily reported success. The fix wasn't in the prompt; it was in the merge function.
+
+**A captured branch changeset, injected.** Before the reviewers run, the workflow shells out and captures the full diff, name-status, and uncommitted state relative to the parent branch. That string lands in the reviewer prompt verbatim. Reviewers don't need to discover what changed; they read it. Both reviewers on the same iteration see the same input.
+
+These two choices remove most of the iteration-to-iteration variance. Either the reviewer sees the diff and the schema accepts the verdict, or the loop keeps running.
+
+## Re-planning, not re-prompting
+
+The interesting part of the loop is what happens *between* iterations.
+
+When the merged review fails, findings are grouped by `file_path` and rendered into a markdown brief. Clusters of related symptoms surface together. That brief becomes the only new context the planner gets on the next iteration. The planner is explicitly instructed to:
+
+1. **Validate** each finding by reading the cited file (drop stale ones).
+2. **Cluster** findings that share a module or underlying defect.
+3. **Root-cause** the actual defect rather than the surface symptom.
+4. Fold the corrected approach into specific RFC sections (Detailed Design, Alternatives, Test Plan).
+
+The output is a *revised RFC*, not a new prompt. The orchestrator on the next iteration decomposes that RFC into a fresh task DAG. Tasks aren't carried across iterations; the design is.
+
+This is where most DIY Ralphs diverge from this one. They feed reviewer findings back as a comment list, the agent fixes the comments, and the defect ships. Here, the next iteration is forced to revise the *design* first.
+
+## Decomposition is part of the loop, not a one-shot
+
+The orchestrator stage takes the RFC and runs three phases:
+
+1. **Decompose** into tasks with a gerund subject, an imperative description, and an explicit `blockedBy` dependency list. Persisted via the SDK's task tool (`TaskCreate`, `todowrite`, etc.).
+2. **Dependency-graph integrity check.** Every dependency reference must point to a real task ID. Dangling references are dropped *before* any worker spawns. Otherwise tasks block forever.
+3. **Execute.** Ready tasks (`pending`, all deps `completed`) fan out as parallel sub-agents. As workers finish, newly unblocked tasks dispatch immediately. Worker failures retry up to three times with the error in context, then mark `error` and unblock the rest of the graph.
+
+A few opinionated rules baked into the prompt: tasks should be small enough that a single sub-agent finishes one in one session, test tasks come after the code they cover, foundations (schema, shared utils) come first. Decomposition is *data*. Bad decomposition is the leading cause of merge conflicts in long-running runs, and the prompt is where that data quality is enforced.
+
+## Three more details that matter
+
+**Infra discovery before review.** Three sub-agents (`codebase-locator`, `codebase-analyzer`, `codebase-pattern-finder`) run in parallel and surface the exact build, test, lint, and CI commands for the repo. The reviewer is then *required* to run them before writing findings. Type errors and test failures become P0/P1 findings with the actual command and exit status quoted in the body. The reviewer cannot declare correctness without verifying against the project's own gates.
+
+**P3 nits get filtered.** The merge step drops priority-3 findings before they reach the planner. If only nits remain, the loop stops. I don't want eight iterations debating a variable name.
+
+**A "caveman" response-style directive** is appended to every prompt: drop articles, drop pleasantries, technical terms exact, code blocks unchanged, schema literals unchanged. Across ten iterations the token savings are real, and the structured outputs the loop actually depends on are explicitly carved out so they survive intact.
+
+## Try it on something hard
+
+```bash
+atomic workflow -n ralph -a claude "<your spec or path/to/spec.md>"
+```
+
+It runs against your existing Claude Code, OpenCode, or Copilot CLI install. Atomic wraps a deterministic outer loop around your agent rather than replacing it. The whole workflow is a small set of TypeScript files you can read in one sitting: [`packages/atomic-sdk/src/workflows/builtin/ralph`](https://github.com/flora131/atomic/tree/main/packages/atomic-sdk/src/workflows/builtin/ralph). MIT-licensed.
+
+The honest claim is modest: this Ralph fails in ways you can debug. When the loop gets something wrong, I can read the RFC, the task DAG, the captured changeset, and both reviewer transcripts and tell you why. That's the bar I want for any agent loop running for hours unattended on real work.
+
+If you try it and it breaks on something, the [issue tracker](https://github.com/flora131/atomic/issues) is open.
