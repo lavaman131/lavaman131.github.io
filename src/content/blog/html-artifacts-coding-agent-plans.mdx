@@ -1,0 +1,81 @@
+---
+title: "How to align coding agents with your plans better than markdown, without burning tokens"
+date: "2026-05-13"
+authors: "Alex Lavaee, Norin Lavaee"
+description: "Thariq Shihipar at Claude Code has been making the case that HTML beats markdown for agent output. We agree. The DeepSeek-OCR screenshot trick is what makes the token cost honest enough to do this at every plan stage."
+cover: "../../assets/images/blog/html-artifacts-coding-agent-plans/cover.png"
+---
+
+import { Image } from "astro:assets";
+import confirmationFlowRedesign from "../../assets/images/blog/html-artifacts-coding-agent-plans/confirmation-flow-redesign.png";
+
+The expensive moments in a coding-agent session are not the model's tokens. They are the seconds you spend skimming a markdown plan and missing a subtle misalignment. You approve, then watch the implementer solve a slightly different problem than the one in your head.
+
+We have started treating that gap as a UI problem, not a model problem. And the UI we have, for coding agents specifically, is bad.
+
+[Thariq Shihipar at Claude Code](https://x.com/trq212/status/2052809885763747935) has been making this case publicly for a while: agents should be emitting HTML, not markdown, for most non-trivial output. His thread is the right primer on *why*, and we're not going to try to re-derive it here. What we want to add is the piece that has been missing for us. We needed a way to use HTML at every plan stage without the token cost stacking up across the session. That way is a screenshot, borrowed from how DeepSeek-OCR handles context compression.
+
+## The case Thariq makes, in three sentences
+
+We will not reproduce Thariq's thread in full. Go read it. The arguments worth restating here are the ones the rest of this post leans on:
+
+1. **Markdown won by inertia.** It rendered everywhere, was easy for a human to hand-edit, and the kinds of plans agents used to produce were short. None of that still binds. Most people are no longer hand-editing agent-generated specs, they are prompting the agent to edit them. Plans have grown into full RFCs. And every modern reviewer has a browser tab open.
+2. **HTML carries information markdown cannot.** Tables with real column alignment, SVG diagrams drawn to scale, before/after panels rendered side by side at the same visual weight. In the absence of those, agents fall back to ASCII boxes and unicode block characters approximating colors. That fallback is what most markdown plans actually look like at length, and it is why nobody reads past line 100.
+3. **Information density matters most at the plan stage.** This is where the gap between what the agent thinks you want and what you actually want is widest. Forcing the plan through a flat-text encoding is a lossy compression step you do not need to be performing.
+
+Thariq catalogs the use cases: plan stages with branching options, design and prototype reviews, PR walkthroughs, code and architecture explainers, throwaway custom editors that end with a "copy as JSON" button. We have ended up using HTML for all of those. Our experience matches his closely enough that the right move is to point you at his thread rather than re-list them.
+
+## Where this landed for us: design work with a coding agent
+
+The plan-stage argument is the one that converted us, and design work is where it shows up most starkly.
+
+The last time we were iterating on a UI change with Claude Code, we asked for the plan as a single-file HTML artifact instead of the usual markdown. Two columns, BEFORE on the left, AFTER on the right, rendered with the real tokens and chrome the UI actually ships:
+
+<Image src={confirmationFlowRedesign} alt="Side-by-side HTML artifact comparing the before and after of a UI redesign, rendered with the real tokens and chrome of the surrounding interface" width={1200} />
+
+The point is not the specific feature. The point is that one artifact got us to high-fidelity comprehension in a single round trip. The markdown equivalent would have been a paragraph of prose and a bullet list. Readable, but lossy in exactly the ways that matter for a visual change. Getting to the same level of confidence through markdown would have taken three or four back-and-forth turns of "what does this look like next to X" and "show me the spacing," each one re-tokenizing the conversation and giving us a worse mental picture than the rendered comparison did instantly.
+
+The expensive operation is reading the spec and noticing what the agent got wrong. Spending model tokens on rendered HTML pays for itself the first time it replaces three turns of "what does this look like next to X" with one look.
+
+## Where Thariq's argument gets harder: token cost on long sessions
+
+HTML is not free. A single artifact comparing two design approaches with inline styles, SVG, and full content runs roughly four to six times the tokens of the equivalent markdown plan. Generation also takes two to four times longer. On a one-shot artifact that's fine. On a long coding-agent session, the plan gets re-read by the implementer, then the reviewer, then the follow-up planner. The HTML keeps getting re-tokenized into context, and the cost stacks up across the session.
+
+This is the part Thariq's posts don't fully address, and it's why HTML stayed a sometimes-tool for us instead of a default. The fix came from a different research direction.
+
+## DeepSeek-OCR is the missing mechanism
+
+DeepSeek-AI's paper [*DeepSeek-OCR: Contexts Optical Compression*](https://arxiv.org/abs/2510.18234) makes a simple claim: a page of text rendered as an image and processed by a vision encoder can be encoded into far fewer tokens than the same text processed as text. Their [model card](https://github.com/deepseek-ai/DeepSeek-OCR) lists the encoding modes. A 1024×1024 image of a full page becomes 256 vision tokens. Their Tiny mode does it in 64. For content that has visual structure, the image channel encodes more per token than the text channel by a wide margin.
+
+You do not need to run their model to borrow the mechanism. Once you have an HTML artifact you are happy with, you do not need to keep the HTML itself in context for subsequent agent calls. Render it, screenshot it, feed the PNG back as an image. The vision tokens encode the same spec at a fraction of the text-token cost, and the human-readable HTML is preserved on disk for the next time you need to iterate.
+
+The workflow we have settled into:
+
+1. Agent generates the HTML artifact as part of the plan stage.
+2. We open it in a browser, review, edit if needed, approve.
+3. A small wrapper renders the artifact and captures a PNG.
+4. Subsequent agent calls receive the PNG as part of the spec, not the raw HTML.
+
+The trade is asymmetric. Our review happens against the rendered HTML, where spacing, alignment, and color do the work of catching the misalignments. The model's re-reads across the implementer and reviewer stages happen against the screenshot, which costs a fraction of the text tokens. Iteration cost stays close to a markdown plan. What we can see in one glance goes way up.
+
+This is what moved HTML artifacts from "nice when I remember to ask for one" to "default at every plan stage" for us.
+
+## Why coding-agent TUIs have not shipped this yet
+
+Claude chat ships artifacts. ChatGPT canvas ships canvas. The chat side of the ecosystem worked this out a while ago: prose-only loses information at exactly the moments that matter most.
+
+The coding-agent TUIs (Claude Code, Codex, Opencode, etc.) are still markdown-first across every stage of the loop. Part of the reason is that TUIs render in terminals, and terminals do not render HTML. But the artifact does not need to live inside the TUI. A hook that drops the file in a browser tab or a side panel solves the rendering problem. The harder constraint is that the agent has to know when an HTML artifact is the right tool, and most plan-stage prompts never ask for one. The default is markdown, the path of least resistance is markdown, and you find out about the misalignment after the implementer is halfway done.
+
+In the short term the fix is one line in your plan-stage prompt: ask for a single-file HTML artifact when the problem is comparison-heavy, visual, or architecturally branching. Then add the screenshot step before the artifact gets re-read by downstream agent calls. In the longer term we want the agents to reach for HTML on their own, the way Claude already does in chat.
+
+## Try it on the next ambiguous plan
+
+The pattern is cheap to try in one session. The next time an agent hands you a markdown plan for something you would want to compare, draw, or render, ask for a single-file HTML artifact instead. Open it in a browser. Read the rendered comparison rather than the prose abstraction of it. If the HTML changes your read on the plan, that is what markdown was hiding.
+
+Then screenshot it before the next agent stage reads it back. The screenshot is what makes this the default at every plan stage, instead of a tool you only reach for when the artifact feels important enough to justify the tokens.
+
+## References
+
+\[1\] Thariq Shihipar (Claude Code), [*The Unreasonable Effectiveness of HTML*](https://x.com/trq212/status/2052809885763747935). The case for HTML over markdown as the default agent output format, with a catalog of use cases.
+
+\[2\] DeepSeek-AI, *DeepSeek-OCR: Contexts Optical Compression*. [arXiv:2510.18234](https://arxiv.org/abs/2510.18234) · [GitHub](https://github.com/deepseek-ai/DeepSeek-OCR). The mechanism behind the screenshot trick: visual tokens encode page-structured content at a fraction of the text-token cost.
